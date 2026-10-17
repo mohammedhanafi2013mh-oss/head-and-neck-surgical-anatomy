@@ -2,7 +2,8 @@
 // surface as CT-style, T1 MRI-style or anatomy-coloured slices. The fills
 // come from stencil capping (each mesh's back faces add to the stencil, its
 // front faces subtract, and a cap is drawn wherever the count is non-zero).
-// These are simulations from the model, not patient imaging.
+// These are simulations from the model, not patient imaging. The "Real CT"
+// and "Real MRI" modes show Visible Human scans instead (js/scans.js).
 
 (function () {
   // Grey levels (0-1) per tissue. CT approximates a soft-tissue window with
@@ -21,6 +22,17 @@
       ids: { parotid: 0.7, thyroid: 0.42, larynx: 0.25, auricle: 0.3 }
     },
     anatomy: { background: 0x15130f, body: 0xe6c9a2 }
+  };
+
+  // Options in the style dropdown for each mode.
+  const MODE_OPTIONS = {
+    sim: [["ct", "CT (soft tissue, contrast)"], ["t1", "MRI T1"], ["anatomy", "Anatomy colours"]],
+    ct: [["soft", "Soft-tissue window"], ["bone", "Bone window"]]
+  };
+  const NOTES = {
+    sim: "Simulated from the 3D model, not patient imaging. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts. Hover over a structure to name it; click or tap to select it.",
+    ct: "Real CT of the Visible Human male (the body the 3D model was built from; post-mortem, no contrast). It is matched to the model slice by registering the model's skeleton to the CT (median bone error about 1.5 mm). Names and outlines come from the registered model, so treat them as approximate for soft tissue. Courtesy of the U.S. National Library of Medicine.",
+    mri: "Real MRI of the Visible Human male (T1 and T2). This scan isn't registered to the model, so browse it with the slider. Courtesy of the U.S. National Library of Medicine."
   };
 
   // Small structures draw last so they sit on top of what they run through.
@@ -45,7 +57,10 @@
       this.viewer = viewer;
       this.el = el;
       this.onPick = opts.onPick || (() => {});
-      this.canvas = el.querySelector("canvas");
+      this.canvas = el.querySelector("canvas.sim");
+      this.realCanvas = el.querySelector("canvas.real");
+      this.mode = "sim";
+      this.scans = new window.ANATOMY.RealScans(this, this.realCanvas, opts.loadScript);
       this.tip = el.querySelector(".section-tip");
       this.planeName = "axial";
       this.style = "ct";
@@ -84,8 +99,9 @@
 
     // ---------- setup ----------
 
-    rebuild(model) {
+    rebuild(model, regionId) {
       this.model = model;
+      this.meshCentre = window.ANATOMY.meshes[regionId].header.centre;
       for (const e of this.entries) for (const m of [e.back, e.front, e.cap]) this.scene.remove(m);
       this.entries = [];
       this.bounds = new THREE.Box3();
@@ -139,20 +155,54 @@
     bindUi() {
       this.el.querySelectorAll("[data-plane]").forEach((b) =>
         b.addEventListener("click", () => {
+          if (b.disabled) return;
           this.planeName = b.dataset.plane;
-          this.el.querySelectorAll("[data-plane]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          this.syncControls();
+          this.update();
+        })
+      );
+      this.el.querySelectorAll("[data-mode]").forEach((b) =>
+        b.addEventListener("click", async () => {
+          this.mode = b.dataset.mode;
+          if (this.mode !== "sim") {
+            this.syncControls();
+            this.scans.message("Loading scans…");
+            try {
+              await this.scans.load();
+            } catch (err) {
+              this.scans.message("Couldn't load the scans. Check that data/scans sits next to index.html.");
+              return;
+            }
+          }
+          if (this.mode === "mri" && this.planeName === "sagittal") this.planeName = "coronal";
+          this.syncControls();
+          this.apply3d();
           this.update();
         })
       );
       const style = this.el.querySelector("#section-style");
       style.addEventListener("change", () => {
-        this.style = style.value;
+        if (this.mode === "sim") this.style = style.value;
+        else if (this.mode === "ct") this.scans.window = style.value;
+        else this.scans.mriSeries[this.planeName] = style.value;
         this.update();
       });
       const level = this.el.querySelector("#section-level");
       level.addEventListener("input", () => {
-        this.level = level.value / 1000;
+        if (this.mode === "mri") this.scans.mriLevel[this.planeName] = level.value / 1000;
+        else this.level = level.value / 1000;
         this.update();
+      });
+      const outlines = this.el.querySelector("#section-outlines");
+      outlines.addEventListener("change", () => {
+        this.scans.showOutlines = outlines.checked;
+        this.update();
+      });
+      this.realCanvas.addEventListener("pointermove", (e) => this.hover(e, true));
+      this.realCanvas.addEventListener("pointerleave", () => (this.tip.hidden = true));
+      this.realCanvas.addEventListener("click", (e) => {
+        const id = this.mode === "ct" && this.scans.ctPick(e);
+        if (id) this.onPick(id);
       });
       const cut = this.el.querySelector("#section-cut");
       cut.addEventListener("change", () => {
@@ -172,11 +222,11 @@
       const size = Math.max(160, Math.min(wrap.clientWidth, 520));
       this.renderer.setSize(size, size, false);
       this.canvas.style.width = this.canvas.style.height = size + "px";
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      this.realCanvas.width = this.realCanvas.height = Math.round(size * dpr);
+      this.realCanvas.style.width = this.realCanvas.style.height = size + "px";
       this.pickTarget = null;
-      if (this.active && this.entries.length) {
-        this.fit();
-        this.draw();
-      }
+      if (this.active && this.entries.length) this.update();
     }
 
     // ---------- slicing ----------
@@ -190,7 +240,10 @@
         this.apply3d();
         this.outline();
         this.fit();
-        this.draw();
+        if (this.mode === "sim") this.draw();
+        else if (this.mode === "ct") this.scans.drawCt();
+        else this.scans.drawMri();
+        this.chrome();
       });
     }
 
@@ -244,8 +297,9 @@
 
     apply3d() {
       this.viewer.invalidate();
-      const on = this.active && this.cut3d && this.entries.length > 0;
-      this.indicator.visible = this.active && this.entries.length > 0;
+      const linked = this.active && this.entries.length > 0 && this.mode !== "mri";
+      const on = linked && this.cut3d;
+      this.indicator.visible = linked;
       // In 3D, keep the same half as the slice so the cut faces the camera side.
       this.clip3d.copy(this.plane);
       for (const s of this.viewer.structures.values()) {
@@ -274,6 +328,7 @@
         const pos = e.source.geometry.attributes.position;
         const idx = e.source.geometry.index.array;
         let sx = 0, sy = 0, count = 0;
+        e.cut = [];
         for (let i = 0; i < idx.length; i += 3) {
           const ia = idx[i], ib = idx[i + 1], ic = idx[i + 2];
           const da = n.x * pos.getX(ia) + n.y * pos.getY(ia) + n.z * pos.getZ(ia) + c;
@@ -287,6 +342,7 @@
             p.copy(a).lerp(b, d1 / (d1 - d2)).sub(this.centre);
             const u = p.dot(right), v = p.dot(up);
             pts.push([u, v]);
+            e.cut.push([u, v]);
             sx += u; sy += v; count++;
           }
         }
@@ -367,7 +423,13 @@
     }
 
     pick(ev) {
-      if (!this.entries.length) return null;
+      const rect = this.canvas.getBoundingClientRect();
+      return this.pickNdc(((ev.clientX - rect.left) / rect.width) * 2 - 1, 1 - ((ev.clientY - rect.top) / rect.height) * 2);
+    }
+
+    // Structure at a point given in the model slice's normalised coordinates.
+    pickNdc(nx, ny) {
+      if (!this.entries.length || Math.abs(nx) > 1 || Math.abs(ny) > 1) return null;
       const size = new THREE.Vector2();
       this.renderer.getDrawingBufferSize(size);
       if (!this.pickTarget || this.pickTarget.width !== size.x) {
@@ -375,34 +437,70 @@
       }
       this.renderer.setRenderTarget(this.pickTarget);
       this.draw(true);
-      const rect = this.canvas.getBoundingClientRect();
-      const x = Math.floor(((ev.clientX - rect.left) / rect.width) * size.x);
-      const y = Math.floor((1 - (ev.clientY - rect.top) / rect.height) * size.y);
+      const x = Math.min(size.x - 1, Math.floor(((nx + 1) / 2) * size.x));
+      const y = Math.min(size.y - 1, Math.floor(((ny + 1) / 2) * size.y));
       const px = new Uint8Array(4);
       this.renderer.readRenderTargetPixels(this.pickTarget, x, y, 1, 1, px);
       this.renderer.setRenderTarget(null);
-      this.draw();
+      if (this.mode === "sim") this.draw();
       const index = (px[0] << 16) | (px[1] << 8) | px[2];
       return index ? this.entries[index - 1].id : null;
     }
 
-    hover(ev) {
+    hover(ev, real = false) {
       if (this.hoverPending) return;
       this.hoverPending = true;
       requestAnimationFrame(() => {
         this.hoverPending = false;
-        const id = this.pick(ev);
+        const target = real ? this.realCanvas : this.canvas;
+        const id = real ? this.mode === "ct" && this.scans.ctPick(ev) : this.pick(ev);
         if (!id) {
           this.tip.hidden = true;
-          this.canvas.style.cursor = "";
+          target.style.cursor = "";
           return;
         }
-        const rect = this.canvas.getBoundingClientRect();
+        const rect = target.getBoundingClientRect();
         this.tip.textContent = this.viewer.structures.get(id).name;
         this.tip.style.transform = `translate(${ev.clientX - rect.left + 12}px, ${ev.clientY - rect.top + 12}px)`;
         this.tip.hidden = false;
-        this.canvas.style.cursor = "pointer";
+        target.style.cursor = "pointer";
       });
+    }
+
+    // Controls that depend on the mode: canvases, dropdown, slider, notes.
+    syncControls() {
+      const mode = this.mode, el = this.el;
+      el.querySelectorAll("[data-mode]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.mode === mode)));
+      el.querySelectorAll("[data-plane]").forEach((x) => {
+        x.setAttribute("aria-pressed", String(x.dataset.plane === this.planeName));
+        x.disabled = mode === "mri" && x.dataset.plane === "sagittal";
+      });
+      this.canvas.hidden = mode !== "sim";
+      this.realCanvas.hidden = mode === "sim";
+      const style = el.querySelector("#section-style");
+      const options = mode === "mri" && this.scans.m
+        ? this.scans.mriList(this.planeName).map((x) => [x.id, `MRI ${x.weighting}`])
+        : MODE_OPTIONS[mode] || [];
+      const current = mode === "sim" ? this.style : mode === "ct" ? this.scans.window : this.scans.mriSeries[this.planeName];
+      style.innerHTML = options.map(([v, t]) => `<option value="${v}"${v === current ? " selected" : ""}>${t}</option>`).join("");
+      el.querySelector("#section-level").value = Math.round((mode === "mri" ? this.scans.mriLevel[this.planeName] : this.level) * 1000);
+      el.querySelector(".section-check-cut").hidden = mode === "mri";
+      el.querySelector(".section-check-outlines").hidden = mode !== "ct";
+      el.querySelector(".section-note").textContent = NOTES[mode];
+    }
+
+    // Scale bar and slice caption after drawing.
+    chrome() {
+      const bar = this.el.querySelector(".scale-bar");
+      const caption = this.el.querySelector(".section-caption");
+      if (this.mode === "mri") {
+        bar.style.width = (this.scans.mriCmCss || 0) + "px";
+        caption.textContent = this.scans.mriLabel || "";
+      } else {
+        caption.textContent = this.mode === "ct" && this.scans.view
+          ? `Real CT · slice ${this.scans.view.k + 1} of ${this.scans.view.plane.positions.length}`
+          : "";
+      }
     }
   }
 

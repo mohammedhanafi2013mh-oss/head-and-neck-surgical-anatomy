@@ -56,6 +56,11 @@
 
   <!-- Cross-section controls; app.js moves this into the CT / MRI tab. -->
   <div id="sections-ui" class="sections" hidden>
+    <div class="seg seg-wide" role="group" aria-label="Image source">
+      <button type="button" data-mode="sim" aria-pressed="true">Simulated</button>
+      <button type="button" data-mode="ct" aria-pressed="false">Real CT</button>
+      <button type="button" data-mode="mri" aria-pressed="false">Real MRI</button>
+    </div>
     <div class="section-controls">
       <div class="seg" role="group" aria-label="Plane">
         <button type="button" data-plane="axial" aria-pressed="true">Axial</button>
@@ -71,20 +76,23 @@
       </label>
     </div>
     <div class="section-view">
-      <canvas aria-label="Cross-section"></canvas>
+      <canvas class="sim" aria-label="Simulated cross-section"></canvas>
+      <canvas class="real" aria-label="Real scan" hidden></canvas>
       <span class="ori ori-top"></span>
       <span class="ori ori-bottom"></span>
       <span class="ori ori-left"></span>
       <span class="ori ori-right"></span>
       <div class="section-tip" hidden></div>
       <div class="scale"><span class="scale-bar"></span>1 cm</div>
+      <span class="section-caption"></span>
     </div>
     <label class="section-level" for="section-level">
       <span class="level-lo">Inferior</span>
       <input id="section-level" type="range" min="0" max="1000" value="500">
       <span class="level-hi">Superior</span>
     </label>
-    <label class="section-check"><input id="section-cut" type="checkbox" checked> Cut the 3D model at this level</label>
+    <label class="section-check section-check-cut"><input id="section-cut" type="checkbox" checked> Cut the 3D model at this level</label>
+    <label class="section-check section-check-outlines" hidden><input id="section-outlines" type="checkbox"> Overlay all model outlines (the selected structure is always outlined)</label>
     <p id="section-selected" class="section-selected"></p>
     <p class="section-note">Simulated from the 3D model, not patient imaging. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts. Hover over a structure to name it; click or tap to select it.</p>
   </div>
@@ -92,12 +100,14 @@
   <footer class="app-footer muted">
     For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
     3D models: <a href="https://www.z-anatomy.com">Z-Anatomy</a> (CC BY-SA 4.0), based on BodyParts3D © The Database Center for Life Science (CC BY-SA 2.1 JP).
+    CT and MRI: Visible Human Project, courtesy of the U.S. National Library of Medicine.
   </footer>
 
   <script src="vendor/three.min.js"></script>
   <script src="js/catalog.js"></script>
   <script src="js/figures.js"></script>
   <script src="js/viewer.js"></script>
+  <script src="js/scans.js"></script>
   <script src="js/sections.js"></script>
   <script src="js/app.js"></script>
 </body>

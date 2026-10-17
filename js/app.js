@@ -44,6 +44,7 @@
   // CT / MRI tab so its WebGL canvas survives re-renders.
   const sectionsUi = $("#sections-ui");
   const sections = new Sections(viewer, sectionsUi, {
+    loadScript: (src) => (loaded.has(src) ? Promise.resolve() : loadScript(src).then(() => loaded.add(src))),
     onPick: (id) => {
       state.selected = id;
       viewer.select(id, false);
@@ -122,7 +123,7 @@
     $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
     history.replaceState(null, "", "#" + entry.id);
     viewer.load(state.region, state.model);
-    sections.rebuild(state.model);
+    sections.rebuild(state.model, entry.id);
     sections.setActive(state.tab === "sections");
     renderLayerToggles();
     render();

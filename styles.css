@@ -338,6 +338,12 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .ori-right { right: 8px; top: 50%; transform: translateY(-50%); }
 .scale { position: absolute; right: 10px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; color: #fff; font: 11px/1 system-ui, sans-serif; opacity: 0.85; pointer-events: none; }
 .scale-bar { display: block; height: 3px; background: #fff; border-radius: 1px; }
+.seg-wide { display: flex; }
+.seg-wide button { flex: 1; }
+.seg button:disabled { opacity: 0.4; cursor: default; }
+.section-view canvas[hidden] { display: none; }
+.section-caption { position: absolute; left: 10px; bottom: 8px; color: #fff; font: 11px/1 system-ui, sans-serif; opacity: 0.8; pointer-events: none; }
+.section-check[hidden] { display: none; }
 .section-tip { position: absolute; left: 0; top: 0; pointer-events: none; padding: 3px 8px; border-radius: 6px; background: var(--surface); color: var(--text); font-size: 12px; white-space: nowrap; border: 1px solid var(--line); }
 .section-level { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
 .section-level input { flex: 1; min-width: 0; accent-color: var(--accent); }
