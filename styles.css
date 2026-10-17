@@ -326,3 +326,4 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
   .viewer-hint { display: none; }
   .viewer-controls { bottom: 26px; }
 }
+.app-footer a { color: inherit; }
