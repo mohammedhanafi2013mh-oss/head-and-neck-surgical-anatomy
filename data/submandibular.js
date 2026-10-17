@@ -46,7 +46,8 @@ window.ANATOMY.regions.submandibular = {
     { id: "artery", label: "Arteries", defaultOn: true },
     { id: "vein", label: "Veins", defaultOn: true },
     { id: "nerve", label: "Nerves", defaultOn: true },
-    { id: "lymph", label: "Lymph nodes", defaultOn: true }
+    { id: "lymph", label: "Lymph nodes", defaultOn: true },
+    { id: "context", label: "Surrounding", defaultOn: false }
   ],
 
   structures: [
@@ -473,6 +474,140 @@ window.ANATOMY.regions.submandibular = {
       surgical: [
         "Flaps are raised in the subplatysmal plane. The marginal mandibular nerve lies just deep to this plane, on the investing fascia."
       ],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "parotid",
+      name: "Parotid gland",
+      layer: "context",
+      summary:
+        "The largest salivary gland, wrapped around the ramus of the mandible in front of the ear. Its lower pole (tail) lies just behind and above the posterior belly of digastric.",
+      relations: [
+        "The facial nerve divides inside it; the marginal mandibular branch leaves its lower border near the angle of the mandible",
+        "The retromandibular vein runs through it and divides near its lower pole"
+      ],
+      supply: {},
+      surgical: [
+        "The lower pole of the parotid marks where the marginal mandibular nerve comes out. In neck dissection the tail of the parotid is the upper limit of level II."
+      ],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "sublingual",
+      name: "Sublingual gland",
+      layer: "context",
+      summary:
+        "The smallest of the major salivary glands. It lies above mylohyoid, under the mucosa of the floor of the mouth, and drains through several small ducts.",
+      relations: [
+        "Lateral to the submandibular duct and the lingual nerve in the floor of the mouth"
+      ],
+      supply: {},
+      surgical: [
+        "A ranula arises from it. A plunging ranula passes through or behind mylohyoid into the submandibular region."
+      ],
+      danger: [],
+      variations: [],
+      refs: ["gray", "harrison"]
+    },
+    {
+      id: "retromandibular",
+      name: "Retromandibular vein",
+      layer: "vein",
+      summary:
+        "Formed in the parotid by the superficial temporal and maxillary veins. Its anterior division joins the facial vein to form the common facial vein.",
+      relations: [
+        "Runs through the parotid, deep to the facial nerve branches"
+      ],
+      supply: {},
+      surgical: [
+        "Following it up from the common facial vein leads to the lower pole of the parotid and the marginal mandibular nerve."
+      ],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "masseter",
+      name: "Masseter",
+      layer: "context",
+      summary:
+        "Muscle of mastication covering the lateral surface of the ramus. Its anterior border is where the facial artery crosses the lower border of the mandible.",
+      relations: [
+        "The facial artery and vein cross the mandible just in front of its anterior border"
+      ],
+      supply: { "Nerve": "Masseteric nerve (CN V3)" },
+      surgical: [
+        "Feel the anterior border with the patient clenching their teeth. This locates the facial vessels and the marginal mandibular nerve crossing."
+      ],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "medial_pterygoid",
+      name: "Medial pterygoid",
+      layer: "context",
+      summary:
+        "Muscle of mastication on the inner surface of the ramus. Its insertion near the angle lies against the lateral surface of the submandibular gland.",
+      relations: [],
+      supply: { "Nerve": "Nerve to medial pterygoid (CN V3)" },
+      surgical: [],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "genioglossus",
+      name: "Genioglossus",
+      layer: "context",
+      summary:
+        "The fan-shaped main muscle of the tongue, running from the genial tubercles into the tongue. Anteriorly the duct and lingual nerve lie lateral to it.",
+      relations: [],
+      supply: { "Nerve": "Hypoglossal nerve" },
+      surgical: [],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "geniohyoid",
+      name: "Geniohyoid",
+      layer: "context",
+      summary:
+        "A narrow muscle running from the inferior genial tubercle to the hyoid, just above (deep to) mylohyoid beside the midline.",
+      relations: [],
+      supply: { "Nerve": "C1 fibres carried by the hypoglossal nerve" },
+      surgical: [],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "scm",
+      name: "Sternocleidomastoid",
+      layer: "context",
+      summary:
+        "Shown for orientation. Its anterior border is the posterior limit of the anterior triangle of the neck.",
+      relations: [],
+      supply: { "Nerve": "Accessory nerve (CN XI)" },
+      surgical: [],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "temporal",
+      name: "Temporal bone (mastoid & styloid)",
+      layer: "bone",
+      summary:
+        "Shown for the origins of the posterior belly of digastric (mastoid notch) and stylohyoid (styloid process).",
+      relations: [],
+      supply: {},
+      surgical: [],
       danger: [],
       variations: [],
       refs: ["gray"]

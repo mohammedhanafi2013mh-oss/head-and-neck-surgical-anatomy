@@ -4,7 +4,7 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 
 The first module is the **submandibular region** (submandibular triangle, level IB).
 
-> For education only. The 3D model is a simplified schematic, not a scan-derived model. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
+> For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
 
 ## Run it
 
@@ -14,10 +14,11 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 
 ## What's in the submandibular module
 
-- **3D model**: the right submandibular region with 22 structures (mandible, hyoid, digastric, stylohyoid, mylohyoid, hyoglossus, gland and duct, external carotid, facial, submental and lingual arteries, facial and internal jugular veins, marginal mandibular, lingual, hypoglossal and mylohyoid nerves, submandibular ganglion, level IA/IB nodes, platysma).
+- **3D model**: real anatomical meshes of the right submandibular region from [Z-Anatomy](https://www.z-anatomy.com), with 29 selectable structures. They include the mandible with molars, hyoid, digastric, stylohyoid, mylohyoid, hyoglossus, the submandibular gland and duct, the facial, submental and external carotid arteries, the facial, retromandibular and internal jugular veins, the marginal mandibular, lingual, hypoglossal and mylohyoid nerves, level IA/IB nodes and platysma. A "Surrounding" layer adds the parotid, sublingual gland, masseter, medial pterygoid, genioglossus, geniohyoid and sternocleidomastoid.
+  - Rendering uses environment lighting, film-style tone mapping and procedural surface detail: muscle fibres along each muscle's line of pull, gland lobules and bone grain.
   - Drag to rotate, scroll or pinch to zoom, shift-drag or right-drag to pan.
   - Tap a structure to open its notes. Toggle layers (bone, muscle, vessels, nerves…) and labels.
-- **Structures**: for each one, a summary, relations, blood and nerve supply, surgical relevance, danger points, variations and references.
+- **Structures**: for each one, a summary, relations, blood and nerve supply, surgical relevance, danger points, variations and references. The lingual artery and submandibular ganglion have notes but aren't in the 3D model, because Z-Anatomy doesn't include them.
 - **Surgery**: an 8-step transcervical submandibular gland excision. Each step sets the model to the layers you would see at that point and highlights the key structures. Complications are listed at the end.
 - **Figures**: original labelled diagrams of the triangle's boundaries and a coronal section.
 - **Quiz**: six questions with explanations.
@@ -29,8 +30,10 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 index.html                     page shell
 styles.css                     styles (light and dark mode)
 data/submandibular.js          all text content for the region: structures, steps, quiz, references
-js/models/submandibular-model.js   3D geometry for the region (structure ids match the data file)
-js/viewer.js                   Three.js viewer: camera controls, picking, labels, layers, highlighting
+data/submandibular-meshes.js   packed 3D meshes (generated; CC BY-SA, see below)
+js/models/submandibular-model.js   decodes the meshes and sets each structure's tissue type
+js/viewer.js                   Three.js viewer: camera controls, picking, labels, layers, materials
+tools/export_zanatomy.py       exports meshes from the Z-Anatomy Blender file
 js/figures.js                  inline SVG diagrams
 js/app.js                      UI: tabs, cards, walkthrough, quiz
 vendor/three.min.js            Three.js r159 (MIT)
@@ -39,22 +42,29 @@ vendor/three.min.js            Three.js r159 (MIT)
 ## Adding a region
 
 1. Copy `data/submandibular.js` to `data/<region>.js` and register it as `window.ANATOMY.regions.<region>`.
-2. Add `js/models/<region>-model.js` with a `build(THREE, helpers)` function that returns one entry per structure id: `{ id, label: [x, y, z], objects: [meshes] }`.
-3. Add both `<script>` tags to `index.html`. The region then appears in the region picker.
+2. Copy `tools/export_zanatomy.py`, change the `STRUCTURES` map (app id → Z-Anatomy object names) and the centring object, and export to `data/<region>-meshes.js`.
+3. Add `js/models/<region>-model.js` with the region's camera and tissue types (copy the submandibular one).
+4. Add the `<script>` tags to `index.html`. The region then appears in the region picker.
 
-## Images and 3D models: licensing
+### Regenerating the meshes
 
-Everything in this repository is original work, apart from Three.js (MIT). Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohen, surgical atlases). Cite them as references instead.
+```
+pip install bpy                      # Blender as a Python module (Python 3.13)
+git clone https://github.com/Z-Anatomy/models-of-human-anatomy
+unzip models-of-human-anatomy/Z-Anatomy.zip Z-Anatomy/Startup.blend
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend data/submandibular-meshes.js
+```
 
-Openly licensed sources that could replace the schematic 3D geometry later:
+## Licensing and credits
 
-- **Z-Anatomy** and **BodyParts3D**: full human models with named structures (CC BY-SA, attribution required). Convert them to `.glb` in Blender, load them with Three.js's GLTFLoader and keep the same structure ids.
-- **Gray's Anatomy (1918)** illustrations: public domain.
-- **Wikimedia Commons** and **Radiopaedia**: check the license of each image.
+- **3D meshes** (`data/submandibular-meshes.js`): [Z-Anatomy](https://www.z-anatomy.com), CC BY-SA 4.0, based on BodyParts3D © The Database Center for Life Science, CC BY-SA 2.1 JP (Mitsuhashi N, et al. *Nucleic Acids Res.* 2009;37:D782–5). Anything derived from these meshes must keep the attribution and the same licence.
+- **Three.js** (`vendor/`): MIT.
+- **Text, diagrams and code**: original to this project.
+
+Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohen, surgical atlases). Cite them as references instead. Other open sources: Gray's Anatomy (1918) illustrations are public domain; for Wikimedia Commons and Radiopaedia, check each image's licence.
 
 ## Roadmap
 
 - More regions: parotid and facial nerve, thyroid and parathyroids, larynx, neck dissection levels II–V, deep neck spaces, skull base
-- Real anatomical meshes (Z-Anatomy / BodyParts3D)
 - Imaging correlation (CT/MRI slices)
 - Installable app with offline caching; later, packaging for the app stores

@@ -11,7 +11,8 @@
     artery: "#d62f2f",
     vein: "#3c5fb8",
     nerve: "#e6c21f",
-    lymph: "#6fb36a"
+    lymph: "#6fb36a",
+    context: "#b9a48f"
   };
 
   const $ = (sel, el = document) => el.querySelector(sel);
@@ -81,10 +82,11 @@
     }
   }
 
+  // [theta, phi] camera angles. The model's right side faces -x.
   const VIEWS = {
-    lateral: [Math.PI / 2, Math.PI / 2],
-    inferior: [1.25, 2.55],
-    anterior: [0.05, 1.6]
+    lateral: [-Math.PI / 2, Math.PI / 2],
+    inferior: [-0.6, 2.9],
+    anterior: [-0.05, 1.6]
   };
   document.querySelectorAll("[data-view]").forEach((b) =>
     b.addEventListener("click", () => {
@@ -167,6 +169,7 @@
       <button class="back" data-back>← All structures</button>
       <h2>${esc(s.name)}</h2>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
+      ${viewer.structures.has(s.id) ? "" : `<p class="aka">Not shown in the 3D model yet.</p>`}
       <p>${esc(s.summary)}</p>
       ${s.relations?.length ? `<h3>Relations</h3>${list(s.relations)}` : ""}
       ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}

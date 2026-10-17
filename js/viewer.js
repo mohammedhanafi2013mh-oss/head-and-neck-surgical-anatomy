@@ -1,141 +1,173 @@
 // A small Three.js viewer: orbit/zoom/pan, click-to-select, hover labels,
 // layer visibility and highlighting. Region models register builder functions
-// on window.ANATOMY.models and get the geometry helpers below.
+// on window.ANATOMY.models and get the material helpers below.
 
 (function () {
   const V3 = (p) => new THREE.Vector3(p[0], p[1], p[2]);
 
-  // ---------- geometry helpers ----------
+  // Material recipes per tissue type: wet, slightly glossy soft tissue,
+  // matte bone, glossy vessels.
+  const TISSUE = {
+    bone: { color: 0xd8c9a5, roughness: 0.7, clearcoat: 0.08 },
+    muscle: { color: 0xa63c3c, roughness: 0.42, clearcoat: 0.35, clearcoatRoughness: 0.35, sheen: 0.6, sheenColor: 0xff9a8f },
+    gland: { color: 0xd8a06a, roughness: 0.55, clearcoat: 0.25, clearcoatRoughness: 0.5, sheen: 0.4, sheenColor: 0xffd6a8 },
+    duct: { color: 0xf1e2b0, roughness: 0.35, clearcoat: 0.5 },
+    artery: { color: 0xc4201f, roughness: 0.3, clearcoat: 0.7, clearcoatRoughness: 0.2 },
+    vein: { color: 0x2d4a9e, roughness: 0.3, clearcoat: 0.7, clearcoatRoughness: 0.2 },
+    nerve: { color: 0xf0d064, roughness: 0.4, clearcoat: 0.4, sheen: 0.5, sheenColor: 0xfff2c0 },
+    node: { color: 0x86ad6a, roughness: 0.5, clearcoat: 0.3 }
+  };
+
   const helpers = {
     V3,
 
-    material(color, opts = {}) {
-      return new THREE.MeshStandardMaterial({
-        color,
-        roughness: opts.roughness ?? 0.55,
+    tissue(kind, opts = {}) {
+      const t = TISSUE[kind] || TISSUE.muscle;
+      const opacity = opts.opacity ?? 1;
+      const m = new THREE.MeshPhysicalMaterial({
+        color: opts.color ?? t.color,
+        roughness: t.roughness,
         metalness: 0,
-        transparent: opts.opacity !== undefined && opts.opacity < 1,
-        opacity: opts.opacity ?? 1,
-        side: opts.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
-        depthWrite: opts.opacity === undefined || opts.opacity >= 1
+        clearcoat: t.clearcoat || 0,
+        clearcoatRoughness: t.clearcoatRoughness ?? 0.3,
+        transparent: opacity < 1,
+        opacity,
+        depthWrite: opacity >= 1,
+        side: THREE.DoubleSide
       });
-    },
-
-    // Smooth tube through points; radius may be a number or [start, end].
-    tube(points, radius, material, segments = 64) {
-      const curve = new THREE.CatmullRomCurve3(points.map(V3), false, "centripetal");
-      const r0 = Array.isArray(radius) ? radius[0] : radius;
-      const r1 = Array.isArray(radius) ? radius[1] : radius;
-      const geo = new THREE.TubeGeometry(curve, segments, 1, 12, false);
-      if (r0 !== 1 || r1 !== 1) taperTube(geo, curve, segments, r0, r1);
-      const group = new THREE.Group();
-      group.add(new THREE.Mesh(geo, material));
-      // Round the ends.
-      for (const [t, r] of [[0, r0], [1, r1]]) {
-        const cap = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), material);
-        cap.position.copy(curve.getPoint(t));
-        group.add(cap);
+      // Sheen takes a number from r133; older builds lack sheenColor.
+      if (t.sheen && "sheenColor" in m) {
+        m.sheen = t.sheen;
+        m.sheenColor.setHex(t.sheenColor);
+        m.sheenRoughness = 0.6;
       }
-      group.userData.curve = curve;
-      return group;
-    },
-
-    // Surface between two polylines (same direction), with optional bulge
-    // along a fixed direction that peaks halfway between the edges.
-    sheet(edgeA, edgeB, material, opts = {}) {
-      const a = new THREE.CatmullRomCurve3(edgeA.map(V3));
-      const b = new THREE.CatmullRomCurve3(edgeB.map(V3));
-      const nu = opts.nu ?? 24, nv = opts.nv ?? 12;
-      const bulge = opts.bulge ? V3(opts.bulge) : null;
-      const pos = [];
-      const idx = [];
-      for (let i = 0; i <= nu; i++) {
-        const pa = a.getPoint(i / nu), pb = b.getPoint(i / nu);
-        for (let j = 0; j <= nv; j++) {
-          const t = j / nv;
-          const p = pa.clone().lerp(pb, t);
-          if (bulge) p.addScaledVector(bulge, Math.sin(Math.PI * t) * Math.sin(Math.PI * (0.15 + 0.7 * i / nu)));
-          pos.push(p.x, p.y, p.z);
-        }
-      }
-      for (let i = 0; i < nu; i++) {
-        for (let j = 0; j < nv; j++) {
-          const k = i * (nv + 1) + j;
-          idx.push(k, k + nv + 1, k + 1, k + 1, k + nv + 1, k + nv + 2);
-        }
-      }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-      geo.setIndex(idx);
-      geo.computeVertexNormals();
-      return new THREE.Mesh(geo, material);
-    },
-
-    ellipsoid(center, radii, material, rotation = [0, 0, 0]) {
-      const m = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 24), material);
-      m.position.copy(V3(center));
-      m.scale.set(radii[0], radii[1], radii[2]);
-      m.rotation.set(rotation[0], rotation[1], rotation[2]);
+      if (SURFACE[kind]) addSurfaceDetail(m, kind);
       return m;
     },
 
-    // Sweep a rectangle along a polyline. The rectangle spans `height` along
-    // `up` and `thickness` across (tangent x up), centred on the path.
-    plate(points, up, height, thickness, material, samples = 80) {
-      const curve = new THREE.CatmullRomCurve3(points.map(V3));
-      const upV = V3(up).normalize();
-      const pos = [];
-      const idx = [];
-      for (let i = 0; i <= samples; i++) {
-        const p = curve.getPoint(i / samples);
-        const tan = curve.getTangent(i / samples);
-        const side = new THREE.Vector3().crossVectors(tan, upV).normalize().multiplyScalar(thickness / 2);
-        const h = typeof height === "function" ? height(i / samples) : height;
-        const top = upV.clone().multiplyScalar(h);
-        const c = [
-          p.clone().add(side),
-          p.clone().sub(side),
-          p.clone().sub(side).add(top),
-          p.clone().add(side).add(top)
-        ];
-        for (const v of c) pos.push(v.x, v.y, v.z);
+    // Point muscle fibres along the mesh's longest axis (first principal
+    // component of its vertices), which follows the muscle's line of pull.
+    setFiberDirection(mesh) {
+      const pos = mesh.geometry.attributes.position;
+      const mean = new THREE.Vector3();
+      for (let i = 0; i < pos.count; i++) mean.x += pos.getX(i), mean.y += pos.getY(i), mean.z += pos.getZ(i);
+      mean.divideScalar(pos.count);
+      const c = [0, 0, 0, 0, 0, 0]; // xx xy xz yy yz zz
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i) - mean.x, y = pos.getY(i) - mean.y, z = pos.getZ(i) - mean.z;
+        c[0] += x * x; c[1] += x * y; c[2] += x * z; c[3] += y * y; c[4] += y * z; c[5] += z * z;
       }
-      for (let i = 0; i < samples; i++) {
-        for (let f = 0; f < 4; f++) {
-          const a = i * 4 + f, b = i * 4 + ((f + 1) % 4);
-          const c = a + 4, d = b + 4;
-          idx.push(a, c, b, b, c, d);
+      let v = new THREE.Vector3(1, 1, 1).normalize();
+      for (let k = 0; k < 30; k++) {
+        v = new THREE.Vector3(
+          c[0] * v.x + c[1] * v.y + c[2] * v.z,
+          c[1] * v.x + c[3] * v.y + c[4] * v.z,
+          c[2] * v.x + c[4] * v.y + c[5] * v.z
+        ).normalize();
+      }
+      mesh.material.userData.fiber.copy(v);
+    },
+
+    // A vertex near the middle of the mesh, so labels sit on the structure
+    // even for long curved vessels and nerves.
+    labelPoint(mesh) {
+      const centre = mesh.geometry.boundingBox.getCenter(new THREE.Vector3());
+      const pos = mesh.geometry.attributes.position;
+      const v = new THREE.Vector3();
+      let best = 0, bestD = Infinity;
+      for (let i = 0; i < pos.count; i += 3) {
+        const d = v.fromBufferAttribute(pos, i).distanceToSquared(centre);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
         }
       }
-      // End caps.
-      const last = samples * 4;
-      idx.push(0, 1, 2, 0, 2, 3, last, last + 2, last + 1, last, last + 3, last + 2);
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-      geo.setIndex(idx);
-      geo.computeVertexNormals();
-      const mesh = new THREE.Mesh(geo, material);
-      material.side = THREE.DoubleSide;
-      return mesh;
+      v.fromBufferAttribute(pos, best);
+      return [v.x, v.y, v.z];
     }
   };
 
-  function taperTube(geo, curve, segments, r0, r1) {
-    const pos = geo.attributes.position;
-    const radial = 13; // radialSegments + 1
-    const v = new THREE.Vector3();
-    for (let i = 0; i <= segments; i++) {
-      const t = i / segments;
-      const c = curve.getPointAt(t);
-      const r = r0 + (r1 - r0) * t;
-      for (let j = 0; j < radial; j++) {
-        const k = i * radial + j;
-        v.fromBufferAttribute(pos, k).sub(c).multiplyScalar(r).add(c);
-        pos.setXYZ(k, v.x, v.y, v.z);
-      }
+  // Procedural surface relief, added to the standard shader as bump mapping
+  // from a height field in object space (centimetres): fibre bundles on
+  // muscle, lobules on glands, fine grain on bone.
+  const SURFACE = {
+    muscle: { strength: 0.012, height: "fibers(p)" },
+    gland: { strength: 0.03, height: "lobules(p)" },
+    bone: { strength: 0.01, height: "vnoise(p * 7.0) * 0.6 + vnoise(p * 19.0) * 0.4" },
+    node: { strength: 0.01, height: "vnoise(p * 9.0)" }
+  };
+
+  const NOISE_GLSL = `
+    varying vec3 vObjPos;
+    uniform vec3 uFiber;
+    uniform float uBump;
+    float hash3(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+    float vnoise(vec3 p) {
+      vec3 i = floor(p), f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+      return mix(
+        mix(mix(hash3(i), hash3(i + vec3(1, 0, 0)), f.x), mix(hash3(i + vec3(0, 1, 0)), hash3(i + vec3(1, 1, 0)), f.x), f.y),
+        mix(mix(hash3(i + vec3(0, 0, 1)), hash3(i + vec3(1, 0, 1)), f.x), mix(hash3(i + vec3(0, 1, 1)), hash3(i + vec3(1, 1, 1)), f.x), f.y),
+        f.z);
     }
-    pos.needsUpdate = true;
-    geo.computeVertexNormals();
+    // Long thin streaks: high frequency across the fibre, low along it.
+    float fibers(vec3 p) {
+      float along = dot(p, uFiber);
+      vec3 across = p - along * uFiber;
+      return vnoise(across * 9.0 + uFiber * along * 0.6) * 0.7 + vnoise(across * 22.0 + uFiber * along * 1.5) * 0.3;
+    }
+    // Rounded lobules with a little fine texture.
+    float lobules(vec3 p) {
+      float n = vnoise(p * 4.5);
+      return smoothstep(0.25, 0.75, n) * 0.8 + vnoise(p * 14.0) * 0.2;
+    }
+    vec3 bumpNormal(vec3 surfPos, vec3 surfNorm, float h) {
+      vec3 sx = dFdx(surfPos), sy = dFdy(surfPos);
+      vec3 r1 = cross(sy, surfNorm), r2 = cross(surfNorm, sx);
+      float det = dot(sx, r1);
+      vec3 grad = sign(det) * (dFdx(h) * r1 + dFdy(h) * r2);
+      return normalize(abs(det) * surfNorm - grad);
+    }
+  `;
+
+  function addSurfaceDetail(material, kind) {
+    const spec = SURFACE[kind];
+    material.userData.fiber = new THREE.Vector3(0, 1, 0);
+    material.customProgramCacheKey = () => "tissue-" + kind;
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.uFiber = { value: material.userData.fiber };
+      shader.uniforms.uBump = { value: spec.strength };
+      shader.vertexShader = "varying vec3 vObjPos;\n" + shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        "#include <begin_vertex>\n  vObjPos = position;"
+      );
+      shader.fragmentShader = NOISE_GLSL + shader.fragmentShader.replace(
+        "#include <normal_fragment_maps>",
+        `#include <normal_fragment_maps>
+        {
+          vec3 p = vObjPos;
+          normal = bumpNormal(-vViewPosition, normal, uBump * (${spec.height}));
+        }`
+      );
+    };
+  }
+
+  // A soft studio for image-based lighting: dim walls with a few bright
+  // panels, prefiltered into an environment map.
+  function studio() {
+    const s = new THREE.Scene();
+    s.add(new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshBasicMaterial({ color: 0x4d4844, side: THREE.BackSide })));
+    const panel = (x, y, z, w, h, k) => {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(k, k, k), side: THREE.DoubleSide }));
+      m.position.set(x, y, z);
+      m.lookAt(0, 0, 0);
+      s.add(m);
+    };
+    panel(0, 9.5, 0, 12, 12, 5);
+    panel(-9.5, 3, 4, 6, 8, 3.5);
+    panel(9, 2, -5, 5, 8, 2);
+    panel(0, -3, 9.5, 8, 4, 1.2);
+    return s;
   }
 
   // ---------- viewer ----------
@@ -153,18 +185,25 @@
       this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
       this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      if ("outputColorSpace" in this.renderer) this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+      else this.renderer.outputEncoding = THREE.sRGBEncoding;
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      this.scene.environment = pmrem.fromScene(studio(), 0.04).texture;
       container.appendChild(this.renderer.domElement);
 
       this.labelLayer = document.createElement("div");
       this.labelLayer.className = "labels";
       container.appendChild(this.labelLayer);
 
-      this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 1.1));
-      const key = new THREE.DirectionalLight(0xffffff, 1.6);
-      key.position.set(10, 8, 12);
+      // Three.js r155+ uses physical light units; older builds need ~1/π the intensity.
+      const L = Number(THREE.REVISION) >= 155 ? 1 : 1 / Math.PI;
+      this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.35 * L));
+      const key = new THREE.DirectionalLight(0xfff4e8, 1.5 * L);
+      key.position.set(-10, 8, 12);
       this.scene.add(key);
-      const fill = new THREE.DirectionalLight(0xffffff, 0.5);
-      fill.position.set(-8, -4, -6);
+      const fill = new THREE.DirectionalLight(0xe8eeff, 0.4 * L);
+      fill.position.set(8, -4, -6);
       this.scene.add(fill);
 
       this.target = new THREE.Vector3();
@@ -199,7 +238,6 @@
             o.userData.id = item.id;
             o.userData.baseOpacity = o.material.opacity;
             o.userData.baseTransparent = o.material.transparent;
-            o.material = o.material.clone();
           }
         });
         this.scene.add(root);
@@ -258,7 +296,8 @@
         s.root.traverse((o) => {
           if (!o.isMesh) return;
           const m = o.material;
-          m.emissive.setHex(highlighted ? 0x3a3a10 : 0x000000);
+          if (highlighted) m.emissive.copy(m.color).multiplyScalar(0.35);
+          else m.emissive.setHex(0x000000);
           let opacity = o.userData.baseOpacity;
           if (dimOthers && !highlighted && s.layer !== "bone") opacity = Math.min(opacity, 0.35);
           if (dimOthers && !highlighted && s.layer === "bone") opacity = Math.min(opacity, 0.6);
