@@ -103,5 +103,66 @@ window.ANATOMY.figures = {
   <text x="300" y="268" class="fig-label small">Facial v.</text>
   <text x="396" y="232" class="fig-label small" text-anchor="end">MMN</text>
   <line x1="372" y1="230" x2="360" y2="236" stroke="var(--fig-stroke)" stroke-width=".8"/>
+</svg>`,
+
+  // Neck dissection levels, left lateral view (face to the left). Zone colours
+  // match the node colours in the 3D model (ANATOMY.LEVEL_COLORS).
+  levels: `
+<svg viewBox="0 0 440 360" role="img" aria-label="Neck dissection levels I to VI, left lateral view">
+  <!-- zones -->
+  <g opacity=".42" stroke="var(--fig-stroke)" stroke-width=".6">
+    <polygon points="62,104 88,110 118,148 84,153" fill="#d4e36f"/>
+    <polygon points="80,99 205,83 222,92 128,148 92,112" fill="#a9c43c"/>
+    <polygon points="128,149 222,92 252,52 258,155 126,155" fill="#3fb6a8"/>
+    <polygon points="252,52 287,58 270,155 258,155" fill="#2b8f86"/>
+    <polygon points="100,155 270,155 242,232 108,232" fill="#4f8fdc"/>
+    <polygon points="108,232 242,232 217,322 120,322" fill="#8a6ad6"/>
+    <polygon points="287,58 332,46 372,232 242,232 270,155" fill="#e3913a"/>
+    <polygon points="242,232 372,232 408,306 217,322" fill="#c8722a"/>
+    <polygon points="76,155 100,155 120,330 94,330" fill="#e06a9a"/>
+  </g>
+  <!-- skin of the front of the neck -->
+  <path d="M58 100 Q66 210 92 334" fill="none" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <!-- mandible -->
+  <path d="M56 92 Q60 104 80 99 L205 83 Q214 82 216 70 L222 14 L246 14 L238 78 Q232 100 205 98 L80 112 Q58 114 52 98 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- mastoid -->
+  <ellipse cx="268" cy="40" rx="14" ry="12" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- sternocleidomastoid -->
+  <path d="M252 46 L287 56 L216 326 L150 330 Z" fill="var(--fig-muscle)" opacity=".16"/>
+  <path d="M252 46 L150 330 M287 56 L216 326" fill="none" stroke="var(--fig-muscle)" stroke-width="1.6"/>
+  <!-- trapezius anterior border -->
+  <path d="M332 46 Q352 140 410 306" fill="none" stroke="var(--fig-muscle)" stroke-width="2.4"/>
+  <!-- digastric -->
+  <path d="M258 52 Q190 100 128 149 Q96 126 64 102" fill="none" stroke="var(--fig-muscle)" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+  <!-- hyoid and cricoid levels -->
+  <ellipse cx="116" cy="152" rx="14" ry="4.5" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <line x1="40" y1="155" x2="300" y2="155" stroke="var(--fig-stroke)" stroke-width=".8" stroke-dasharray="4 3"/>
+  <rect x="88" y="222" width="16" height="10" rx="2" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <line x1="46" y1="232" x2="380" y2="232" stroke="var(--fig-stroke)" stroke-width=".8" stroke-dasharray="4 3"/>
+  <!-- clavicle -->
+  <path d="M120 326 Q260 316 420 300" fill="none" stroke="var(--fig-stroke)" stroke-width="9" stroke-linecap="round" opacity=".55"/>
+  <path d="M120 326 Q260 316 420 300" fill="none" stroke="var(--fig-bone)" stroke-width="7" stroke-linecap="round"/>
+  <!-- accessory nerve -->
+  <path d="M250 60 Q262 110 272 150 Q300 196 360 250" fill="none" stroke="var(--fig-nerve)" stroke-width="2.4" stroke-dasharray="6 3"/>
+  <!-- level labels -->
+  <g class="fig-level">
+    <text x="84" y="134">IA</text>
+    <text x="152" y="112">IB</text>
+    <text x="200" y="132">IIA</text>
+    <text x="266" y="112">IIB</text>
+    <text x="176" y="198">III</text>
+    <text x="164" y="284">IV</text>
+    <text x="318" y="160">VA</text>
+    <text x="318" y="282">VB</text>
+    <text x="88" y="262">VI</text>
+  </g>
+  <!-- landmark labels -->
+  <text x="6" y="158" class="fig-label small">Hyoid</text>
+  <text x="6" y="236" class="fig-label small">Cricoid</text>
+  <text x="300" y="344" class="fig-label small">Clavicle</text>
+  <text x="372" y="96" class="fig-label small">Trapezius</text>
+  <text x="110" y="76" class="fig-label small">Mandible</text>
+  <text x="362" y="262" class="fig-label small">XI</text>
+  <text x="212" y="250" class="fig-label small" transform="rotate(-72 212 250)">Sternocleidomastoid</text>
 </svg>`
 };
