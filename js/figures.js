@@ -164,5 +164,62 @@ window.ANATOMY.figures = {
   <text x="110" y="76" class="fig-label small">Mandible</text>
   <text x="362" y="262" class="fig-label small">XI</text>
   <text x="212" y="250" class="fig-label small" transform="rotate(-72 212 250)">Sternocleidomastoid</text>
+</svg>`,
+
+  // Facial nerve trunk landmarks and branches, right lateral view (face to
+  // the right).
+  facial: `
+<svg viewBox="0 0 440 330" role="img" aria-label="Facial nerve trunk landmarks and branches, right lateral view">
+  <!-- zygomatic arch and mandible -->
+  <path d="M150 92 L300 86 Q318 85 322 94 L300 100 L170 104 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M196 104 L214 106 L222 196 Q226 222 252 226 L380 228 Q400 230 404 214 L408 236 Q404 252 380 250 L250 250 Q210 248 200 214 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- eye and mouth for orientation -->
+  <ellipse cx="350" cy="70" rx="22" ry="9" fill="none" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M352 176 Q372 184 392 176" fill="none" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <!-- ear, tragus, mastoid -->
+  <path d="M150 70 Q112 74 112 128 Q112 176 140 186 Q154 190 156 172 Q150 156 160 146 Q172 132 168 112 Q166 82 150 70 Z" fill="var(--fig-auricle, #e7c3b4)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M168 112 L182 122 L172 132 Z" fill="var(--fig-auricle, #e7c3b4)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <ellipse cx="146" cy="206" rx="14" ry="20" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- parotid gland -->
+  <path d="M176 98 L262 98 Q272 130 270 168 Q266 206 236 226 Q206 236 186 216 Q170 196 172 168 Q174 130 176 98 Z" fill="var(--fig-gland)" opacity=".55" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- duct -->
+  <path d="M268 132 L330 136 Q338 137 340 146" fill="none" stroke="var(--fig-duct)" stroke-width="4"/>
+  <path d="M268 132 L330 136 Q338 137 340 146" fill="none" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <!-- posterior belly of digastric -->
+  <path d="M150 214 Q190 236 236 262" fill="none" stroke="var(--fig-muscle)" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+  <!-- trunk and branches -->
+  <g fill="none" stroke="var(--fig-nerve)" stroke-linecap="round">
+    <path d="M168 168 Q182 172 198 170" stroke-width="4.5"/>
+    <path d="M198 170 Q214 150 232 120 Q246 92 262 60 Q268 46 280 30" stroke-width="2.6"/>
+    <path d="M232 120 Q276 96 330 80" stroke-width="2.6"/>
+    <path d="M206 160 Q260 146 340 150" stroke-width="2.6"/>
+    <path d="M198 170 Q228 196 270 214 Q320 232 370 208" stroke-width="2.6"/>
+    <path d="M204 182 Q214 230 226 300" stroke-width="2.4"/>
+    <path d="M168 168 Q150 150 134 126" stroke-width="1.8"/>
+  </g>
+  <!-- Pitanguy's line -->
+  <line x1="176" y1="140" x2="300" y2="40" stroke="var(--fig-incision)" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <!-- landmark callouts -->
+  <circle cx="182" cy="122" r="3" fill="var(--fig-incision)"/>
+  <text x="14" y="98" class="fig-label small">Tragal pointer</text>
+  <line x1="78" y1="100" x2="180" y2="121" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="14" y="246" class="fig-label small">Mastoid</text>
+  <line x1="50" y1="243" x2="134" y2="214" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="14" y="284" class="fig-label small">Post. belly digastric</text>
+  <line x1="104" y1="280" x2="196" y2="246" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="14" y="178" class="fig-label small">Trunk</text>
+  <line x1="44" y1="175" x2="172" y2="169" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="14" y="140" class="fig-label small">Posterior auricular</text>
+  <line x1="98" y1="137" x2="140" y2="134" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <!-- branch labels -->
+  <text x="284" y="28" class="fig-label small">Temporal</text>
+  <text x="334" y="96" class="fig-label small">Zygomatic</text>
+  <text x="344" y="154" class="fig-label small">Buccal</text>
+  <text x="300" y="268" class="fig-label small">Marginal mandibular</text>
+  <line x1="340" y1="258" x2="350" y2="222" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="232" y="312" class="fig-label small">Cervical</text>
+  <text x="300" y="122" class="fig-label small">Parotid duct</text>
+  <text x="208" y="72" class="fig-label small" transform="rotate(-39 208 72)">Pitanguy's line</text>
+  <text x="214" y="196" class="fig-label">Parotid</text>
 </svg>`
 };

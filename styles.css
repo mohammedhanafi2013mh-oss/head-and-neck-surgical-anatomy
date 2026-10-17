@@ -320,6 +320,32 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .refs-list li.flash { background: var(--accent-soft); border-radius: 6px; }
 .note { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; margin-top: 18px; }
 
+/* ---------- cross-sections ---------- */
+.sections { display: grid; gap: 12px; }
+.section-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface-2); padding: 6px 12px; cursor: pointer; font-size: 13px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.section-style { font-size: 13px; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.section-style select { background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.section-view { position: relative; width: 100%; max-width: 520px; aspect-ratio: 1; justify-self: center; border-radius: 10px; overflow: hidden; background: #000; }
+.section-view canvas { display: block; }
+.ori { position: absolute; color: #fff; font: 600 12px/1 system-ui, sans-serif; opacity: 0.8; pointer-events: none; text-shadow: 0 0 3px #000; }
+.ori-top { top: 6px; left: 50%; transform: translateX(-50%); }
+.ori-bottom { bottom: 6px; left: 50%; transform: translateX(-50%); }
+.ori-left { left: 8px; top: 50%; transform: translateY(-50%); }
+.ori-right { right: 8px; top: 50%; transform: translateY(-50%); }
+.scale { position: absolute; right: 10px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; color: #fff; font: 11px/1 system-ui, sans-serif; opacity: 0.85; pointer-events: none; }
+.scale-bar { display: block; height: 3px; background: #fff; border-radius: 1px; }
+.section-tip { position: absolute; left: 0; top: 0; pointer-events: none; padding: 3px 8px; border-radius: 6px; background: var(--surface); color: var(--text); font-size: 12px; white-space: nowrap; border: 1px solid var(--line); }
+.section-level { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.section-level input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.section-check { font-size: 13px; display: flex; gap: 8px; align-items: center; }
+.section-selected { font-size: 14px; margin: 0 !important; min-height: 1.4em; }
+.section-selected button { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; font: inherit; }
+.section-note { font-size: 12px; color: var(--muted); margin: 0 !important; }
+
 .app-footer { font-size: 12px; padding: 0 20px 14px; }
 
 @media (max-width: 900px) {

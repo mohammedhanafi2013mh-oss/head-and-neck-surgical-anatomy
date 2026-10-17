@@ -5,7 +5,10 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 Modules so far:
 
 - **Submandibular region** (submandibular triangle, level IB), right side
+- **Parotid & facial nerve** (parotid region and extracranial facial nerve), right side
 - **Lateral neck** (neck dissection levels I–VI), left side
+
+Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
 > For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
 
@@ -37,6 +40,21 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: an original diagram of levels I–VI in the same colours as the 3D nodes.
 - **Quiz**: six questions. **References**: Robbins 2002 and 2008, Som 1999, Crile 1906, Bocca 1967, Nahum 1961, Gray's, Scott-Brown's and Shah.
 
+## What's in the parotid module
+
+- **3D model**: the right parotid region from Z-Anatomy. The facial nerve is split into the trunk (from the stylomastoid foramen to the pes anserinus) and the temporal, zygomatic, buccal, marginal mandibular, cervical and posterior auricular branches, each selectable. It also has the parotid gland and accessory lobe, the parotid duct, the retromandibular vein, the external carotid, superficial temporal, transverse facial and maxillary arteries, masseter, sternocleidomastoid, the posterior belly of digastric, the styloid muscles, the ear and tragus, and the parotid nodes. The great auricular nerve is drawn for this app. Layers add the parapharyngeal structures (internal carotid, internal jugular, IX–XII) and the facial and deep muscles.
+- **Structures**: notes on every structure, with trunk landmarks (tragal pointer, posterior belly of digastric, tympanomastoid suture, styloid), Pitanguy's line, Frey syndrome and the auriculotemporal nerve (notes only).
+- **Surgery**: a 9-step superficial parotidectomy. **Figures**: an original diagram of the trunk landmarks and branches. **Quiz**: six questions.
+
+## CT / MRI cross-sections
+
+The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
+
+- The cut surface of every structure is filled by stencil capping and shaded as **CT** (soft-tissue window, contrast-filled vessels), **T1 MRI** (bright fat, dark flow voids) or **anatomy colours**.
+- Orientation follows radiology convention: axial viewed from the feet with the patient's right on the image left; R/L/A/P/S/I markers and a 1 cm scale bar are shown.
+- Hover names a structure; clicking selects it in the 3D view. The 3D model is cut at the same level, with the plane outlined.
+- These are **simulations from the model, not patient imaging**. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts (convex hull grown by 6 mm).
+
 ## Project layout
 
 ```
@@ -47,6 +65,7 @@ data/<region>.js               all text content for a region: structures, steps,
 data/<region>-meshes.js        packed 3D meshes (generated; CC BY-SA, see below)
 js/models/<region>-model.js    camera, view angles and tissue type per structure
 js/viewer.js                   Three.js viewer: mesh decoding, camera controls, picking, labels, layers, materials
+js/sections.js                 CT / MRI-style cross-sections through the 3D model
 tools/export_zanatomy.py       exports each region's meshes from the Z-Anatomy Blender file
 js/figures.js                  inline SVG diagrams
 js/app.js                      UI: tabs, cards, walkthrough, quiz
@@ -67,6 +86,7 @@ pip install bpy                      # Blender as a Python module (Python 3.13)
 git clone https://github.com/Z-Anatomy/models-of-human-anatomy
 unzip models-of-human-anatomy/Z-Anatomy.zip Z-Anatomy/Startup.blend
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend submandibular data/submandibular-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend parotid data/parotid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/lateral-neck-meshes.js
 ```
 
@@ -80,6 +100,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: parotid and facial nerve, thyroid and parathyroids, larynx, carotid triangle, posterior triangle, deep neck spaces, skull base
-- Imaging correlation (CT/MRI slices)
+- More regions: thyroid and parathyroids, larynx, carotid triangle, posterior triangle, deep neck spaces, skull base
+- Real, openly licensed CT/MRI images alongside the simulated sections
 - Installable app with offline caching; later, packaging for the app stores

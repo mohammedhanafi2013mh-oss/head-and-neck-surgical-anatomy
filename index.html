@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Head & Neck Surgical Anatomy</title>
-<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular region and lateral neck.">
+<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular region, parotid and facial nerve, and lateral neck, with CT and MRI-style cross-sections.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -45,6 +45,7 @@
         <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
         <button role="tab" data-tab="structures">Structures</button>
         <button role="tab" data-tab="surgery">Surgery</button>
+        <button role="tab" data-tab="sections">CT / MRI</button>
         <button role="tab" data-tab="figures">Figures</button>
         <button role="tab" data-tab="quiz">Quiz</button>
         <button role="tab" data-tab="refs">References</button>
@@ -52,6 +53,41 @@
       <div id="panel-body" class="panel-body"></div>
     </section>
   </main>
+
+  <!-- Cross-section controls; app.js moves this into the CT / MRI tab. -->
+  <div id="sections-ui" class="sections" hidden>
+    <div class="section-controls">
+      <div class="seg" role="group" aria-label="Plane">
+        <button type="button" data-plane="axial" aria-pressed="true">Axial</button>
+        <button type="button" data-plane="coronal" aria-pressed="false">Coronal</button>
+        <button type="button" data-plane="sagittal" aria-pressed="false">Sagittal</button>
+      </div>
+      <label class="section-style">Style
+        <select id="section-style">
+          <option value="ct">CT (soft tissue, contrast)</option>
+          <option value="t1">MRI T1</option>
+          <option value="anatomy">Anatomy colours</option>
+        </select>
+      </label>
+    </div>
+    <div class="section-view">
+      <canvas aria-label="Cross-section"></canvas>
+      <span class="ori ori-top"></span>
+      <span class="ori ori-bottom"></span>
+      <span class="ori ori-left"></span>
+      <span class="ori ori-right"></span>
+      <div class="section-tip" hidden></div>
+      <div class="scale"><span class="scale-bar"></span>1 cm</div>
+    </div>
+    <label class="section-level" for="section-level">
+      <span class="level-lo">Inferior</span>
+      <input id="section-level" type="range" min="0" max="1000" value="500">
+      <span class="level-hi">Superior</span>
+    </label>
+    <label class="section-check"><input id="section-cut" type="checkbox" checked> Cut the 3D model at this level</label>
+    <p id="section-selected" class="section-selected"></p>
+    <p class="section-note">Simulated from the 3D model, not patient imaging. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts. Hover over a structure to name it; click or tap to select it.</p>
+  </div>
 
   <footer class="app-footer muted">
     For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
@@ -62,6 +98,7 @@
   <script src="js/catalog.js"></script>
   <script src="js/figures.js"></script>
   <script src="js/viewer.js"></script>
+  <script src="js/sections.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

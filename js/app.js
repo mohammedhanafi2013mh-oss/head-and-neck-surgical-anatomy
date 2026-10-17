@@ -1,7 +1,7 @@
 // UI wiring: tabs, structure cards, surgical walkthrough, figures, quiz, references.
 
 (function () {
-  const { regions, models, figures, catalog, Viewer } = window.ANATOMY;
+  const { regions, models, figures, catalog, Viewer, Sections } = window.ANATOMY;
 
   const LAYER_COLORS = {
     superficial: "#d98b7a",
@@ -12,7 +12,8 @@
     vein: "#3c5fb8",
     nerve: "#e6c21f",
     lymph: "#6fb36a",
-    context: "#b9a48f"
+    context: "#b9a48f",
+    deep: "#7e9bb8"
   };
 
   const $ = (sel, el = document) => el.querySelector(sel);
@@ -30,7 +31,7 @@
   const viewer = new Viewer($("#viewer"), {
     onSelect: (id) => {
       state.selected = id;
-      if (id && state.tab !== "surgery") {
+      if (id && state.tab !== "surgery" && state.tab !== "sections") {
         state.tab = "structures";
       }
       render();
@@ -38,6 +39,33 @@
   });
   viewer.onLayerForced = () => renderLayerToggles();
   window.ANATOMY.viewer = viewer;
+
+  // Cross-sections live in one persistent element, moved in and out of the
+  // CT / MRI tab so its WebGL canvas survives re-renders.
+  const sectionsUi = $("#sections-ui");
+  const sections = new Sections(viewer, sectionsUi, {
+    onPick: (id) => {
+      state.selected = id;
+      viewer.select(id, false);
+      showSectionSelection();
+    }
+  });
+  viewer.onRefresh = () => {
+    if (sections.active) sections.update();
+  };
+  window.ANATOMY.sections = sections;
+
+  function showSectionSelection() {
+    const el = $("#section-selected");
+    const s = state.selected && state.region.structures.find((x) => x.id === state.selected);
+    el.innerHTML = s ? `Selected: <strong>${esc(s.name)}</strong> · <button type="button" data-notes>View notes</button>` : "";
+    const btn = $("[data-notes]", el);
+    if (btn) btn.addEventListener("click", () => {
+      state.tab = "structures";
+      sections.setActive(false);
+      render();
+    });
+  }
 
   // ---------- region ----------
   const select = $("#region-select");
@@ -94,6 +122,8 @@
     $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
     history.replaceState(null, "", "#" + entry.id);
     viewer.load(state.region, state.model);
+    sections.rebuild(state.model);
+    sections.setActive(state.tab === "sections");
     renderLayerToggles();
     render();
   }
@@ -138,6 +168,7 @@
       state.tab = b.dataset.tab;
       if (b.dataset.tab === "structures") state.selected = state.selected || null;
       if (leavingSurgery) exitWalkthrough();
+      sections.setActive(state.tab === "sections");
       render();
     })
   );
@@ -147,8 +178,18 @@
     document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.tab)));
     const body = $("#panel-body");
     const r = state.region;
-    const views = { overview, structures, surgery, figures: figuresTab, quiz, refs };
+    const views = { overview, structures, surgery, sections: sectionsTab, figures: figuresTab, quiz, refs };
+    if (body.contains(sectionsUi)) {
+      sectionsUi.hidden = true;
+      document.body.appendChild(sectionsUi);
+    }
     body.innerHTML = views[state.tab](r);
+    if (state.tab === "sections") {
+      $("#section-slot").appendChild(sectionsUi);
+      sectionsUi.hidden = false;
+      showSectionSelection();
+      sections.resize();
+    }
     wire(body);
     if (state.tab === "surgery") applyStep();
     else viewer.select(state.selected, false);
@@ -231,6 +272,13 @@
       <h3>Complications</h3>
       <div class="callout danger"><ul>${p.complications.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
       ${refChips(p.refs)}`;
+  }
+
+  function sectionsTab() {
+    return `
+      <h2>Cross-sections</h2>
+      <p class="muted">Slice the 3D model at any level and compare it with how the anatomy looks on CT and MRI.</p>
+      <div id="section-slot"></div>`;
   }
 
   function figuresTab(r) {
