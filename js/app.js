@@ -1,7 +1,7 @@
 // UI wiring: tabs, structure cards, surgical walkthrough, figures, quiz, references.
 
 (function () {
-  const { regions, models, figures, Viewer } = window.ANATOMY;
+  const { regions, models, figures, catalog, Viewer } = window.ANATOMY;
 
   const LAYER_COLORS = {
     superficial: "#d98b7a",
@@ -41,7 +41,7 @@
 
   // ---------- region ----------
   const select = $("#region-select");
-  for (const r of Object.values(regions)) {
+  for (const r of catalog) {
     const opt = document.createElement("option");
     opt.value = r.id;
     opt.textContent = r.title;
@@ -53,13 +53,47 @@
   select.appendChild(soon);
   select.addEventListener("change", () => loadRegion(select.value));
 
-  function loadRegion(id) {
-    state.region = regions[id];
+  // Each region's content, meshes and model load on first use, as plain
+  // script tags so the app still works from file://.
+  const loaded = new Set();
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const el = document.createElement("script");
+      el.src = src;
+      el.onload = resolve;
+      el.onerror = () => reject(new Error(`Couldn't load ${src}`));
+      document.body.appendChild(el);
+    });
+  }
+
+  async function loadRegion(id) {
+    const entry = catalog.find((r) => r.id === id) || catalog[0];
+    select.value = entry.id;
+    const loading = $("#viewer-loading");
+    loading.textContent = `Loading ${entry.title}…`;
+    loading.hidden = false;
+    try {
+      for (const src of entry.scripts) {
+        if (!loaded.has(src)) {
+          await loadScript(src);
+          loaded.add(src);
+        }
+      }
+    } catch (err) {
+      loading.textContent = `${err.message}. Check that the data folder sits next to index.html.`;
+      return;
+    }
+    loading.hidden = true;
+    state.region = regions[entry.id];
+    state.model = models[entry.id];
     state.selected = null;
     state.step = 0;
     state.quiz = {};
+    state.search = "";
+    if (state.tab === "surgery") state.tab = "overview";
     $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
-    viewer.load(state.region, models[id]);
+    history.replaceState(null, "", "#" + entry.id);
+    viewer.load(state.region, state.model);
     renderLayerToggles();
     render();
   }
@@ -82,17 +116,12 @@
     }
   }
 
-  // [theta, phi] camera angles. The model's right side faces -x.
-  const VIEWS = {
-    lateral: [-Math.PI / 2, Math.PI / 2],
-    inferior: [-0.6, 2.9],
-    anterior: [-0.05, 1.6]
-  };
   document.querySelectorAll("[data-view]").forEach((b) =>
     b.addEventListener("click", () => {
       const v = b.dataset.view;
+      if (!state.model) return;
       if (v === "reset") viewer.resetView();
-      else viewer.setView(...VIEWS[v]);
+      else viewer.setView(...state.model.views[v]);
     })
   );
   const labelsBtn = $("#labels-toggle");
@@ -114,6 +143,7 @@
   );
 
   function render() {
+    if (!state.region) return;
     document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.tab)));
     const body = $("#panel-body");
     const r = state.region;
@@ -170,6 +200,7 @@
       <h2>${esc(s.name)}</h2>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
       ${viewer.structures.has(s.id) ? "" : `<p class="aka">Not shown in the 3D model yet.</p>`}
+      ${s.drawn ? `<p class="aka">Z-Anatomy has no model of this structure. Its 3D path was drawn for this app from the surrounding anatomy.</p>` : ""}
       <p>${esc(s.summary)}</p>
       ${s.relations?.length ? `<h3>Relations</h3>${list(s.relations)}` : ""}
       ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
@@ -326,5 +357,5 @@
     renderLayerToggles();
   }
 
-  loadRegion(Object.keys(regions)[0]);
+  loadRegion(location.hash.slice(1));
 })();

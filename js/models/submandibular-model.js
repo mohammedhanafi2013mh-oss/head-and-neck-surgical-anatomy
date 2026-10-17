@@ -12,6 +12,13 @@ window.ANATOMY.models.submandibular = {
   // lateral with the neck extended.
   camera: { target: [-0.5, 0.2, 0.8], radius: 15, theta: -1.2, phi: 2.55 },
 
+  // [theta, phi] for the view buttons. The right side faces -x.
+  views: {
+    lateral: [-Math.PI / 2, Math.PI / 2],
+    inferior: [-0.6, 2.9],
+    anterior: [-0.05, 1.6]
+  },
+
   // Shading per structure. `kind` picks the material recipe in viewer.js.
   look: {
     mandible: { kind: "bone" },
@@ -46,33 +53,6 @@ window.ANATOMY.models.submandibular = {
   },
 
   build(THREE, h) {
-    const src = window.ANATOMY.meshes.submandibular;
-    const { header } = src;
-    const bin = Uint8Array.from(atob(src.data), (c) => c.charCodeAt(0)).buffer;
-    const lo = header.min, hi = header.max;
-    const scale = [0, 1, 2].map((i) => (hi[i] - lo[i]) / 65535);
-
-    const byId = new Map();
-    for (const m of header.meshes) {
-      const q = new Int16Array(bin, m.positions, m.vertexCount * 3);
-      const pos = new Float32Array(q.length);
-      for (let i = 0; i < q.length; i++) {
-        const axis = i % 3;
-        pos[i] = (q[i] + 32768) * scale[axis] + lo[axis];
-      }
-      const Index = m.indexType === "u32" ? Uint32Array : Uint16Array;
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      geo.setIndex(new THREE.BufferAttribute(new Index(bin, m.indices, m.indexCount), 1));
-      geo.computeVertexNormals();
-      geo.computeBoundingBox();
-      const look = this.look[m.id] || { kind: "muscle" };
-      const mesh = new THREE.Mesh(geo, h.tissue(look.kind, look));
-      if (look.kind === "muscle") h.setFiberDirection(mesh);
-      if (!byId.has(m.id)) byId.set(m.id, []);
-      byId.get(m.id).push(mesh);
-    }
-
-    return [...byId].map(([id, objects]) => ({ id, label: h.labelPoint(objects[0]), objects }));
+    return h.fromMeshes("submandibular", this.look);
   }
 };

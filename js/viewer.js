@@ -68,6 +68,36 @@
       mesh.material.userData.fiber.copy(v);
     },
 
+    // Decode a region's packed meshes (from tools/export_zanatomy.py) into
+    // one entry per structure id, shaded by the model's `look` table.
+    fromMeshes(key, look) {
+      const { header, data } = window.ANATOMY.meshes[key];
+      const bin = Uint8Array.from(atob(data), (c) => c.charCodeAt(0)).buffer;
+      const lo = header.min, hi = header.max;
+      const scale = [0, 1, 2].map((i) => (hi[i] - lo[i]) / 65535);
+      const byId = new Map();
+      for (const m of header.meshes) {
+        const q = new Int16Array(bin, m.positions, m.vertexCount * 3);
+        const pos = new Float32Array(q.length);
+        for (let i = 0; i < q.length; i++) {
+          const axis = i % 3;
+          pos[i] = (q[i] + 32768) * scale[axis] + lo[axis];
+        }
+        const Index = m.indexType === "u32" ? Uint32Array : Uint16Array;
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        geo.setIndex(new THREE.BufferAttribute(new Index(bin, m.indices, m.indexCount), 1));
+        geo.computeVertexNormals();
+        geo.computeBoundingBox();
+        const style = look[m.id] || { kind: "muscle" };
+        const mesh = new THREE.Mesh(geo, helpers.tissue(style.kind, style));
+        if (style.kind === "muscle") helpers.setFiberDirection(mesh);
+        if (!byId.has(m.id)) byId.set(m.id, []);
+        byId.get(m.id).push(mesh);
+      }
+      return [...byId].map(([id, objects]) => ({ id, label: helpers.labelPoint(objects[0]), objects }));
+    },
+
     // A vertex near the middle of the mesh, so labels sit on the structure
     // even for long curved vessels and nerves.
     labelPoint(mesh) {
@@ -224,8 +254,20 @@
     }
 
     load(region, model) {
-      for (const s of this.structures.values()) this.scene.remove(s.root);
+      for (const s of this.structures.values()) {
+        this.scene.remove(s.root);
+        s.label.remove();
+        s.root.traverse((o) => {
+          if (o.isMesh) {
+            o.geometry.dispose();
+            o.material.dispose();
+          }
+        });
+      }
       this.structures.clear();
+      this.layerVisible = {};
+      this.focusIds = new Set();
+      this.selectedId = null;
       const meta = Object.fromEntries(region.structures.map((s) => [s.id, s]));
       const built = model.build(THREE, helpers);
       for (const item of built) {
@@ -299,8 +341,8 @@
           if (highlighted) m.emissive.copy(m.color).multiplyScalar(0.35);
           else m.emissive.setHex(0x000000);
           let opacity = o.userData.baseOpacity;
-          if (dimOthers && !highlighted && s.layer !== "bone") opacity = Math.min(opacity, 0.35);
-          if (dimOthers && !highlighted && s.layer === "bone") opacity = Math.min(opacity, 0.6);
+          if (dimOthers && !highlighted && s.layer !== "bone") opacity = Math.min(opacity, 0.2);
+          if (dimOthers && !highlighted && s.layer === "bone") opacity = Math.min(opacity, 0.4);
           m.opacity = opacity;
           m.transparent = opacity < 1;
           m.depthWrite = opacity >= 1;
