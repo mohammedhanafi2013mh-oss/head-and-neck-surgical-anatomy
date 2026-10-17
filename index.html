@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Head & Neck Surgical Anatomy</title>
+<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular region.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◆</span>
+      <div>
+        <h1>Head &amp; Neck Surgical Anatomy</h1>
+        <p id="region-subtitle" class="muted"></p>
+      </div>
+    </div>
+    <label class="region-picker">
+      <span class="visually-hidden">Region</span>
+      <select id="region-select"></select>
+    </label>
+  </header>
+
+  <main class="layout">
+    <section class="viewer-wrap" aria-label="3D model">
+      <div id="viewer" class="viewer"></div>
+      <div class="viewer-toolbar">
+        <div id="layer-toggles" class="chips" role="group" aria-label="Layers"></div>
+      </div>
+      <div class="viewer-controls">
+        <button data-view="lateral" type="button">Lateral</button>
+        <button data-view="inferior" type="button">Inferior</button>
+        <button data-view="anterior" type="button">Anterior</button>
+        <button data-view="reset" type="button">Reset</button>
+        <button id="labels-toggle" type="button" aria-pressed="false">Labels</button>
+      </div>
+      <p class="viewer-hint">Drag to rotate · scroll or pinch to zoom · shift-drag or right-drag to pan · tap a structure</p>
+      <p class="viewer-badge">Schematic · not to scale</p>
+    </section>
+
+    <section class="panel" aria-label="Details">
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
+        <button role="tab" data-tab="structures">Structures</button>
+        <button role="tab" data-tab="surgery">Surgery</button>
+        <button role="tab" data-tab="figures">Figures</button>
+        <button role="tab" data-tab="quiz">Quiz</button>
+        <button role="tab" data-tab="refs">References</button>
+      </nav>
+      <div id="panel-body" class="panel-body"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer muted">
+    For education only. The 3D model is a simplified schematic; check every surgical detail against current atlases and senior guidance before using it in clinical practice.
+  </footer>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="data/submandibular.js"></script>
+  <script src="js/figures.js"></script>
+  <script src="js/viewer.js"></script>
+  <script src="js/models/submandibular-model.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
