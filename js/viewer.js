@@ -159,11 +159,13 @@
       this.labelLayer.className = "labels";
       container.appendChild(this.labelLayer);
 
-      this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 1.1));
-      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      // Three.js r155+ uses physical light units; older builds need ~1/π the intensity.
+      const L = Number(THREE.REVISION) >= 155 ? 1 : 1 / Math.PI;
+      this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 1.1 * L));
+      const key = new THREE.DirectionalLight(0xffffff, 1.6 * L);
       key.position.set(10, 8, 12);
       this.scene.add(key);
-      const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+      const fill = new THREE.DirectionalLight(0xffffff, 0.5 * L);
       fill.position.set(-8, -4, -6);
       this.scene.add(fill);
 
