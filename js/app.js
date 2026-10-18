@@ -253,7 +253,8 @@
       <h2>${esc(s.name)}</h2>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
       ${viewer.structures.has(s.id) ? "" : `<p class="aka">Not shown in the 3D model yet.</p>`}
-      ${s.drawn ? `<p class="aka">Z-Anatomy has no model of this structure. Its 3D path was drawn for this app from the surrounding anatomy.</p>` : ""}
+      ${s.drawn === "redrawn" ? `<p class="aka">Z-Anatomy's model places this structure inaccurately here, so its path in this region was redrawn for this app in its usual position.</p>`
+        : s.drawn ? `<p class="aka">Z-Anatomy has no model of this structure. Its 3D path was drawn for this app from the surrounding anatomy.</p>` : ""}
       <p>${esc(s.summary)}</p>
       ${s.relations?.length ? `<h3>Relations</h3>${list(s.relations)}` : ""}
       ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}

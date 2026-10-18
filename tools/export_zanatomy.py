@@ -330,9 +330,73 @@ REGIONS = {
                   "rln_right": 0.0010, "rln_left": 0.0010, "sln": 0.0009, "ebsln": 0.0007,
                   "superior_thyroid_artery": 0.0012, "superior_laryngeal_artery": 0.0007},
     },
+    "carotid": {
+        # Right carotid bifurcation.
+        "centre": (-0.030, -0.004, 1.505),
+        "landmarks": "thyroid",
+        "sides": (-1,),
+        "structures": {
+            "mandible": ["Mandible"],
+            "temporal": ["Temporal bone.r"],
+            "hyoid": ["Hyoid bone"],
+            "larynx": ["Thyroid cartilage", "Cricoid cartilage"],
+            "vertebrae": ["Vertebra C3", "Vertebra C4", "Vertebra C5"],
+            "scm": ["Sternocleidomastoid muscle.r"],
+            "digastric": ["Posterior belly of digastric muscle.r", "Intermediate tendon of digastric muscle.r",
+                          "Anterior belly of digastric muscle.r"],
+            "stylohyoid": ["Stylohyoid muscle.r"],
+            "omohyoid": ["Omohyoid muscle.r"],
+            "sternohyoid": ["Sternohyoid muscle.r"],
+            "thyrohyoid": ["Thyrohyoid muscle.r"],
+            "hyoglossus": ["Hyoglossus muscle.r"],
+            "mylohyoid": ["Mylohyoid muscle.r"],
+            "constrictors": ["Inferior pharyngeal constrictor.r", "Middle pharyngeal constrictor.r"],
+            "platysma": ["Platysma.r"],
+            "smg": ["Submandibular gland.r"],
+            "parotid": ["Parotid gland.r"],
+            "thyroid": ["Thyroid gland"],
+            "triangle": ["Carotid triangle.r"],
+            "cca": ["Right common carotid artery"],
+            "ica": ["Internal carotid artery.r"],
+            "eca": ["External carotid artery.r"],
+            "facial_artery": ["Facial artery.r"],
+            "occipital_artery": [("Occipital artery.r", [(0, 0)])],
+            "ascending_pharyngeal": ["Ascending pharyngeal artery.r"],
+            "facial_vein": ["Facial vein.r"],
+            "lingual_vein": ["Lingual vein.r"],
+            "superior_thyroid_vein": ["Superior thyroid vein.r"],
+            "retromandibular": ["Retromandibular vein.r"],
+            "ejv": ["External jugular vein.r"],
+            # Z-Anatomy's loop of XII passes medial to the external carotid; keep its
+            # intracranial and tongue parts and redraw the loop (see drawn_hypoglossal).
+            "hypoglossal": [("Hypoglossal nerve (XII).r", [(0, 0, 14), (0, 17), (1, 0), (2, 0), (3, 0), (4, 0),
+                                                            (5, 0), (6, 0), (7, 0)])],
+            "accessory": [("Accessory nerve (XI).r", [(0, 0), (1, 0), (2, 0)])],
+            "glossopharyngeal": ["Glossopharyngeal nerve (IX).r"],
+            "sympathetic": ["Sympathetic trunk.r"],
+            "nodes_ii": ["Jugulodigastric node.r", "Lateral superior jugular node.r"],
+            "nodes_iii": ["Anterior inferior jugular nodes.r"],
+        },
+        "curve_scale": {"vagus": 1.6, "hypoglossal": 1.6, "accessory": 1.6, "glossopharyngeal": 1.6, "sympathetic": 1.5,
+                        "lingual_vein": 1.4, "superior_thyroid_vein": 1.4, "facial_vein": 1.2, "ascending_pharyngeal": 1.4},
+        "bones": {"mandible", "temporal", "hyoid", "larynx", "vertebrae"},
+        # (below, above) heights in metres; geometry outside is dropped.
+        "clip": {"Right common carotid artery": (1.43, 9), "Internal carotid artery.r": (0, 1.565),
+                 "Sympathetic trunk.r": (1.43, 1.56), "Glossopharyngeal nerve (IX).r": (1.50, 9),
+                 "Accessory nerve (XI).r": (1.43, 9), "Sternocleidomastoid muscle.r": (1.42, 9),
+                 "Omohyoid muscle.r": (1.43, 9), "Sternohyoid muscle.r": (1.43, 9), "External jugular vein.r": (1.43, 9),
+                 "Platysma.r": (1.43, 9), "Anterior inferior jugular nodes.r": (1.445, 9),
+                 "Hypoglossal nerve (XII).r": (0, 1.575)},
+        # Z-Anatomy puts the right internal jugular vein and vagus medial to the
+        # carotids at the bifurcation; they are redrawn in their usual places.
+        "drawn": {"ijv": 0.0055, "vagus": 0.0012, "hypoglossal": 0.0010, "facial_vein": 0.0022,
+                  "lingual_artery": 0.0011, "ansa_cervicalis": 0.0006, "superior_thyroid_artery": 0.0012,
+                  "superior_laryngeal_artery": 0.0007, "sln": 0.0009, "ebsln": 0.0007},
+    },
 }
 
 cfg = REGIONS[REGION]
+SIDES = cfg.get("sides", (-1, 1))  # which sides the drawn thyroid-region paths cover
 bpy.ops.wm.open_mainfile(filepath=BLEND)
 deps = bpy.context.evaluated_depsgraph_get()
 D = bpy.data.objects
@@ -573,7 +637,7 @@ def drawn_sln(L):
     """Superior laryngeal nerve from the vagus to its division near the greater
     horn of the hyoid, and the internal branch to the thyrohyoid membrane."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         start = min(L.vagus["l" if sx > 0 else "r"], key=lambda p: abs(p.z - 1.535))
         out.append([start, side_vec(sx, 0.027, 0.004, 1.520), side_vec(sx, 0.026, 0.002, 1.506),
                     side_vec(sx, 0.022, -0.006, 1.499), side_vec(sx, 0.018, -0.012, 1.495)])
@@ -584,7 +648,7 @@ def drawn_ebsln(L):
     """External branch: down on the inferior constrictor, deep to the superior
     thyroid artery, to cricothyroid."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         ct = L.cricothyroid["l" if sx > 0 else "r"]
         target = sum(ct, Vector()) / len(ct)
         out.append([side_vec(sx, 0.026, 0.002, 1.506), side_vec(sx, 0.022, -0.002, 1.490),
@@ -595,7 +659,7 @@ def drawn_ebsln(L):
 def drawn_superior_thyroid_artery(L):
     """First branch of the external carotid, down and forward to the upper pole."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         eca = L.eca["l" if sx > 0 else "r"]
         origin = min(eca, key=lambda p: p.z) + Vector((0, -0.001, 0.003))
         pole = L.upper_pole(sx)
@@ -607,7 +671,7 @@ def drawn_superior_thyroid_artery(L):
 def drawn_middle_thyroid_vein(L):
     """From the lateral surface of each lobe straight out to the internal jugular vein."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         z = 1.470
         lateral = max((v for v in slice_of(L.gland, z, 0.003)), key=lambda v: sx * v.x)
         ijv = L.ijv["l" if sx > 0 else "r"]
@@ -620,7 +684,7 @@ def drawn_inferior_thyroid_veins(L):
     """From each lower pole down in front of the trachea to the left brachiocephalic vein."""
     out = []
     target = min(L.bcv, key=lambda p: abs(p.x))
-    for sx in (-1, 1):
+    for sx in SIDES:
         pole = L.lower_pole(sx)
         out.append([pole, pole + Vector((sx * -0.003, -0.004, -0.015)),
                     Vector((sx * 0.004, target.y + 0.002, 1.405)), target + Vector((sx * 0.003, 0.002, 0.002))])
@@ -632,7 +696,7 @@ def drawn_vocal_folds(L):
     commissure) to the vocal process of each arytenoid. The tube's centre sits
     lateral to the free edge so the edges, not the centres, meet in front."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         ary = L.arytenoid(sx)
         vp = min(ary, key=lambda v: v.y)  # vocal process: most anterior point
         front = L.thyroid_angle(vp.z - 0.0016)
@@ -648,7 +712,7 @@ def drawn_vestibular_folds(L):
     thyroid angle just below the epiglottic attachment to the front of each
     arytenoid, with the ventricle between the two folds."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         ary = L.arytenoid(sx)
         vp = min(ary, key=lambda v: v.y)
         top = max(ary, key=lambda v: v.z)
@@ -664,12 +728,74 @@ def drawn_superior_laryngeal_artery(L):
     """Branch of the superior thyroid artery that runs medially with the
     internal laryngeal nerve and pierces the thyrohyoid membrane."""
     out = []
-    for sx in (-1, 1):
+    for sx in SIDES:
         eca = L.eca["l" if sx > 0 else "r"]
         origin = min(eca, key=lambda p: p.z) + Vector((sx * -0.002, -0.006, 0.0005))
         out.append([origin, side_vec(sx, 0.026, -0.009, 1.4915), side_vec(sx, 0.021, -0.0125, 1.4925),
                     side_vec(sx, 0.017, -0.0135, 1.4925)])
     return out
+
+
+# Carotid sheath at the right bifurcation, redrawn (Blender metres): the
+# internal jugular vein lateral to the carotids, the vagus behind, between them.
+CAROTID_IJV = [(-0.0368, 0.0087, 1.5701), (-0.0361, 0.0063, 1.5577), (-0.0390, 0.0030, 1.542), (-0.0415, -0.0005, 1.525),
+               (-0.0420, -0.0025, 1.505), (-0.0410, -0.0045, 1.488), (-0.0380, -0.0080, 1.468), (-0.0330, -0.0130, 1.449),
+               (-0.0280, -0.0165, 1.432)]
+CAROTID_VAGUS = [(-0.0273, 0.0080, 1.570), (-0.0300, 0.0060, 1.556), (-0.0330, 0.0050, 1.545), (-0.0350, 0.0030, 1.525),
+                 (-0.0355, 0.0020, 1.505), (-0.0340, 0.0015, 1.488), (-0.0310, 0.0010, 1.468), (-0.0280, -0.0040, 1.450),
+                 (-0.0240, -0.0080, 1.435)]
+
+
+def drawn_ijv(L):
+    return [Vector(p) for p in CAROTID_IJV]
+
+
+def drawn_vagus(L):
+    return [Vector(p) for p in CAROTID_VAGUS]
+
+
+def drawn_hypoglossal(L):
+    """Loop of XII: down between the internal carotid and the vein, hooking
+    under the occipital artery, then forward superficial to the external
+    carotid, rejoining Z-Anatomy's nerve on its way to hyoglossus."""
+    return [Vector((-0.0259, 0.0014, 1.5601)), Vector((-0.0310, 0.0030, 1.557)), Vector((-0.0380, -0.0010, 1.552)),
+            Vector((-0.0440, -0.0010, 1.5485)), Vector((-0.0455, -0.0060, 1.546)), Vector((-0.0410, -0.0120, 1.542)),
+            Vector((-0.0340, -0.0140, 1.539)), Vector((-0.0273, -0.0134, 1.5379))]
+
+
+def drawn_facial_vein(L):
+    """Common facial vein: from the facial and lingual veins across the front
+    of the carotid bifurcation to the internal jugular vein."""
+    return [Vector((-0.0332, -0.0096, 1.5291)), Vector((-0.0314, -0.0085, 1.527)), Vector((-0.0360, -0.0095, 1.523)),
+            Vector((-0.0405, -0.0055, 1.519))]
+
+
+def drawn_lingual_artery(L):
+    """From the external carotid opposite the tip of the greater horn of the
+    hyoid: a short upward loop, then forward above the horn and deep to
+    hyoglossus (medial to it, below the hypoglossal nerve)."""
+    eca = L.eca["r"]
+    z0 = 1.505
+    origin = Vector((along_z(eca, z0, 0), along_z(eca, z0, 1), z0))
+    return [origin, origin + Vector((0.003, -0.003, 0.004)), Vector((-0.025, -0.009, 1.5085)),
+            Vector((-0.016, -0.022, 1.5065)), Vector((-0.010, -0.034, 1.5065)), Vector((-0.008, -0.048, 1.5105))]
+
+
+def drawn_ansa_cervicalis(L):
+    """Superior root leaving the hypoglossal nerve and running down on the
+    front of the carotid sheath; inferior root (C2-C3) passing lateral to the
+    internal jugular vein; the loop low on the sheath; twigs to the strap muscles."""
+    cca = curve_points("Right common carotid artery", 0)
+    front = lambda z, dy=-0.0045: Vector((along_z(cca, z, 0), along_z(cca, z, 1) + dy, z))
+    loop = front(1.457, -0.006)
+    superior = [Vector((-0.0448, -0.0040, 1.5475)), Vector((-0.0400, -0.0085, 1.535)), Vector((-0.0360, -0.0080, 1.520)),
+                Vector((-0.0330, -0.0070, 1.505)), front(1.480), front(1.466), loop]
+    inferior = [Vector((-0.043, 0.010, 1.505)), Vector((-0.0385, 0.000, 1.488)), Vector((-0.036, -0.008, 1.472)),
+                Vector((-0.031, -0.0115, 1.461)), loop]
+    twigs = [[loop, loop + Vector((0.004, -0.006, 0.002)), Vector((-0.019, -0.022, 1.462))],
+             [loop, loop + Vector((0.002, -0.004, -0.004)), Vector((-0.017, -0.024, 1.446))],
+             [front(1.470, -0.006), Vector((-0.030, -0.020, 1.472)), Vector((-0.034, -0.024, 1.474))]]
+    return [superior, inferior] + twigs
 
 
 DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
@@ -678,7 +804,9 @@ DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
          "superior_thyroid_artery": drawn_superior_thyroid_artery,
          "middle_thyroid_vein": drawn_middle_thyroid_vein, "inferior_thyroid_veins": drawn_inferior_thyroid_veins,
          "vocal_folds": drawn_vocal_folds, "vestibular_folds": drawn_vestibular_folds,
-         "superior_laryngeal_artery": drawn_superior_laryngeal_artery}
+         "superior_laryngeal_artery": drawn_superior_laryngeal_artery,
+         "lingual_artery": drawn_lingual_artery, "ansa_cervicalis": drawn_ansa_cervicalis,
+         "ijv": drawn_ijv, "vagus": drawn_vagus, "hypoglossal": drawn_hypoglossal, "facial_vein": drawn_facial_vein}
 
 
 def curve_object(name, points, radius):
@@ -824,6 +952,8 @@ for sid, names in cfg["structures"].items():
 
 if cfg.get("landmarks") == "thyroid":
     L = ThyroidLandmarks()
+    if REGION == "carotid":
+        L.vagus["r"] = [Vector(p) for p in CAROTID_VAGUS]
 elif cfg.get("node_groups") or cfg.get("drawn"):
     L = NeckLandmarks(cfg.get("side", "l"))
 

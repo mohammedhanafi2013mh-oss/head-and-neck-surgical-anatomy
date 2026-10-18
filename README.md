@@ -9,6 +9,7 @@ Modules so far:
 - **Lateral neck** (neck dissection levels I–VI), left side
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
 - **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
+- **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -76,6 +77,21 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: original diagrams of the larynx seen at laryngoscopy and a coronal section of the subsites. **Quiz**: six questions.
 - **References**: Gray's, Scott-Brown's, Shah, Hirano 1974, Tucker & Smith 1962, Difficult Airway Society 2015, the European Laryngological Society cordectomy classification (Remacle 2000), Singer & Blom 1980, Paydarfar 2006, Cernea 1992 and AJCC 8th edition.
 
+## What's in the carotid triangle module
+
+- **3D model**: the right carotid triangle from Z-Anatomy, with a translucent marker of the triangle itself. It includes:
+  - the common, internal and external carotids, with the facial, occipital and ascending pharyngeal arteries
+  - the facial, lingual, superior thyroid, retromandibular and external jugular veins
+  - the hypoglossal, accessory and glossopharyngeal nerves and the sympathetic trunk
+  - sternocleidomastoid, digastric, stylohyoid, the strap muscles, hyoglossus, mylohyoid and the constrictors
+  - the mandible, temporal bone, hyoid and larynx, and level II and III nodes; the glands and spine are an optional layer
+- **Drawn structures**: Z-Anatomy has no lingual artery, ansa cervicalis, superior thyroid or superior laryngeal artery, or superior laryngeal nerve, so the exporter draws them.
+- **Redrawn structures**: at the right bifurcation Z-Anatomy places the internal jugular vein and vagus medial to the carotids, and the loop of the hypoglossal nerve medial to the external carotid. The exporter redraws these segments in their usual positions: the vein lateral, the vagus behind between artery and vein, and XII crossing superficial to both carotids under the occipital artery. The common facial vein is redrawn too. The notes for these structures say they were redrawn.
+- **Structures**: notes on every structure. The carotid sinus and carotid body have notes only, including Shamblin's groups for carotid body tumours.
+- **Surgery**: a 10-step carotid endarterectomy, from incision to the clamp and release order and patch closure, with complications.
+- **Figures**: an original diagram of the triangle's boundaries and contents. **Quiz**: six questions.
+- **References**: NASCET 1991, ECST 1998, Rothwell 2004, GALA 2008, ESVS 2023, Shamblin 1971, Rutherford's, Gray's and Shah.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -142,6 +158,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend parotid data/parotid-mes
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/lateral-neck-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-meshes.js
 ```
 
 ## Licensing and credits
@@ -155,6 +172,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: carotid triangle, posterior triangle, deep neck spaces, skull base
+- More regions: posterior triangle, deep neck spaces, skull base
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

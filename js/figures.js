@@ -403,5 +403,71 @@ window.ANATOMY.figures = {
   <line x1="48" y1="303" x2="150" y2="303" stroke="var(--fig-stroke)" stroke-width=".7"/>
   <text x="244" y="76" class="fig-label small">Epiglottis</text>
   <text x="300" y="56" class="fig-label small">Quadrangular membrane</text>
+</svg>`,
+
+  carotidTriangle: `
+<svg viewBox="0 0 460 400" role="img" aria-label="The right carotid triangle in lateral view with its boundaries, the carotid bifurcation, jugular vein and nerves">
+  <!-- mandible and mastoid -->
+  <path d="M250 20 L440 26 L440 60 Q350 70 290 92 Q262 100 250 80 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <ellipse cx="96" cy="44" rx="20" ry="26" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- hyoid and thyroid cartilage -->
+  <ellipse cx="330" cy="168" rx="26" ry="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M330 196 L400 192 L404 262 L346 270 Z" fill="var(--fig-auricle, #e7c3b4)" stroke="var(--fig-stroke)"/>
+  <!-- triangle shading -->
+  <path d="M120 74 L306 166 L250 300 Z" fill="#7fb8e6" opacity=".18"/>
+  <!-- sternocleidomastoid -->
+  <path d="M84 60 L120 60 L300 392 L240 392 Z" fill="var(--fig-muscle)" opacity=".45" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- posterior belly of digastric and omohyoid -->
+  <path d="M110 66 Q210 110 306 164" fill="none" stroke="var(--fig-muscle)" stroke-width="10" stroke-linecap="round" opacity=".85"/>
+  <path d="M318 176 Q290 240 234 320 Q210 352 180 372" fill="none" stroke="var(--fig-muscle)" stroke-width="9" stroke-linecap="round" opacity=".85"/>
+  <!-- internal jugular vein (lateral) -->
+  <path d="M150 40 Q160 160 186 250 Q206 330 226 400" fill="none" stroke="var(--fig-vein)" stroke-width="14" opacity=".85"/>
+  <!-- common facial vein -->
+  <path d="M300 116 Q260 160 214 186" fill="none" stroke="var(--fig-vein)" stroke-width="5"/>
+  <!-- carotids -->
+  <g fill="none" stroke="var(--fig-artery)" stroke-linecap="round">
+    <path d="M262 400 Q246 300 232 222" stroke-width="10"/>
+    <path d="M232 222 Q214 150 196 40" stroke-width="8"/>
+    <path d="M232 222 Q240 160 262 40" stroke-width="7"/>
+    <!-- branches of the external carotid -->
+    <path d="M238 196 Q272 206 310 238" stroke-width="3.5"/>
+    <path d="M244 172 Q266 158 280 168 Q298 174 322 154" stroke-width="3.5"/>
+    <path d="M248 140 Q290 120 330 96" stroke-width="3.5"/>
+    <path d="M252 104 Q210 96 150 86" stroke-width="3.5"/>
+  </g>
+  <!-- vagus (behind, dashed) -->
+  <path d="M190 40 Q204 160 226 250 Q240 330 250 400" fill="none" stroke="var(--fig-nerve)" stroke-width="3" stroke-dasharray="6 4"/>
+  <!-- hypoglossal nerve crossing the carotids, and the ansa -->
+  <g fill="none" stroke="var(--fig-nerve)" stroke-linecap="round">
+    <path d="M176 40 Q180 108 186 118 Q200 130 236 132 Q290 134 350 138" stroke-width="3.2"/>
+    <path d="M240 134 Q244 220 250 300 Q252 318 238 324" stroke-width="1.8"/>
+    <path d="M150 196 Q190 280 238 324" stroke-width="1.8"/>
+  </g>
+  <!-- labels -->
+  <text x="8" y="40" class="fig-label small">Mastoid</text>
+  <text x="380" y="16" class="fig-label small">Mandible</text>
+  <text x="300" y="192" class="fig-label small">Hyoid</text>
+  <text x="410" y="236" class="fig-label small">Larynx</text>
+  <text x="120" y="108" class="fig-label small" transform="rotate(26 120 108)">Post. belly digastric</text>
+  <text x="196" y="364" class="fig-label small" transform="rotate(-52 196 364)">Omohyoid</text>
+  <text x="44" y="246" class="fig-label small" transform="rotate(62 44 246)">Sternocleidomastoid</text>
+  <text x="8" y="160" class="fig-label small">IJV</text>
+  <line x1="30" y1="157" x2="168" y2="157" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="292" class="fig-label small">Vagus (in sheath)</text>
+  <line x1="98" y1="289" x2="234" y2="289" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="214" class="fig-label small">Ansa cervicalis</text>
+  <line x1="88" y1="211" x2="162" y2="214" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="268" y="360" class="fig-label small">Common carotid</text>
+  <text x="150" y="28" class="fig-label small">ICA</text>
+  <text x="266" y="28" class="fig-label small">ECA</text>
+  <text x="330" y="88" class="fig-label small">Facial a.</text>
+  <text x="362" y="160" class="fig-label small">Lingual a.</text>
+  <line x1="360" y1="157" x2="324" y2="154" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="316" y="252" class="fig-label small">Sup. thyroid a.</text>
+  <text x="94" y="80" class="fig-label small">Occipital a.</text>
+  <text x="356" y="140" class="fig-label small">XII</text>
+  <text x="8" y="128" class="fig-label small">Common facial v.</text>
+  <line x1="100" y1="125" x2="256" y2="160" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="250" y="226" class="fig-label small">Bifurcation</text>
 </svg>`
 };
