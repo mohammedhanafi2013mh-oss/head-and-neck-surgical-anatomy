@@ -102,6 +102,7 @@
     rebuild(model, regionId) {
       this.model = model;
       this.meshCentre = window.ANATOMY.meshes[regionId].header.centre;
+      this.level = model.sectionLevel ?? 0.5;
       for (const e of this.entries) for (const m of [e.back, e.front, e.cap]) this.scene.remove(m);
       this.entries = [];
       this.bounds = new THREE.Box3();
@@ -143,6 +144,7 @@
         this.body.renderOrder = 0;
         this.scene.add(this.body);
       }
+      this.syncControls();
       this.update();
     }
 

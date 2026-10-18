@@ -7,6 +7,7 @@ Modules so far:
 - **Submandibular region** (submandibular triangle, level IB), right side
 - **Parotid & facial nerve** (parotid region and extracranial facial nerve), right side
 - **Lateral neck** (neck dissection levels I–VI), left side
+- **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -45,6 +46,19 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **3D model**: the right parotid region from Z-Anatomy. The facial nerve is split into the trunk (from the stylomastoid foramen to the pes anserinus) and the temporal, zygomatic, buccal, marginal mandibular, cervical and posterior auricular branches, each selectable. It also has the parotid gland and accessory lobe, the parotid duct, the retromandibular vein, the external carotid, superficial temporal, transverse facial and maxillary arteries, masseter, sternocleidomastoid, the posterior belly of digastric, the styloid muscles, the ear and tragus, and the parotid nodes. The great auricular nerve is drawn for this app. Layers add the parapharyngeal structures (internal carotid, internal jugular, IX–XII) and the facial and deep muscles.
 - **Structures**: notes on every structure, with trunk landmarks (tragal pointer, posterior belly of digastric, tympanomastoid suture, styloid), Pitanguy's line, Frey syndrome and the auriculotemporal nerve (notes only).
 - **Surgery**: a 9-step superficial parotidectomy. **Figures**: an original diagram of the trunk landmarks and branches. **Quiz**: six questions.
+
+## What's in the thyroid module
+
+- **3D model**: both sides of the central neck from Z-Anatomy. It has the thyroid gland, superior and inferior parathyroids, thymus, larynx (thyroid and cricoid cartilages, arytenoids, epiglottis), trachea and oesophagus. Also the strap muscles, cricothyroid and the inferior constrictor, and the carotid arteries up to the bifurcation. The rest: inferior thyroid arteries and thyrocervical trunks, subclavian arteries and aortic arch, the jugular, brachiocephalic and superior thyroid veins, the vagus nerves, and level VI and lower jugular nodes. "Surrounding" adds sternocleidomastoid and C5–T1.
+  - **Drawn structures**: Z-Anatomy has no recurrent or superior laryngeal nerves, superior thyroid artery, or middle and inferior thyroid veins. The exporter draws them on its anatomy:
+    - the right recurrent nerve hooks under the subclavian artery and runs obliquely; the left hooks under the arch and climbs vertically in the tracheo-oesophageal groove; both enter the larynx behind the cricothyroid joint
+    - the external branch of the superior laryngeal nerve runs to cricothyroid
+    - the superior thyroid artery runs from the external carotid to the upper pole
+  - The Z-Anatomy gland sits a little higher on the larynx than in most people; the notes say so.
+- **Structures**: notes on every structure. Berry's ligament, the tubercle of Zuckerkandl and the non-recurrent laryngeal nerve have notes only. Topics covered: Cernea's external-branch types, parathyroid embryology and position (Akerström), and Simon's triangle.
+- **Surgery**: a 10-step total thyroidectomy with nerve monitoring, and its complications, including bedside haematoma release.
+- **Figures**: an original posterior-view diagram of the nerves, arteries, parathyroids and Berry's ligament. **Quiz**: six questions.
+- **References**: Randolph's textbook, Cernea 1992, Akerström 1984, Pelizzo 1998, Toniato 2004, the international monitoring guideline (Randolph 2011), the ATA central neck dissection consensus (Carty 2009), Robbins 2002 and 2008, Gray's, Scott-Brown's and Shah.
 
 ## CT / MRI cross-sections
 
@@ -110,6 +124,7 @@ unzip models-of-human-anatomy/Z-Anatomy.zip Z-Anatomy/Startup.blend
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend submandibular data/submandibular-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend parotid data/parotid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/lateral-neck-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-meshes.js
 ```
 
 ## Licensing and credits
@@ -123,6 +138,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: thyroid and parathyroids, larynx, carotid triangle, posterior triangle, deep neck spaces, skull base
+- More regions: larynx, carotid triangle, posterior triangle, deep neck spaces, skull base
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

@@ -17,5 +17,10 @@ window.ANATOMY.catalog = [
     id: "lateral_neck",
     title: "Lateral neck",
     scripts: ["data/lateral-neck.js", "data/lateral-neck-meshes.js", "js/models/lateral-neck-model.js"]
+  },
+  {
+    id: "thyroid",
+    title: "Thyroid & central neck",
+    scripts: ["data/thyroid.js", "data/thyroid-meshes.js", "js/models/thyroid-model.js"]
   }
 ];
