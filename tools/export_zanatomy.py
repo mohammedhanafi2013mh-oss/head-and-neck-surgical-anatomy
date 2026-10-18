@@ -150,6 +150,72 @@ REGIONS = {
         # Structures Z-Anatomy lacks, drawn as paths on its anatomy.
         "drawn": {"phrenic": 0.0014, "great_auricular": 0.0011, "thoracic_duct": 0.0013},
     },
+
+    "parotid": {
+        "centre_object": "Parotid gland.r",
+        "structures": {
+            "mandible": ["Mandible"] + LOWER_TEETH,
+            "temporal": ["Temporal bone.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            "atlas": ["Atlas (C1)"],
+            "auricle": ["Helix.r", "Tragus.r", "Antitragus.r", "Lobule of auricle.r", "Concha of auricle.r"],
+            "masseter": ["Superficial part of masseter.r", "Deep part of masseter.r"],
+            "temporalis": ["Temporalis muscle.r"],
+            "pterygoids": ["Medial pterygoid muscle.r", "Inferior head of lateral pterygoid muscle.r",
+                           "Superior head of lateral pterygoid muscle.r"],
+            "scm": ["Sternocleidomastoid muscle.r"],
+            "digastric_post": ["Posterior belly of digastric muscle.r"],
+            "stylohyoid": ["Stylohyoid muscle.r", "Stylohyoid ligament.r"],
+            "stylopharyngeus": ["Stylopharyngeus muscle.r"],
+            "facial_muscles": ["Zygomaticus major muscle.r", "Risorius muscle.r", "Depressor anguli oris.r",
+                               "Orbicularis oris muscle.r", "Frontalis muscle.r"],
+            "platysma": ["Platysma.r"],
+            "parotid": ["Parotid gland.r", "(Accessory parotid gland).r"],
+            "parotid_duct": ["Parotid duct.r"],
+            "smg": ["Submandibular gland.r"],
+            "eca": ["External carotid artery.r"],
+            "ica": ["Internal carotid artery.r"],
+            "sta": ["Superficial temporal artery.r", "Frontal branch of superficial temporal artery.r"],
+            "transverse_facial": ["Transverse facial artery.r"],
+            "maxillary_artery": ["Maxillary artery.r"],
+            "occipital_artery": ["Occipital artery.r"],
+            "facial_artery": ["Facial artery.r"],
+            "retromandibular": ["Retromandibular vein.r", "Anterior division of retromandibular vein.r",
+                                "Posterior division of retromandibular vein.r", "Superficial temporal veins.r",
+                                "Maxillary veins.r"],
+            "ejv": ["External jugular vein.r", "Posterior auricular vein.r"],
+            "ijv": ["Internal jugular vein.r"],
+            "facial_vein": ["Facial vein.r", "Common facial vein.r"],
+            # Facial nerve split into trunk and branches: (spline, first point, end).
+            # Spline 0 runs from the brainstem; the posterior auricular branch
+            # (spline 9) leaves it at point 12, just below the stylomastoid
+            # foramen, and the upper division (spline 3) at point 15 (pes anserinus).
+            "facial_trunk": [("Facial nerve (VII).r", [(0, 12, 16)])],
+            "temporal_branch": [("Facial nerve (VII).r", [(8, 0)])],
+            "zygomatic_branch": [("Facial nerve (VII).r", [(7, 0)])],
+            "buccal_branch": [("Facial nerve (VII).r", [(3, 0), (4, 0), (5, 0), (6, 0)])],
+            "mmn": [("Facial nerve (VII).r", [(0, 15), (1, 0)])],
+            "cervical_branch": [("Facial nerve (VII).r", [(2, 0)])],
+            "posterior_auricular_nerve": [("Facial nerve (VII).r", [(9, 0)])],
+            "glossopharyngeal": ["Glossopharyngeal nerve (IX).r"],
+            "vagus": ["Vagus nerve (X).r"],
+            "accessory": ["Accessory nerve (XI).r"],
+            "hypoglossal": ["Hypoglossal nerve (XII).r"],
+            "parotid_nodes": ["Intraglandular parotid nodes.r", "Superficial parotid nodes.r",
+                              "Pre-auricular nodes.r", "Infra-auricular nodes.r"],
+        },
+        "curve_scale": {"facial_trunk": 2.2, "temporal_branch": 1.8, "zygomatic_branch": 1.8,
+                        "buccal_branch": 1.8, "mmn": 1.8, "cervical_branch": 1.8,
+                        "posterior_auricular_nerve": 1.8, "parotid_duct": 1.4, "glossopharyngeal": 1.4,
+                        "vagus": 1.4, "accessory": 1.6, "hypoglossal": 1.4, "sta": 1.2,
+                        "transverse_facial": 1.3},
+        "bones": {"mandible", "temporal", "zygomatic", "atlas"},
+        "clip_below": {"Vagus nerve (X).r": 1.475, "Accessory nerve (XI).r": 1.470,
+                       "Internal jugular vein.r": 1.470, "Sternocleidomastoid muscle.r": 1.465,
+                       "Platysma.r": 1.470, "External jugular vein.r": 1.470},
+        "side": "r",
+        "drawn": {"great_auricular": 0.0011},
+    },
 }
 
 cfg = REGIONS[REGION]
@@ -198,17 +264,19 @@ def slice_of(verts, z, half=0.003):
 # ---------- landmarks for the lateral neck ----------
 
 class NeckLandmarks:
-    def __init__(self):
+    def __init__(self, side="l"):
+        self.side = 1 if side == "l" else -1  # +x is the patient's left
+        sfx = "." + side
         self.hyoid = min(v.z for v in world_verts("Hyoid bone"))            # lower border of hyoid
         self.cricoid = min(v.z for v in world_verts("Cricoid cartilage"))   # lower border of cricoid
         self.notch = max(v.z for v in world_verts("Manubrium of sternum"))  # suprasternal notch
-        self.gland_back = max(v.y for v in world_verts("Submandibular gland.l"))
-        self.scm = world_verts("Sternocleidomastoid muscle.l")
-        self.cca = curve_points("Left common carotid artery", 0)
-        self.accessory = curve_points("Accessory nerve (XI).l", 2)  # trunk crossing the posterior triangle
-        self.ijv = curve_points("Internal jugular vein.l", 0)
-        self.scalenus = world_verts("Scalenus anterior muscle.l")
-        self.anterior_belly = world_verts("Anterior belly of digastric muscle.l")
+        self.gland_back = max(v.y for v in world_verts("Submandibular gland" + sfx))
+        self.scm = world_verts("Sternocleidomastoid muscle" + sfx)
+        self.cca = curve_points("Left common carotid artery" if side == "l" else "Right common carotid artery", 0)
+        self.accessory = curve_points("Accessory nerve (XI)" + sfx, 2)  # trunk crossing the posterior triangle
+        self.ijv = curve_points("Internal jugular vein" + sfx, 0)
+        self.scalenus = world_verts("Scalenus anterior muscle" + sfx)
+        self.anterior_belly = world_verts("Anterior belly of digastric muscle" + sfx)
 
     def scm_back(self, z):
         """y of the posterior border of sternocleidomastoid at height z."""
@@ -297,17 +365,18 @@ def drawn_great_auricular(L):
     """From Erb's point (1 cm below where the accessory nerve crosses the
     posterior border of sternocleidomastoid) up across the muscle towards
     the ear lobe."""
+    sx = L.side
     z_cross = next(p.z for p in sorted(L.accessory, key=lambda p: -p.z) if p.y > L.scm_back(p.z))
     z0 = z_cross - 0.010
     s = slice_of(L.scm, z0)
     erb = max(s, key=lambda v: v.y)
-    pts = [erb + Vector((0.002, 0.002, 0))]
+    pts = [erb + Vector((0.002 * sx, 0.002, 0))]
     for t in (0.2, 0.45, 0.7, 1.0):
         z = z0 + (1.555 - z0) * t
         y = erb.y + (0.012 - erb.y) * t
         near = [v for v in L.scm if abs(v.z - z) < 0.006 and abs(v.y - y) < 0.006]
-        x = max(v.x for v in near) if near else pts[-1].x
-        pts.append(Vector((x + 0.0015, y, z)))
+        x = sx * max(sx * v.x for v in near) if near else pts[-1].x
+        pts.append(Vector((x + 0.0015 * sx, y, z)))
     return pts
 
 
@@ -333,12 +402,13 @@ def curve_object(name, points, radius):
 # ---------- mesh conversion ----------
 
 def trimmed_curve(obj, parts):
-    """Copy of obj's curve data keeping only the given (spline, first point) tails."""
+    """Copy of obj's curve data keeping only the given (spline, first[, end]) pieces."""
     src = obj.data
     cu = src.copy()
     cu.splines.clear()
-    for si, first in parts:
-        pts = src.splines[si].bezier_points[first:]
+    for part in parts:
+        si, first, end = (tuple(part) + (None,))[:3]
+        pts = src.splines[si].bezier_points[first:end]
         sp = cu.splines.new("BEZIER")
         sp.bezier_points.add(len(pts) - 1)
         for dst, p in zip(sp.bezier_points, pts):
@@ -348,13 +418,14 @@ def trimmed_curve(obj, parts):
     return cu
 
 
-def world_bmesh(obj, sid, scale=1.0):
+def world_bmesh(obj, sid, scale=1.0, parts=None):
     """Evaluated mesh of obj as a triangulated bmesh in world coordinates."""
     if obj.type == "CURVE":
         cu = obj.data
-        if obj.name in cfg.get("spline_parts", {}):
+        parts = parts or cfg.get("spline_parts", {}).get(obj.name)
+        if parts:
             source = obj
-            cu = trimmed_curve(obj, cfg["spline_parts"][obj.name])
+            cu = trimmed_curve(obj, parts)
             obj = bpy.data.objects.new(obj.name + " (part)", cu)
             obj.matrix_world = source.matrix_world.copy()
             bpy.context.scene.collection.objects.link(obj)
@@ -437,19 +508,20 @@ def add(sid, name, verts, tris):
 
 
 for sid, names in cfg["structures"].items():
-    for name in names:
+    for entry in names:
+        name, pieces = entry if isinstance(entry, tuple) else (entry, None)
         obj = D.get(name)
         if obj is None:
             print("missing", name)
             continue
-        bm = world_bmesh(obj, sid, cfg["curve_scale"].get(sid, 1.0))
+        bm = world_bmesh(obj, sid, cfg["curve_scale"].get(sid, 1.0), pieces)
         if name in cfg.get("clip_below", {}):
             clip(bm, cfg["clip_below"][name])
         add(sid, name, *to_arrays(bm))
         bm.free()
 
 if cfg.get("node_groups") or cfg.get("drawn"):
-    L = NeckLandmarks()
+    L = NeckLandmarks(cfg.get("side", "l"))
 
 if cfg.get("node_groups"):
     by_level = defaultdict(list)
@@ -500,6 +572,8 @@ for sid, name, verts, tris in parts:
     meshes.append(entry)
 
 header = {"min": list(lo), "max": list(hi), "meshes": meshes,
+          # Blender world position (metres) of the app origin, for matching to scans.
+          "centre": [round(c, 6) for c in centre],
           "credit": "Z-Anatomy (CC BY-SA 4.0), based on BodyParts3D (c) The Database Center for Life Science (CC BY-SA 2.1 JP)"}
 with open(OUT, "w") as f:
     f.write("// Generated by tools/export_zanatomy.py from Z-Anatomy (CC BY-SA 4.0),\n")

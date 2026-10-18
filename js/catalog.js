@@ -9,6 +9,11 @@ window.ANATOMY.catalog = [
     scripts: ["data/submandibular.js", "data/submandibular-meshes.js", "js/models/submandibular-model.js"]
   },
   {
+    id: "parotid",
+    title: "Parotid & facial nerve",
+    scripts: ["data/parotid.js", "data/parotid-meshes.js", "js/models/parotid-model.js"]
+  },
+  {
     id: "lateral_neck",
     title: "Lateral neck",
     scripts: ["data/lateral-neck.js", "data/lateral-neck-meshes.js", "js/models/lateral-neck-model.js"]

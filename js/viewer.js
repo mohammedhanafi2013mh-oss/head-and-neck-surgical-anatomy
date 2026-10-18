@@ -15,7 +15,8 @@
     artery: { color: 0xc4201f, roughness: 0.3, clearcoat: 0.7, clearcoatRoughness: 0.2 },
     vein: { color: 0x2d4a9e, roughness: 0.3, clearcoat: 0.7, clearcoatRoughness: 0.2 },
     nerve: { color: 0xf0d064, roughness: 0.4, clearcoat: 0.4, sheen: 0.5, sheenColor: 0xfff2c0 },
-    node: { color: 0x86ad6a, roughness: 0.5, clearcoat: 0.3 }
+    node: { color: 0x86ad6a, roughness: 0.5, clearcoat: 0.3 },
+    cartilage: { color: 0xe7c3b4, roughness: 0.45, clearcoat: 0.3, sheen: 0.4, sheenColor: 0xffe2d6 }
   };
 
   const helpers = {
@@ -246,8 +247,18 @@
 
       new ResizeObserver(() => this.resize()).observe(container);
       this.resize();
+      // Draw only when something changed: the camera (compared each frame)
+      // or anything that calls invalidate(). Saves battery on phones.
+      this.dirty = true;
+      let lastView = "";
       const loop = () => {
-        this.render();
+        const { radius, theta, phi } = this.spherical;
+        const view = [radius, theta, phi, this.target.x, this.target.y, this.target.z].join();
+        if (this.dirty || view !== lastView) {
+          this.dirty = false;
+          lastView = view;
+          this.render();
+        }
         requestAnimationFrame(loop);
       };
       requestAnimationFrame(loop);
@@ -330,7 +341,12 @@
       if (notify) this.onSelect(id);
     }
 
+    invalidate() {
+      this.dirty = true;
+    }
+
     refresh() {
+      this.dirty = true;
       const dimOthers = this.focusIds.size > 0 || this.selectedId;
       for (const [id, s] of this.structures) {
         s.root.visible = !!this.layerVisible[s.layer];
@@ -350,6 +366,7 @@
         s.label.classList.toggle("is-hidden", !s.root.visible || !(this.showAllLabels || highlighted));
         s.label.classList.toggle("is-active", highlighted);
       }
+      if (this.onRefresh) this.onRefresh();
     }
 
     resetView() {
@@ -367,6 +384,7 @@
       const w = this.container.clientWidth, h = this.container.clientHeight;
       if (!w || !h) return;
       this.renderer.setSize(w, h, false);
+      this.dirty = true;
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
     }
