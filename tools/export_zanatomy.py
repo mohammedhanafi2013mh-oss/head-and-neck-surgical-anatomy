@@ -273,6 +273,63 @@ REGIONS = {
         "drawn": {"rln_right": 0.0012, "rln_left": 0.0012, "sln": 0.0010, "ebsln": 0.0008,
                   "superior_thyroid_artery": 0.0013, "middle_thyroid_vein": 0.0013, "inferior_thyroid_veins": 0.0013},
     },
+    "larynx": {
+        # Midline, at the glottis.
+        "centre": (0.0, -0.015, 1.478),
+        "landmarks": "thyroid",
+        "structures": {
+            "hyoid": ["Hyoid bone"],
+            "thyroid_cartilage": ["Thyroid cartilage"],
+            "cricoid": ["Cricoid cartilage"],
+            "arytenoids": ["Arytenoid cartilage.l", "Arytenoid cartilage.r", "Corniculate cartilage.l", "Corniculate cartilage.r"],
+            "epiglottis": ["Epiglottis"],
+            "trachea": ["Trachea"],
+            "thyrohyoid_membrane": ["Median thyrohyoid ligament", "Lateral thyrohyoid ligament.l", "Lateral thyrohyoid ligament.r"],
+            "cricothyroid_membrane": ["Median cricothyroid ligament"],
+            "quadrangular_membrane": ["Quadrangular membrane.l", "Quadrangular membrane.r"],
+            "pca": ["Posterior crico-arytenoid muscle.l", "Posterior crico-arytenoid muscle.r"],
+            "lca": ["Lateral crico-arytenoid muscle.l", "Lateral crico-arytenoid muscle.r"],
+            "interarytenoid": ["Transverse arytenoid muscle", "Ary-epiglottic part of oblique arytenoid muscle.l",
+                               "Ary-epiglottic part of oblique arytenoid muscle.r"],
+            "thyroarytenoid": ["External part of thyro-arytenoid muscle.l", "External part of thyro-arytenoid muscle.r",
+                               "Thyro-epiglottic part of thyro-arytenoid muscle.l", "Thyro-epiglottic part of thyro-arytenoid muscle.r"],
+            "cricothyroid": ["Straight part of cricothyroid muscle.l", "Straight part of cricothyroid muscle.r",
+                             "Oblique part of cricothyroid muscle.l", "Oblique part of cricothyroid muscle.r"],
+            "thyrohyoid": ["Thyrohyoid muscle.l", "Thyrohyoid muscle.r"],
+            "sternothyroid": ["Sternothyroid muscle.l", "Sternothyroid muscle.r"],
+            "sternohyoid": ["Sternohyoid muscle.l", "Sternohyoid muscle.r"],
+            "omohyoid": ["Omohyoid muscle.l", "Omohyoid muscle.r"],
+            "constrictors": ["Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r",
+                             "Middle pharyngeal constrictor.l", "Middle pharyngeal constrictor.r"],
+            "laryngopharynx": ["Laryngopharynx"],
+            "tongue": ["Tongue"],
+            "thyroid": ["Thyroid gland"],
+            "vertebrae": ["Vertebra C3", "Vertebra C4", "Vertebra C5", "Vertebra C6"],
+            "cca": ["Left common carotid artery", "Right common carotid artery",
+                    "External carotid artery.l", "External carotid artery.r",
+                    "Internal carotid artery.l", "Internal carotid artery.r"],
+            "ita": ["Inferior thyroid artery.l", "Inferior thyroid artery.r"],
+            "ijv": ["Internal jugular vein.l", "Internal jugular vein.r"],
+            "superior_thyroid_vein": ["Superior thyroid vein.l", "Superior thyroid vein.r"],
+            "vagus": ["Vagus nerve (X).l", "Vagus nerve (X).r"],
+        },
+        "curve_scale": {"vagus": 1.6, "ita": 1.4, "superior_thyroid_vein": 1.4, "cca": 1.0},
+        "bones": {"hyoid", "thyroid_cartilage", "cricoid", "arytenoids", "epiglottis", "trachea", "vertebrae"},
+        # (below, above) heights in metres; geometry outside is dropped.
+        # Drawn paths are clipped by their app id.
+        "clip": {"Trachea": (1.425, 9), "Left common carotid artery": (1.43, 9), "Right common carotid artery": (1.43, 9),
+                 "External carotid artery.l": (0, 1.535), "External carotid artery.r": (0, 1.535),
+                 "Internal carotid artery.l": (0, 1.535), "Internal carotid artery.r": (0, 1.535),
+                 "Internal jugular vein.l": (1.43, 1.535), "Internal jugular vein.r": (1.43, 1.535),
+                 "Vagus nerve (X).l": (1.43, 1.545), "Vagus nerve (X).r": (1.43, 1.545),
+                 "Sternohyoid muscle.l": (1.43, 9), "Sternohyoid muscle.r": (1.43, 9),
+                 "Sternothyroid muscle.l": (1.43, 9), "Sternothyroid muscle.r": (1.43, 9),
+                 "Omohyoid muscle.l": (1.43, 9), "Omohyoid muscle.r": (1.43, 9),
+                 "rln_right": (1.43, 9), "rln_left": (1.43, 9)},
+        "drawn": {"vocal_folds": 0.0017, "vestibular_folds": 0.0014,
+                  "rln_right": 0.0010, "rln_left": 0.0010, "sln": 0.0009, "ebsln": 0.0007,
+                  "superior_thyroid_artery": 0.0012, "superior_laryngeal_artery": 0.0007},
+    },
 }
 
 cfg = REGIONS[REGION]
@@ -467,6 +524,14 @@ class ThyroidLandmarks:
         side = [v for v in self.cartilage if sx * v.x > 0.6 * max(abs(w.x) for w in self.cartilage) and v.y > mid_y]
         return min(side, key=lambda v: v.z)
 
+    def arytenoid(self, sx):
+        return world_verts("Arytenoid cartilage." + ("l" if sx > 0 else "r"))
+
+    def thyroid_angle(self, z):
+        """Inner surface of the thyroid cartilage in the midline at height z."""
+        mid = [v for v in self.cartilage if abs(v.x) < 0.0015 and abs(v.z - z) < 0.0012]
+        return max(mid, key=lambda v: v.y)
+
     def upper_pole(self, sx):
         return max((v for v in self.gland if sx * v.x > 0.005), key=lambda v: v.z)
 
@@ -562,11 +627,58 @@ def drawn_inferior_thyroid_veins(L):
     return out
 
 
+def drawn_vocal_folds(L):
+    """Vocal folds: from the inner angle of the thyroid cartilage (anterior
+    commissure) to the vocal process of each arytenoid. The tube's centre sits
+    lateral to the free edge so the edges, not the centres, meet in front."""
+    out = []
+    for sx in (-1, 1):
+        ary = L.arytenoid(sx)
+        vp = min(ary, key=lambda v: v.y)  # vocal process: most anterior point
+        front = L.thyroid_angle(vp.z - 0.0016)
+        out.append([front + Vector((sx * 0.0018, 0.0012, 0)),
+                    (front + vp) / 2 + Vector((sx * 0.0030, 0, 0)),
+                    vp + Vector((sx * 0.0014, 0.0012, 0.0002)),
+                    vp + Vector((sx * 0.0016, 0.0030, 0.0004))])
+    return out
+
+
+def drawn_vestibular_folds(L):
+    """Vestibular (false) folds: above and lateral to the vocal folds, from the
+    thyroid angle just below the epiglottic attachment to the front of each
+    arytenoid, with the ventricle between the two folds."""
+    out = []
+    for sx in (-1, 1):
+        ary = L.arytenoid(sx)
+        vp = min(ary, key=lambda v: v.y)
+        top = max(ary, key=lambda v: v.z)
+        front = L.thyroid_angle(vp.z + 0.0030)
+        back = Vector((top.x + sx * 0.0012, vp.y + 0.003, vp.z + 0.0052))
+        out.append([front + Vector((sx * 0.0030, 0.0016, 0)),
+                    (front + back) / 2 + Vector((sx * 0.0050, 0, 0.0004)),
+                    back])
+    return out
+
+
+def drawn_superior_laryngeal_artery(L):
+    """Branch of the superior thyroid artery that runs medially with the
+    internal laryngeal nerve and pierces the thyrohyoid membrane."""
+    out = []
+    for sx in (-1, 1):
+        eca = L.eca["l" if sx > 0 else "r"]
+        origin = min(eca, key=lambda p: p.z) + Vector((sx * -0.002, -0.006, 0.0005))
+        out.append([origin, side_vec(sx, 0.026, -0.009, 1.4915), side_vec(sx, 0.021, -0.0125, 1.4925),
+                    side_vec(sx, 0.017, -0.0135, 1.4925)])
+    return out
+
+
 DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
          "great_auricular": drawn_great_auricular,
          "rln_right": drawn_rln_right, "rln_left": drawn_rln_left, "sln": drawn_sln, "ebsln": drawn_ebsln,
          "superior_thyroid_artery": drawn_superior_thyroid_artery,
-         "middle_thyroid_vein": drawn_middle_thyroid_vein, "inferior_thyroid_veins": drawn_inferior_thyroid_veins}
+         "middle_thyroid_vein": drawn_middle_thyroid_vein, "inferior_thyroid_veins": drawn_inferior_thyroid_veins,
+         "vocal_folds": drawn_vocal_folds, "vestibular_folds": drawn_vestibular_folds,
+         "superior_laryngeal_artery": drawn_superior_laryngeal_artery}
 
 
 def curve_object(name, points, radius):
@@ -736,6 +848,8 @@ if cfg.get("node_groups"):
 for sid, radius in cfg.get("drawn", {}).items():
     obj = curve_object(sid, DRAWN[sid](L), radius)
     bm = world_bmesh(obj, sid)
+    if sid in cfg.get("clip", {}):
+        clip(bm, *cfg["clip"][sid])
     add(sid, f"{sid} (drawn)", *to_arrays(bm))
     bm.free()
 

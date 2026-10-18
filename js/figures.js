@@ -282,5 +282,126 @@ window.ANATOMY.figures = {
   <text x="8" y="130" class="fig-label small">Left lobe</text>
   <text x="400" y="130" class="fig-label small">Right lobe</text>
   <text x="230" y="20" class="fig-label small" text-anchor="middle">L ← posterior view → R</text>
+</svg>`,
+
+  laryngoscopy: `
+<svg viewBox="0 0 460 380" role="img" aria-label="The larynx seen from above at laryngoscopy, with the vocal folds, vestibular folds, epiglottis, aryepiglottic folds, arytenoids and piriform fossae">
+  <!-- tongue base and valleculae -->
+  <path d="M60 46 Q230 0 400 46 L400 70 Q230 30 60 70 Z" fill="var(--fig-muscle)" opacity=".5" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <ellipse cx="190" cy="74" rx="30" ry="9" fill="#5a2a2a" opacity=".7"/>
+  <ellipse cx="270" cy="74" rx="30" ry="9" fill="#5a2a2a" opacity=".7"/>
+  <!-- outer pharynx -->
+  <path d="M74 90 Q60 220 120 330 Q230 372 340 330 Q400 220 386 90 Z" fill="#e9b3a8" opacity=".55" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- piriform fossae -->
+  <path d="M100 150 Q96 240 140 318 Q150 250 134 160 Z" fill="#5a2a2a" opacity=".55"/>
+  <path d="M360 150 Q364 240 320 318 Q310 250 326 160 Z" fill="#5a2a2a" opacity=".55"/>
+  <!-- laryngeal inlet bounded by epiglottis and aryepiglottic folds -->
+  <path d="M150 104 Q230 70 310 104 Q332 200 296 300 L164 300 Q128 200 150 104 Z" fill="#d98a86" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <!-- epiglottis -->
+  <path d="M146 106 Q230 60 314 106 Q300 122 230 110 Q160 122 146 106 Z" fill="var(--fig-auricle, #e8cf9a)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- vestibular folds -->
+  <path d="M220 128 Q170 190 176 284 L196 284 Q196 200 226 132 Z" fill="#c9726e" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M240 128 Q290 190 284 284 L264 284 Q264 200 234 132 Z" fill="#c9726e" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- glottis (dark) with tracheal rings -->
+  <path d="M230 134 L206 278 L254 278 Z" fill="#2a1a1a"/>
+  <g stroke="#7a6a60" stroke-width="1.2" fill="none" opacity=".8">
+    <path d="M222 200 Q230 204 238 200"/><path d="M218 226 Q230 231 242 226"/><path d="M214 252 Q230 258 246 252"/>
+  </g>
+  <!-- vocal folds -->
+  <path d="M230 134 Q212 200 200 280 L210 282 Q218 210 232 136 Z" fill="#f4eee6" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M230 134 Q248 200 260 280 L250 282 Q242 210 228 136 Z" fill="#f4eee6" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- arytenoids (corniculate and cuneiform tubercles) and interarytenoid -->
+  <ellipse cx="196" cy="300" rx="20" ry="13" fill="#e9c6b6" stroke="var(--fig-stroke)"/>
+  <ellipse cx="264" cy="300" rx="20" ry="13" fill="#e9c6b6" stroke="var(--fig-stroke)"/>
+  <circle cx="170" cy="286" r="7" fill="#e9c6b6" stroke="var(--fig-stroke)"/>
+  <circle cx="290" cy="286" r="7" fill="#e9c6b6" stroke="var(--fig-stroke)"/>
+  <!-- labels -->
+  <text x="230" y="24" class="fig-label small" text-anchor="middle">Tongue base</text>
+  <text x="230" y="92" class="fig-label small" text-anchor="middle">Epiglottis</text>
+  <text x="8" y="80" class="fig-label small">Vallecula</text>
+  <line x1="58" y1="78" x2="164" y2="76" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="136" class="fig-label small">Aryepiglottic fold</text>
+  <line x1="100" y1="139" x2="146" y2="160" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="244" class="fig-label small">Piriform fossa</text>
+  <line x1="84" y1="241" x2="118" y2="241" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="196" class="fig-label small">Vestibular fold</text>
+  <line x1="350" y1="193" x2="278" y2="210" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="236" class="fig-label small">Vocal fold</text>
+  <line x1="350" y1="233" x2="252" y2="236" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="140" class="fig-label small">Ant. commissure</text>
+  <line x1="350" y1="137" x2="234" y2="136" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="276" class="fig-label small">Rima glottidis</text>
+  <line x1="350" y1="273" x2="242" y2="266" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="300" y="350" class="fig-label small">Arytenoid</text>
+  <line x1="320" y1="340" x2="274" y2="308" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="110" y="366" class="fig-label small">Cuneiform tubercle</text>
+  <line x1="150" y1="356" x2="170" y2="294" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="230" y="376" class="fig-label small" text-anchor="middle">Posterior</text>
+  <text x="14" y="16" class="fig-label small">R</text><text x="440" y="16" class="fig-label small">L</text>
+</svg>`,
+
+  larynxCoronal: `
+<svg viewBox="0 0 460 400" role="img" aria-label="Coronal section of the larynx showing the supraglottis, glottis and subglottis, the vestibular and vocal folds, the ventricle and the paraglottic space">
+  <!-- hyoid -->
+  <rect x="96" y="20" width="268" height="16" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- thyrohyoid membrane -->
+  <path d="M110 36 L118 84 M350 36 L342 84" stroke="#9c94c0" stroke-width="3"/>
+  <!-- thyroid laminae -->
+  <path d="M112 84 L128 84 L132 250 L114 250 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M348 84 L332 84 L328 250 L346 250 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- cricoid -->
+  <path d="M150 262 L170 262 L174 346 L150 346 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M310 262 L290 262 L286 346 L310 346 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- trachea -->
+  <path d="M176 352 L176 392 M284 352 L284 392" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <!-- paraglottic space (fat) -->
+  <path d="M132 96 L196 110 L196 238 L176 264 L132 250 Z" fill="var(--fig-gland)" opacity=".35"/>
+  <path d="M328 96 L264 110 L264 238 L284 264 L328 250 Z" fill="var(--fig-gland)" opacity=".35"/>
+  <!-- quadrangular membranes -->
+  <path d="M168 60 L196 112 L196 170" fill="none" stroke="#9c94c0" stroke-width="2.4"/>
+  <path d="M292 60 L264 112 L264 170" fill="none" stroke="#9c94c0" stroke-width="2.4"/>
+  <!-- vestibular folds -->
+  <path d="M196 150 Q212 160 204 182 Q196 188 186 182 L186 156 Z" fill="#d98a86" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M264 150 Q248 160 256 182 Q264 188 274 182 L274 156 Z" fill="#d98a86" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- ventricles -->
+  <path d="M196 186 Q182 192 180 200 Q190 204 206 200 Z" fill="#5a2a2a" opacity=".6"/>
+  <path d="M264 186 Q278 192 280 200 Q270 204 254 200 Z" fill="#5a2a2a" opacity=".6"/>
+  <!-- thyroarytenoid / vocalis -->
+  <path d="M180 204 L214 210 L220 222 L176 236 Z" fill="var(--fig-muscle)" opacity=".85" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M280 204 L246 210 L240 222 L284 236 Z" fill="var(--fig-muscle)" opacity=".85" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- vocal fold edges (cover) -->
+  <path d="M206 206 Q222 212 222 220 Q214 222 208 220 Z" fill="#f4eee6" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M254 206 Q238 212 238 220 Q246 222 252 220 Z" fill="#f4eee6" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- conus elasticus -->
+  <path d="M220 222 L172 262" fill="none" stroke="#9c94c0" stroke-width="2.4"/>
+  <path d="M240 222 L288 262" fill="none" stroke="#9c94c0" stroke-width="2.4"/>
+  <!-- epiglottis tip -->
+  <path d="M222 42 Q230 30 238 42 L234 96 L226 96 Z" fill="var(--fig-auricle, #e8cf9a)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- subsite brackets -->
+  <g stroke="var(--fig-stroke)" stroke-width=".9" fill="none">
+    <path d="M372 60 L380 60 L380 200 L372 200"/><path d="M372 204 L380 204 L380 232 L372 232"/><path d="M372 236 L380 236 L380 346 L372 346"/>
+  </g>
+  <text x="386" y="134" class="fig-label small">Supraglottis</text>
+  <text x="386" y="222" class="fig-label small">Glottis</text>
+  <text x="386" y="294" class="fig-label small">Subglottis</text>
+  <!-- labels -->
+  <text x="230" y="16" class="fig-label small" text-anchor="middle">Hyoid</text>
+  <text x="8" y="60" class="fig-label small">Thyrohyoid membrane</text>
+  <text x="8" y="120" class="fig-label small">Thyroid cartilage</text>
+  <line x1="92" y1="117" x2="114" y2="130" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="150" class="fig-label small">Paraglottic space</text>
+  <line x1="98" y1="147" x2="150" y2="160" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="176" class="fig-label small">Vestibular fold</text>
+  <line x1="88" y1="173" x2="188" y2="170" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="200" class="fig-label small">Ventricle</text>
+  <line x1="62" y1="197" x2="184" y2="198" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="226" class="fig-label small">Vocal fold / vocalis</text>
+  <line x1="106" y1="223" x2="196" y2="220" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="262" class="fig-label small">Conus elasticus</text>
+  <line x1="92" y1="259" x2="186" y2="250" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="306" class="fig-label small">Cricoid</text>
+  <line x1="48" y1="303" x2="150" y2="303" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="244" y="76" class="fig-label small">Epiglottis</text>
+  <text x="300" y="56" class="fig-label small">Quadrangular membrane</text>
 </svg>`
 };

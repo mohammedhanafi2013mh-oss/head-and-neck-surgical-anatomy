@@ -13,6 +13,7 @@
     nerve: "#e6c21f",
     lymph: "#6fb36a",
     context: "#b9a48f",
+    membrane: "#a79fcf",
     deep: "#7e9bb8"
   };
 
@@ -126,10 +127,20 @@
     sections.rebuild(state.model, entry.id);
     sections.setActive(state.tab === "sections");
     renderLayerToggles();
+    renderViewButtons();
     render();
   }
 
   // ---------- viewer controls ----------
+
+  // A region can rename a view button (e.g. "From above" for the larynx).
+  function renderViewButtons() {
+    const names = { lateral: "Lateral", inferior: "Inferior", anterior: "Anterior" };
+    document.querySelectorAll("[data-view]").forEach((b) => {
+      const v = b.dataset.view;
+      if (names[v]) b.textContent = (state.model.viewLabels || {})[v] || names[v];
+    });
+  }
   function renderLayerToggles() {
     const box = $("#layer-toggles");
     box.innerHTML = "";

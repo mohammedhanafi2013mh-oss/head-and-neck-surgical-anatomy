@@ -8,6 +8,7 @@ Modules so far:
 - **Parotid & facial nerve** (parotid region and extracranial facial nerve), right side
 - **Lateral neck** (neck dissection levels I–VI), left side
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
+- **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -59,6 +60,21 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Surgery**: a 10-step total thyroidectomy with nerve monitoring, and its complications, including bedside haematoma release.
 - **Figures**: an original posterior-view diagram of the nerves, arteries, parathyroids and Berry's ligament. **Quiz**: six questions.
 - **References**: Randolph's textbook, Cernea 1992, Akerström 1984, Pelizzo 1998, Toniato 2004, the international monitoring guideline (Randolph 2011), the ATA central neck dissection consensus (Carty 2009), Robbins 2002 and 2008, Gray's, Scott-Brown's and Shah.
+
+## What's in the larynx module
+
+- **3D model** from Z-Anatomy:
+  - Cartilages: thyroid, cricoid, arytenoids with corniculates, the perforated epiglottis, hyoid and upper trachea.
+  - Membranes: thyrohyoid, cricothyroid and quadrangular.
+  - Intrinsic muscles, each selectable: posterior and lateral cricoarytenoid, interarytenoid, thyroarytenoid and cricothyroid.
+  - Optional layers add the strap muscles and constrictors, and the laryngopharynx, tongue base, thyroid and C3–C6.
+  - Also the carotids, inferior thyroid arteries, jugular and superior thyroid veins, and the vagus nerves.
+  - The "From above" view button looks down into the larynx as at laryngoscopy. A region model can rename its view buttons with `viewLabels`.
+- **Drawn structures**: Z-Anatomy has no vocal or vestibular folds, so the exporter draws them. The vocal folds run from the inner thyroid angle to each arytenoid's vocal process, and the vestibular folds sit above them with the ventricle between. It also draws the superior laryngeal nerve and its branches, the ends of the recurrent laryngeal nerves, and the superior thyroid and superior laryngeal arteries.
+- **Structures**: notes on every structure. The conus elasticus, pre-epiglottic and paraglottic spaces, and lymphatic drainage by subsite have notes only. Topics include the vocal fold layers (Hirano), muscle actions and nerve supply, and emergency front-of-neck access through the cricothyroid membrane.
+- **Surgery**: a 10-step total laryngectomy, including primary tracheo-oesophageal puncture, and its complications.
+- **Figures**: original diagrams of the larynx seen at laryngoscopy and a coronal section of the subsites. **Quiz**: six questions.
+- **References**: Gray's, Scott-Brown's, Shah, Hirano 1974, Tucker & Smith 1962, Difficult Airway Society 2015, the European Laryngological Society cordectomy classification (Remacle 2000), Singer & Blom 1980, Paydarfar 2006, Cernea 1992 and AJCC 8th edition.
 
 ## CT / MRI cross-sections
 
@@ -125,6 +141,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend submandibular data/subma
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend parotid data/parotid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/lateral-neck-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshes.js
 ```
 
 ## Licensing and credits
@@ -138,6 +155,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: larynx, carotid triangle, posterior triangle, deep neck spaces, skull base
+- More regions: carotid triangle, posterior triangle, deep neck spaces, skull base
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores
