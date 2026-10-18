@@ -22,5 +22,10 @@ window.ANATOMY.catalog = [
     id: "thyroid",
     title: "Thyroid & central neck",
     scripts: ["data/thyroid.js", "data/thyroid-meshes.js", "js/models/thyroid-model.js"]
+  },
+  {
+    id: "larynx",
+    title: "Larynx",
+    scripts: ["data/larynx.js", "data/larynx-meshes.js", "js/models/larynx-model.js"]
   }
 ];
