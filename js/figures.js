@@ -221,5 +221,66 @@ window.ANATOMY.figures = {
   <text x="300" y="122" class="fig-label small">Parotid duct</text>
   <text x="208" y="72" class="fig-label small" transform="rotate(-39 208 72)">Pitanguy's line</text>
   <text x="214" y="196" class="fig-label">Parotid</text>
+</svg>`,
+  thyroid: `
+<svg viewBox="0 0 460 380" role="img" aria-label="Back of the thyroid with the recurrent laryngeal nerves, thyroid arteries and parathyroids, posterior view">
+  <!-- larynx (posterior laminae of the thyroid cartilage and cricoid) and trachea -->
+  <path d="M176 40 L284 40 L292 150 L168 150 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M190 150 L270 150 L266 196 L194 196 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M198 196 L262 196 L262 356 L198 356 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" opacity=".6">
+    <line x1="198" y1="216" x2="262" y2="216"/><line x1="198" y1="236" x2="262" y2="236"/><line x1="198" y1="256" x2="262" y2="256"/>
+    <line x1="198" y1="276" x2="262" y2="276"/><line x1="198" y1="296" x2="262" y2="296"/><line x1="198" y1="316" x2="262" y2="316"/><line x1="198" y1="336" x2="262" y2="336"/>
+  </g>
+  <!-- thyroid lobes (back surface), with a tubercle of Zuckerkandl on each -->
+  <path d="M166 96 Q150 104 140 150 Q130 200 140 250 Q150 286 176 282 Q196 276 198 240 L198 200 Q186 176 180 140 Q176 108 166 96 Z" fill="var(--fig-gland)" opacity=".75" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M294 96 Q310 104 320 150 Q330 200 320 250 Q310 286 284 282 Q264 276 262 240 L262 200 Q274 176 280 140 Q284 108 294 96 Z" fill="var(--fig-gland)" opacity=".75" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <path d="M190 196 Q178 186 186 172 Q196 176 198 192 Z" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M270 196 Q282 186 274 172 Q264 176 262 192 Z" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- Berry's ligament -->
+  <g stroke="var(--fig-stroke)" stroke-width=".8">
+    <line x1="194" y1="200" x2="204" y2="210"/><line x1="194" y1="208" x2="204" y2="218"/><line x1="194" y1="216" x2="204" y2="226"/>
+    <line x1="256" y1="210" x2="266" y2="200"/><line x1="256" y1="218" x2="266" y2="208"/><line x1="256" y1="226" x2="266" y2="216"/>
+  </g>
+  <!-- superior thyroid arteries to the upper poles -->
+  <g fill="none" stroke="var(--fig-artery)" stroke-width="3.5" stroke-linecap="round">
+    <path d="M74 30 Q120 50 160 100"/><path d="M386 30 Q340 50 300 100"/>
+    <!-- inferior thyroid arteries arching in to the lower lobes -->
+    <path d="M56 330 Q70 250 110 236 Q140 228 160 236"/><path d="M404 330 Q390 250 350 236 Q320 228 300 236"/>
+    <path d="M128 232 Q140 206 160 196" stroke-width="2.4"/><path d="M332 232 Q320 206 300 196" stroke-width="2.4"/>
+  </g>
+  <!-- external branches of the superior laryngeal nerves -->
+  <g fill="none" stroke="var(--fig-nerve)" stroke-width="1.6" stroke-dasharray="4 3">
+    <path d="M100 20 Q140 46 168 84 Q176 98 178 112"/><path d="M360 20 Q320 46 292 84 Q284 98 282 112"/>
+  </g>
+  <!-- recurrent laryngeal nerves: left (image left) vertical in the groove, right (image right) oblique -->
+  <g fill="none" stroke="var(--fig-nerve)" stroke-width="3" stroke-linecap="round">
+    <path d="M196 370 Q194 300 196 240 Q197 214 200 192"/>
+    <path d="M330 370 Q300 310 276 260 Q264 226 260 192"/>
+  </g>
+  <!-- parathyroids -->
+  <g fill="#c79a4a" stroke="var(--fig-stroke)" stroke-width=".8">
+    <ellipse cx="176" cy="164" rx="7" ry="5"/><ellipse cx="284" cy="164" rx="7" ry="5"/>
+    <ellipse cx="160" cy="262" rx="7" ry="5"/><ellipse cx="300" cy="262" rx="7" ry="5"/>
+  </g>
+  <!-- labels -->
+  <text x="230" y="98" class="fig-label small" text-anchor="middle">Thyroid cartilage</text>
+  <text x="230" y="178" class="fig-label small" text-anchor="middle">Cricoid</text>
+  <text x="230" y="300" class="fig-label small" text-anchor="middle">Trachea</text>
+  <text x="8" y="14" class="fig-label small">Sup. thyroid a. + ext. branch SLN</text>
+  <text x="8" y="356" class="fig-label small">Inf. thyroid a.</text>
+  <text x="340" y="362" class="fig-label small">Right RLN (oblique)</text>
+  <text x="96" y="374" class="fig-label small">Left RLN (vertical)</text>
+  <text x="352" y="150" class="fig-label small">Sup. parathyroid</text>
+  <line x1="350" y1="147" x2="292" y2="163" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="286" class="fig-label small">Inf. parathyroid</text>
+  <line x1="350" y1="282" x2="308" y2="264" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="186" class="fig-label small">Zuckerkandl</text>
+  <line x1="74" y1="183" x2="184" y2="184" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="352" y="214" class="fig-label small">Berry's ligament</text>
+  <line x1="350" y1="211" x2="266" y2="214" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <text x="8" y="130" class="fig-label small">Left lobe</text>
+  <text x="400" y="130" class="fig-label small">Right lobe</text>
+  <text x="230" y="20" class="fig-label small" text-anchor="middle">L ← posterior view → R</text>
 </svg>`
 };

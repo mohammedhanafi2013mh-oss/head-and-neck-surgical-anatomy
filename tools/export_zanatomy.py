@@ -216,6 +216,63 @@ REGIONS = {
         "side": "r",
         "drawn": {"great_auricular": 0.0011},
     },
+
+    "thyroid": {
+        # Midline, at the level of the thyroid gland.
+        "centre": (0.0, -0.010, 1.470),
+        "landmarks": "thyroid",
+        "structures": {
+            "hyoid": ["Hyoid bone"],
+            "larynx": ["Thyroid cartilage", "Cricoid cartilage", "Arytenoid cartilage.l", "Arytenoid cartilage.r", "Epiglottis"],
+            "trachea": ["Trachea"],
+            "sternum": ["Manubrium of sternum"],
+            "clavicles": ["Clavicle.l", "Clavicle.r"],
+            "vertebrae": ["Vertebra C5", "Vertebra C6", "Vertebra C7", "Vertebra T1"],
+            "thyroid": ["Thyroid gland"],
+            "parathyroid_superior": ["Superior parathyroid gland.l", "Superior parathyroid gland.r"],
+            "parathyroid_inferior": ["Inferior parathyroid gland.l", "Inferior parathyroid gland.r"],
+            "thymus": ["Left lobe of thymus", "Right lobe of thymus"],
+            "sternohyoid": ["Sternohyoid muscle.l", "Sternohyoid muscle.r"],
+            "sternothyroid": ["Sternothyroid muscle.l", "Sternothyroid muscle.r"],
+            "thyrohyoid": ["Thyrohyoid muscle.l", "Thyrohyoid muscle.r"],
+            "omohyoid": ["Omohyoid muscle.l", "Omohyoid muscle.r"],
+            "scm": ["Sternocleidomastoid muscle.l", "Sternocleidomastoid muscle.r"],
+            "cricothyroid": ["Straight part of cricothyroid muscle.l", "Straight part of cricothyroid muscle.r",
+                             "Oblique part of cricothyroid muscle.l", "Oblique part of cricothyroid muscle.r"],
+            "constrictor": ["Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r"],
+            "oesophagus": ["Oesophagus"],
+            "platysma": ["Platysma.l", "Platysma.r"],
+            "cca": ["Left common carotid artery", "Right common carotid artery", "Brachiocephalic trunk",
+                    "External carotid artery.l", "External carotid artery.r",
+                    "Internal carotid artery.l", "Internal carotid artery.r"],
+            "ita": ["Inferior thyroid artery.l", "Inferior thyroid artery.r", "Thyrocervical trunk.l", "Thyrocervical trunk.r"],
+            "subclavian_arteries": ["Left subclavian artery", "Right subclavian artery", "Aortic arch"],
+            "ijv": ["Internal jugular vein.l", "Internal jugular vein.r"],
+            "brachiocephalic_veins": ["Left brachiocephalic vein", "Right brachiocephalic vein"],
+            "ajv": ["Anterior jugular vein.l", "Anterior jugular vein.r"],
+            "superior_thyroid_vein": ["Superior thyroid vein.l", "Superior thyroid vein.r"],
+            "vagus": ["Vagus nerve (X).l", "Vagus nerve (X).r"],
+            "nodes_vi": ["Pretracheal nodes.l", "Pretracheal nodes.r", "Paratracheal cervical nodes",
+                         "Thyroid nodes.l", "Thyroid nodes.r"],
+            "nodes_lateral": ["Anterior inferior jugular nodes.l", "Anterior inferior jugular nodes.r",
+                              "Inferior deep lateral cervical nodes.l", "Inferior deep lateral cervical nodes.r"],
+        },
+        "curve_scale": {"vagus": 1.6, "ita": 1.4, "superior_thyroid_vein": 1.4, "cca": 1.0},
+        "bones": {"hyoid", "larynx", "trachea", "sternum", "clavicles", "vertebrae"},
+        # (below, above) heights in metres; geometry outside is dropped.
+        "clip": {"Trachea": (1.355, 9), "Oesophagus": (1.355, 9), "Vagus nerve (X).l": (1.345, 1.52),
+                 "Vagus nerve (X).r": (1.345, 1.52), "Left lobe of thymus": (1.345, 9), "Right lobe of thymus": (1.345, 9),
+                 "Sternocleidomastoid muscle.l": (0, 1.52), "Sternocleidomastoid muscle.r": (0, 1.52),
+                 "Internal jugular vein.l": (0, 1.52), "Internal jugular vein.r": (0, 1.52),
+                 "Platysma.l": (1.37, 1.52), "Platysma.r": (1.37, 1.52),
+                 "Omohyoid muscle.l": (0, 1.52), "Omohyoid muscle.r": (0, 1.52),
+                 "Left subclavian artery": (0, 9), "Clavicle.l": (0, 9),
+                 "External carotid artery.l": (0, 1.535), "External carotid artery.r": (0, 1.535),
+                 "Internal carotid artery.l": (0, 1.535), "Internal carotid artery.r": (0, 1.535)},
+        # Structures Z-Anatomy lacks, drawn as paths on its anatomy.
+        "drawn": {"rln_right": 0.0012, "rln_left": 0.0012, "sln": 0.0010, "ebsln": 0.0008,
+                  "superior_thyroid_artery": 0.0013, "middle_thyroid_vein": 0.0013, "inferior_thyroid_veins": 0.0013},
+    },
 }
 
 cfg = REGIONS[REGION]
@@ -380,19 +437,150 @@ def drawn_great_auricular(L):
     return pts
 
 
+
+# ---------- landmarks and drawn paths for the thyroid region ----------
+
+class ThyroidLandmarks:
+    def __init__(self):
+        self.trachea = world_verts("Trachea")
+        self.cartilage = world_verts("Thyroid cartilage")
+        thyroid = D["Thyroid gland"]
+        me = thyroid.evaluated_get(deps).to_mesh()  # includes the mirrored left lobe
+        self.gland = [thyroid.matrix_world @ v.co for v in me.vertices]
+        self.ijv = {s: curve_points("Internal jugular vein." + s, 0) for s in "lr"}
+        self.eca = {s: curve_points("External carotid artery." + s, 0) for s in "lr"}
+        self.vagus = {s: curve_points("Vagus nerve (X)." + s, 2) for s in "lr"}
+        self.bcv = curve_points("Left brachiocephalic vein", 0)
+        self.cricothyroid = {s: world_verts("Straight part of cricothyroid muscle." + s) for s in "lr"}
+
+    def groove(self, z, sx):
+        """Tracheo-oesophageal groove: posterolateral corner of the trachea at height z."""
+        sl = slice_of(self.trachea, z, 0.002) or slice_of(self.trachea, z, 0.006)
+        half = max(abs(v.x) for v in sl)
+        back = max(v.y for v in sl)
+        front = min(v.y for v in sl)
+        return Vector((sx * half * 0.9, back - (back - front) * 0.18, z))
+
+    def cricothyroid_joint(self, sx):
+        """Tip of the inferior horn of the thyroid cartilage on one side."""
+        mid_y = sum(v.y for v in self.cartilage) / len(self.cartilage)
+        side = [v for v in self.cartilage if sx * v.x > 0.6 * max(abs(w.x) for w in self.cartilage) and v.y > mid_y]
+        return min(side, key=lambda v: v.z)
+
+    def upper_pole(self, sx):
+        return max((v for v in self.gland if sx * v.x > 0.005), key=lambda v: v.z)
+
+    def lower_pole(self, sx):
+        return min((v for v in self.gland if sx * v.x > 0.004), key=lambda v: v.z)
+
+
+def side_vec(sx, x, y, z):
+    return Vector((sx * x, y, z))
+
+
+def drawn_rln(L, sx):
+    """Recurrent laryngeal nerve: hooks under the right subclavian artery (right)
+    or the aortic arch (left), then climbs the tracheo-oesophageal groove and
+    enters the larynx just behind the cricothyroid joint."""
+    entry = L.cricothyroid_joint(sx) + Vector((0, 0.003, 0.002))
+    if sx < 0:  # right: oblique course from the subclavian loop
+        start = side_vec(sx, 0.020, 0.000, 1.413)
+        pts = [start, side_vec(sx, 0.023, 0.005, 1.405), side_vec(sx, 0.019, 0.009, 1.410)]
+        zs = [1.420, 1.430, 1.440, 1.450]
+    else:  # left: under the arch, then nearly vertical in the groove
+        start = side_vec(sx, 0.016, -0.001, 1.372)
+        pts = [start, side_vec(sx, 0.016, 0.006, 1.360), side_vec(sx, 0.012, 0.012, 1.368)]
+        zs = [1.380, 1.395, 1.410, 1.425, 1.440, 1.450]
+    pts += [L.groove(z, sx) for z in zs]
+    pts.append(entry)
+    return pts
+
+
+def drawn_rln_right(L):
+    return drawn_rln(L, -1)
+
+
+def drawn_rln_left(L):
+    return drawn_rln(L, 1)
+
+
+def drawn_sln(L):
+    """Superior laryngeal nerve from the vagus to its division near the greater
+    horn of the hyoid, and the internal branch to the thyrohyoid membrane."""
+    out = []
+    for sx in (-1, 1):
+        start = min(L.vagus["l" if sx > 0 else "r"], key=lambda p: abs(p.z - 1.535))
+        out.append([start, side_vec(sx, 0.027, 0.004, 1.520), side_vec(sx, 0.026, 0.002, 1.506),
+                    side_vec(sx, 0.022, -0.006, 1.499), side_vec(sx, 0.018, -0.012, 1.495)])
+    return out
+
+
+def drawn_ebsln(L):
+    """External branch: down on the inferior constrictor, deep to the superior
+    thyroid artery, to cricothyroid."""
+    out = []
+    for sx in (-1, 1):
+        ct = L.cricothyroid["l" if sx > 0 else "r"]
+        target = sum(ct, Vector()) / len(ct)
+        out.append([side_vec(sx, 0.026, 0.002, 1.506), side_vec(sx, 0.022, -0.002, 1.490),
+                    side_vec(sx, 0.017, -0.005, 1.478), target + Vector((sx * 0.002, 0.001, 0.002))])
+    return out
+
+
+def drawn_superior_thyroid_artery(L):
+    """First branch of the external carotid, down and forward to the upper pole."""
+    out = []
+    for sx in (-1, 1):
+        eca = L.eca["l" if sx > 0 else "r"]
+        origin = min(eca, key=lambda p: p.z) + Vector((0, -0.001, 0.003))
+        pole = L.upper_pole(sx)
+        out.append([origin, origin + Vector((sx * -0.002, -0.006, 0.002)),
+                    (origin + pole) / 2 + Vector((0, -0.006, 0.004)), pole + Vector((0, -0.002, 0.001))])
+    return out
+
+
+def drawn_middle_thyroid_vein(L):
+    """From the lateral surface of each lobe straight out to the internal jugular vein."""
+    out = []
+    for sx in (-1, 1):
+        z = 1.470
+        lateral = max((v for v in slice_of(L.gland, z, 0.003)), key=lambda v: sx * v.x)
+        ijv = L.ijv["l" if sx > 0 else "r"]
+        target = Vector((along_z(ijv, z, 0), along_z(ijv, z, 1), z))
+        out.append([lateral, (lateral + target) / 2 + Vector((0, -0.002, -0.002)), target])
+    return out
+
+
+def drawn_inferior_thyroid_veins(L):
+    """From each lower pole down in front of the trachea to the left brachiocephalic vein."""
+    out = []
+    target = min(L.bcv, key=lambda p: abs(p.x))
+    for sx in (-1, 1):
+        pole = L.lower_pole(sx)
+        out.append([pole, pole + Vector((sx * -0.003, -0.004, -0.015)),
+                    Vector((sx * 0.004, target.y + 0.002, 1.405)), target + Vector((sx * 0.003, 0.002, 0.002))])
+    return out
+
+
 DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
-         "great_auricular": drawn_great_auricular}
+         "great_auricular": drawn_great_auricular,
+         "rln_right": drawn_rln_right, "rln_left": drawn_rln_left, "sln": drawn_sln, "ebsln": drawn_ebsln,
+         "superior_thyroid_artery": drawn_superior_thyroid_artery,
+         "middle_thyroid_vein": drawn_middle_thyroid_vein, "inferior_thyroid_veins": drawn_inferior_thyroid_veins}
 
 
 def curve_object(name, points, radius):
+    """A tube along one polyline, or several (a list of polylines)."""
     cu = bpy.data.curves.new(name, "CURVE")
     cu.dimensions = "3D"
-    sp = cu.splines.new("NURBS")
-    sp.points.add(len(points) - 1)
-    for p, v in zip(sp.points, points):
-        p.co = (v.x, v.y, v.z, 1)
-    sp.order_u = 3
-    sp.use_endpoint_u = True
+    lines = points if points and not isinstance(points[0], Vector) else [points]
+    for line in lines:
+        sp = cu.splines.new("NURBS")
+        sp.points.add(len(line) - 1)
+        for p, v in zip(sp.points, line):
+            p.co = (v.x, v.y, v.z, 1)
+        sp.order_u = 3
+        sp.use_endpoint_u = True
     cu.bevel_depth = radius
     obj = bpy.data.objects.new(name, cu)
     bpy.context.scene.collection.objects.link(obj)
@@ -449,8 +637,8 @@ def world_bmesh(obj, sid, scale=1.0, parts=None):
     return bm
 
 
-def clip(bm, z):
-    gone = [f for f in bm.faces if all(v.co.z < z for v in f.verts)]
+def clip(bm, z, top=9.0):
+    gone = [f for f in bm.faces if all(v.co.z < z for v in f.verts) or all(v.co.z > top for v in f.verts)]
     bmesh.ops.delete(bm, geom=gone, context="FACES")
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
 
@@ -517,10 +705,14 @@ for sid, names in cfg["structures"].items():
         bm = world_bmesh(obj, sid, cfg["curve_scale"].get(sid, 1.0), pieces)
         if name in cfg.get("clip_below", {}):
             clip(bm, cfg["clip_below"][name])
+        if name in cfg.get("clip", {}):
+            clip(bm, *cfg["clip"][name])
         add(sid, name, *to_arrays(bm))
         bm.free()
 
-if cfg.get("node_groups") or cfg.get("drawn"):
+if cfg.get("landmarks") == "thyroid":
+    L = ThyroidLandmarks()
+elif cfg.get("node_groups") or cfg.get("drawn"):
     L = NeckLandmarks(cfg.get("side", "l"))
 
 if cfg.get("node_groups"):
