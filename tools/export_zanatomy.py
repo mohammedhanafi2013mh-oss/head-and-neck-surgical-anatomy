@@ -551,6 +551,132 @@ REGIONS = {
                                          "jugular": ("spline_end", "Sigmoid sinus.r", 0), "neck": "end"}},
         },
     },
+    "infratemporal": {
+        # Right infratemporal fossa, between the ramus and the lateral pterygoid plate.
+        "centre": (-0.036, -0.020, 1.570),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "mandible": ["Mandible"] + LOWER_TEETH,
+            "maxilla": ["Maxilla.r", "Palatine bone.r", "Upper first molar tooth.r", "Upper second molar tooth.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            "sphenoid": ["Sphenoid bone"],
+            "temporal": ["Temporal bone.r"],
+            "parietal": ["Parietal bone.r"],
+            # ---- temporomandibular joint and ligaments ----
+            # Z-Anatomy's lateral ligament is mislabelled: its ".l" object is on the right.
+            "tmj_capsule": ["Articular capsule of temporomandibular joint.r", "Lateral temporomandibular ligament.l"],
+            "tmj_disc": ["Articular disc of temporomandibular joint.r"],
+            "sphenomandibular": ["Sphenomandibular ligament.r"],
+            "stylomandibular": ["Stylomandibular ligament.r"],
+            "pterygospinous": ["Pterygospinous ligament.r"],
+            # ---- muscles ----
+            "temporalis": ["Temporalis muscle.r"],
+            "masseter": ["Superficial part of masseter.r", "Deep part of masseter.r"],
+            "lpt_superior": ["Superior head of lateral pterygoid muscle.r"],
+            "lpt_inferior": ["Inferior head of lateral pterygoid muscle.r"],
+            "medial_pterygoid": ["Medial pterygoid muscle.r"],
+            "superior_constrictor": ["Superior pharyngeal constrictor.r"],
+            "digastric_post": ["Posterior belly of digastric muscle.r"],
+            "styloid_muscles": ["Stylohyoid muscle.r", "Stylohyoid ligament.r", "Stylopharyngeus muscle.r"],
+            "parotid": ["Parotid gland.r"],
+            # ---- nerves ----
+            "v3_trunk": [("Trigeminal nerve (V).r", [(1, 0)])],
+            "v3_anterior": ["Anterior division of mandibular nerve.r"],
+            "v3_posterior": ["Posterior division of mandibular nerve.r"],
+            "ian": ["Inferior alveolar nerve.r"],
+            "lingual_nerve": ["Lingual nerve.r"],
+            "buccal_nerve": ["Buccal nerve.r"],
+            "chorda": ["Chorda tympani.r"],
+            "nerve_mylohyoid": ["Nerve to mylohyoid muscle.r"],
+            "v2": ["Maxillary nerve.r"],
+            "facial_nerve": ["Facial nerve (VII).r"],
+            # ---- arteries ----
+            "eca": ["External carotid artery.r"],
+            "maxillary_artery": ["Maxillary artery.r"],
+            "mma": ["Middle meningeal artery.r"],
+            "accessory_meningeal": ["Accessory branch of middle meningeal artery.r"],
+            "iaa": ["Inferior alveolar artery.r", "Mylohyoid branch of inferior alveolar artery.r",
+                    "Mental branch of inferior alveolar artery.r"],
+            "deep_temporal_arteries": ["Anterior deep temporal artery.r", "Posterior deep temporal artery.r"],
+            "buccal_artery": ["Buccal artery.r"],
+            "psa": ["Posterior superior alveolar artery.r"],
+            "descending_palatine": ["Descending palatine artery.r", "Greater palatine artery.r"],
+            "sphenopalatine": ["Posterior lateral nasal branches of sphenopalatine artery..r",
+                               "Posterior septal branches of sphenopalatine artery.r"],
+            "pterygoid_canal_artery": ["Artery of pterygoid canal.r"],
+            "sta": ["Superficial temporal artery.r", "Frontal branch of superficial temporal artery.r"],
+            "transverse_facial": ["Transverse facial artery.r"],
+            "ica": ["Internal carotid artery.r"],
+            # ---- veins ----
+            "maxillary_vein": ["Maxillary veins.r"],
+            "retromandibular": ["Retromandibular vein.r", "Anterior division of retromandibular vein.r",
+                                "Posterior division of retromandibular vein.r", "Superficial temporal veins.r"],
+            "ijv": ["Internal jugular vein.r"],
+        },
+        "curve_scale": {"v3_trunk": 2.6, "v3_anterior": 2.0, "v3_posterior": 2.2, "ian": 1.8, "lingual_nerve": 1.8,
+                        "buccal_nerve": 1.5, "chorda": 1.2, "nerve_mylohyoid": 1.2, "v2": 1.8, "facial_nerve": 1.6,
+                        "maxillary_artery": 2.0, "mma": 1.6, "accessory_meningeal": 1.1, "iaa": 1.3,
+                        "deep_temporal_arteries": 1.2, "buccal_artery": 1.1, "psa": 1.1, "descending_palatine": 1.2,
+                        "sphenopalatine": 1.0, "pterygoid_canal_artery": 1.0, "sta": 1.4, "transverse_facial": 1.1,
+                        "maxillary_vein": 2.2, "retromandibular": 1.6},
+        "bones": {"mandible", "maxilla", "zygomatic", "sphenoid", "temporal", "parietal"},
+        "clip": {"Parietal bone.r": (0, 1.665), "Superficial temporal artery.r": (0, 1.665),
+                 "Superficial temporal veins.r": (0, 1.665), "Frontal branch of superficial temporal artery.r": (0, 1.665),
+                 "Internal carotid artery.r": (1.50, 1.585), "Internal jugular vein.r": (1.50, 9),
+                 "External carotid artery.r": (1.50, 9), "Superior pharyngeal constrictor.r": (1.52, 9),
+                 "Stylopharyngeus muscle.r": (1.51, 9), "Stylohyoid muscle.r": (1.51, 9)},
+        "side": "r",
+        # Mandibular nerve branches Z-Anatomy lacks. See drawn_auriculotemporal() and below.
+        "drawn": {"auriculotemporal": 0.0009, "masseteric_nerve": 0.0008, "deep_temporal_nerves": 0.0008,
+                  "nerve_medial_pterygoid": 0.0007, "otic_ganglion": 0.0018},
+        "points": {
+            "foramen_ovale": ("anchor", "Foramen ovale.j"),
+            "foramen_spinosum": ("anchor", "Foramen spinosum.j"),
+            "mental_foramen": ("anchor", "Mental foramen.j"),
+            "lateral_pterygoid_plate": ("anchor", "Lateral pterygoid plate.j"),
+            "spine_of_sphenoid": ("anchor", "Spine of sphenoid bone.j"),
+            "mandibular_foramen": ("first_in", ("Inferior alveolar nerve.r", 0), ["Mandible"], 0.002),
+            "mandibular_notch": ("closest", ("masseteric_nerve", 0), ["Mandible"], (1.553, 1.570)),
+            "pterygomaxillary_fissure": ("spline_end", "Maxillary artery.r", 0),
+            "stylomastoid_foramen": ("last_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+        },
+        "courses": {
+            "maxillary_artery": {"path": [("Maxillary artery.r", 0)],
+                                 "points": {"origin": "start", "iaa": ("nearest_start", "Inferior alveolar artery.r"),
+                                            "mma": ("nearest_start", "Middle meningeal artery.r"),
+                                            "accessory": ("nearest_start", "Accessory branch of middle meningeal artery.r"),
+                                            "deep_temporal": ("nearest_start", "Posterior deep temporal artery.r"),
+                                            "buccal": ("nearest_start", "Buccal artery.r"), "ppf": "end"}},
+            "mma": {"path": [("Maxillary artery.r", 0), ("Middle meningeal artery.r", 0)],
+                    "points": {"maxillary": ("nearest_start", "Middle meningeal artery.r"),
+                               "auriculotemporal": ("nearest", "auriculotemporal"), "spinosum": "@foramen_spinosum"}},
+            "v3_trunk": {"path": [("Trigeminal nerve (V).r", 1), ("Posterior division of mandibular nerve.r", 0),
+                                  ("Inferior alveolar nerve.r", 0), ("Inferior alveolar nerve.r", 1)],
+                         "points": {"ovale": "@foramen_ovale", "otic": ("nearest", "otic_ganglion"),
+                                    "anterior": ("spline_end", "Anterior division of mandibular nerve.r", 0),
+                                    "lingual": ("spline_start", "Lingual nerve.r", 0),
+                                    "mylohyoid": ("spline_start", "Nerve to mylohyoid muscle.r", 0),
+                                    "mandibular_foramen": "@mandibular_foramen", "mental": "@mental_foramen"}},
+            "lingual_nerve": {"path": [("Lingual nerve.r", 0)],
+                              "points": {"origin": "start", "chorda": ("nearest", "Chorda tympani.r"),
+                                         "molar": ("closest", None, ["Mandible"], (1.522, 1.545)), "tongue": "end"}},
+            "buccal_nerve": {"path": [("Anterior division of mandibular nerve.r", 0), ("Buccal nerve.r", 0)],
+                             "points": {"division": "start", "heads": ("nearest", "Inferior head of lateral pterygoid muscle.r"),
+                                        "cheek": "end"}},
+            "auriculotemporal": {"path": [("auriculotemporal", 0), ("auriculotemporal", 2)],
+                                 "points": {"origin": "start", "mma": ("nearest", "Middle meningeal artery.r"),
+                                            "tmj": ("nearest", "Articular capsule of temporomandibular joint.r"),
+                                            "temple": "end"}},
+            "chorda": {"path": [("Chorda tympani.r", 0)], "points": {"fissure": "start", "lingual": "end"}},
+        },
+        "spaces": {
+            # The fossa itself: a hull around the pterygoids and the maxillary artery.
+            "s_itf": {"type": "hull", "objects": ["Medial pterygoid muscle.r", "Inferior head of lateral pterygoid muscle.r",
+                                                   "Superior head of lateral pterygoid muscle.r", "Sphenomandibular ligament.r"],
+                      "inflate": 0.0015},
+        },
+    },
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
@@ -1048,6 +1174,56 @@ DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
          "superior_laryngeal_artery": drawn_superior_laryngeal_artery,
          "lingual_artery": drawn_lingual_artery, "ansa_cervicalis": drawn_ansa_cervicalis,
          "ijv": drawn_ijv, "vagus": drawn_vagus, "hypoglossal": drawn_hypoglossal, "facial_vein": drawn_facial_vein}
+
+
+# ---------- drawn mandibular nerve branches (infratemporal region) ----------
+# Hand-placed from the right mandibular nerve (division point (-22.9, -15.0, 1576.8) mm),
+# the middle meningeal artery, the neck of the mandible and the mandibular notch.
+
+def drawn_auriculotemporal(L):
+    """Two roots from the posterior division encircling the middle meningeal
+    artery, then back behind the neck of the mandible and up through the
+    parotid with the superficial temporal vessels."""
+    o = Vector((-0.0249, -0.0156, 1.5721))
+    join = Vector((-0.0350, -0.0075, 1.5770))
+    upper = [o, Vector((-0.0280, -0.0120, 1.5810)), Vector((-0.0320, -0.0090, 1.5825)), join]
+    lower = [o, Vector((-0.0290, -0.0115, 1.5720)), Vector((-0.0330, -0.0085, 1.5730)), join]
+    trunk = [join, Vector((-0.0400, -0.0030, 1.5705)), Vector((-0.0460, 0.0015, 1.5680)), Vector((-0.0540, 0.0010, 1.5720)),
+             Vector((-0.0600, 0.0005, 1.5850)), Vector((-0.0640, 0.0010, 1.6050)), Vector((-0.0670, 0.0020, 1.6250))]
+    return [upper, lower, trunk]
+
+
+def drawn_masseteric_nerve(L):
+    """Above the lateral pterygoid and through the mandibular notch, behind
+    the tendon of temporalis, into the deep surface of masseter."""
+    return [Vector((-0.0245, -0.0165, 1.5750)), Vector((-0.0320, -0.0220, 1.5830)), Vector((-0.0400, -0.0280, 1.5740)),
+            Vector((-0.0440, -0.0300, 1.5610)), Vector((-0.0480, -0.0310, 1.5520)), Vector((-0.0500, -0.0330, 1.5400))]
+
+
+def drawn_deep_temporal_nerves(L):
+    """Anterior and posterior deep temporal nerves: over the upper head of
+    lateral pterygoid into the deep surface of temporalis."""
+    posterior = [Vector((-0.0250, -0.0170, 1.5750)), Vector((-0.0330, -0.0220, 1.5850)), Vector((-0.0420, -0.0230, 1.5880)),
+                 Vector((-0.0500, -0.0240, 1.6000)), Vector((-0.0560, -0.0250, 1.6150))]
+    anterior = [Vector((-0.0270, -0.0195, 1.5700)), Vector((-0.0340, -0.0300, 1.5840)), Vector((-0.0420, -0.0370, 1.5920)),
+                Vector((-0.0480, -0.0400, 1.6050)), Vector((-0.0500, -0.0420, 1.6150))]
+    return [posterior, anterior]
+
+
+def drawn_nerve_medial_pterygoid(L):
+    """From the main trunk, past the otic ganglion, into medial pterygoid."""
+    return [Vector((-0.0230, -0.0145, 1.5750)), Vector((-0.0220, -0.0170, 1.5680)), Vector((-0.0220, -0.0220, 1.5620)),
+            Vector((-0.0240, -0.0260, 1.5550))]
+
+
+def drawn_otic_ganglion(L):
+    """A small swelling medial to the main trunk just below foramen ovale."""
+    return [Vector((-0.0206, -0.0130, 1.5745)), Vector((-0.0205, -0.0143, 1.5740)), Vector((-0.0204, -0.0155, 1.5735))]
+
+
+DRAWN.update({"auriculotemporal": drawn_auriculotemporal, "masseteric_nerve": drawn_masseteric_nerve,
+              "deep_temporal_nerves": drawn_deep_temporal_nerves, "nerve_medial_pterygoid": drawn_nerve_medial_pterygoid,
+              "otic_ganglion": drawn_otic_ganglion})
 
 
 def curve_object(name, points, radius):

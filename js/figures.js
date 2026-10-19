@@ -694,5 +694,144 @@ window.ANATOMY.figures = {
   <text x="380" y="420" class="fig-label small">Danger-space infection</text>
   <text x="380" y="432" class="fig-label small">can reach the posterior</text>
   <text x="380" y="444" class="fig-label small">mediastinum</text>
+</svg>`,
+
+  infratemporalFossa: `
+<svg viewBox="0 0 580 440" role="img" aria-label="Right infratemporal fossa seen from the side with the ramus and zygomatic arch removed: lateral and medial pterygoids, maxillary artery and its branches, and the branches of the mandibular nerve">
+  <!-- skull base roof, zygomatic arch stumps, mastoid and styloid -->
+  <path d="M70 62 Q230 44 470 66 L476 100 Q330 94 170 104 L76 110 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <rect x="130" y="70" width="40" height="18" rx="4" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="3 2"/>
+  <rect x="420" y="72" width="44" height="18" rx="4" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="3 2"/>
+  <path d="M136 104 Q160 128 186 108" fill="none" stroke="var(--fig-stroke)" stroke-width="1.5"/>
+  <path d="M80 110 L106 112 L112 160 L88 168 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M122 118 L130 120 L144 196 L138 198 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- maxilla and lateral pterygoid plate -->
+  <path d="M466 100 Q484 150 480 230 Q474 276 448 280 Q424 276 428 240 L436 104 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M382 104 L402 104 L400 280 L380 272 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- mandible body, ramus removed (dashed outline) -->
+  <path d="M214 344 Q280 366 520 358 L526 398 Q320 410 210 386 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M214 344 Q182 260 186 150 L200 120 M276 356 Q254 260 316 160 L344 126" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="4 3"/>
+  <!-- medial pterygoid (deep), lateral pterygoid upper and lower heads -->
+  <path d="M382 204 L400 242 L244 356 L216 340 Z" fill="var(--fig-muscle)" opacity=".4" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M386 108 L398 130 L206 138 L204 126 Z" fill="var(--fig-muscle)" opacity=".75" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M382 142 L398 202 L208 162 L206 146 Z" fill="var(--fig-muscle)" opacity=".75" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- foramen ovale and spinosum (in the roof, seen through) -->
+  <circle cx="246" cy="100" r="5" fill="#3b3226"/>
+  <circle cx="216" cy="98" r="3" fill="#3b3226"/>
+  <!-- arteries -->
+  <g fill="none" stroke="var(--fig-artery)" stroke-linecap="round">
+    <path d="M160 440 L162 212" stroke-width="6"/>
+    <path d="M162 214 Q158 130 154 30" stroke-width="3.5"/>
+    <path d="M162 214 Q196 182 260 174 Q320 168 372 162 L414 158" stroke-width="4.5"/>
+    <path d="M200 184 Q206 130 214 100" stroke-width="2.4"/>
+    <path d="M210 182 Q236 240 254 306" stroke-width="2.2"/>
+    <path d="M300 172 Q304 120 306 62" stroke-width="1.8"/>
+    <path d="M346 166 Q350 120 352 62" stroke-width="1.8"/>
+    <path d="M362 164 Q400 220 440 284" stroke-width="1.6"/>
+    <path d="M398 160 Q420 180 432 214" stroke-width="1.6"/>
+  </g>
+  <!-- nerves -->
+  <g fill="none" stroke="var(--fig-nerve)" stroke-linecap="round">
+    <path d="M250 162 Q254 240 254 306" stroke-width="3"/>
+    <path d="M254 306 Q320 350 512 372" stroke-width="2" stroke-dasharray="5 3"/>
+    <path d="M264 162 Q290 260 316 326 Q350 352 410 352" stroke-width="3"/>
+    <path d="M190 146 Q226 168 262 204" stroke-width="1.4"/>
+    <path d="M374 140 Q408 206 444 278" stroke-width="2"/>
+    <path d="M282 118 Q252 114 222 112" stroke-width="2"/>
+    <path d="M292 116 Q296 88 298 58" stroke-width="1.6"/>
+    <path d="M336 116 Q340 88 342 58" stroke-width="1.6"/>
+    <path d="M236 126 Q222 116 206 120 Q192 126 178 112 Q164 96 148 34" stroke-width="2"/>
+    <path d="M236 126 Q220 140 206 136 Q196 132 192 124" stroke-width="2"/>
+  </g>
+  <!-- labels with leaders -->
+  <g class="fig-label small">
+    <text x="6" y="28">Auriculotemporal n.</text>
+    <text x="6" y="40">and sup. temporal a.</text>
+    <text x="6" y="92">Masseteric n. (to the notch)</text>
+    <text x="6" y="136">Middle meningeal a.</text>
+    <text x="6" y="240">Chorda tympani</text>
+    <text x="6" y="200">Maxillary a.</text>
+    <text x="6" y="330">External carotid a.</text>
+    <text x="250" y="28">F. ovale (V3)</text>
+    <text x="300" y="46">Deep temporal nn. and aa.</text>
+    <text x="490" y="122">Lat. pterygoid,</text>
+    <text x="490" y="134">upper head</text>
+    <text x="490" y="168">PTM fissure</text>
+    <text x="490" y="190">Lower head</text>
+    <text x="490" y="224">Post. sup.</text>
+    <text x="490" y="236">alveolar a.</text>
+    <text x="490" y="266">Medial pterygoid</text>
+    <text x="490" y="292">Buccal n. and a.</text>
+    <text x="490" y="340">Lingual n.</text>
+    <text x="300" y="432">Inferior alveolar n. and a. to the mandibular foramen</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" fill="none">
+    <line x1="100" y1="36" x2="150" y2="44"/>
+    <line x1="150" y1="90" x2="228" y2="112"/>
+    <line x1="106" y1="133" x2="206" y2="130"/>
+    <line x1="88" y1="236" x2="226" y2="172"/>
+    <line x1="66" y1="196" x2="186" y2="190"/>
+    <line x1="108" y1="326" x2="160" y2="326"/>
+    <line x1="268" y1="32" x2="248" y2="94"/>
+    <line x1="488" y1="126" x2="330" y2="126"/>
+    <line x1="488" y1="164" x2="414" y2="158"/>
+    <line x1="488" y1="186" x2="350" y2="180"/>
+    <line x1="488" y1="228" x2="432" y2="212"/>
+    <line x1="488" y1="262" x2="340" y2="262"/>
+    <line x1="488" y1="288" x2="442" y2="280"/>
+    <line x1="488" y1="336" x2="406" y2="350"/>
+    <line x1="298" y1="424" x2="256" y2="312"/>
+  </g>
+  <text x="6" y="416" class="fig-label small">Right side, anterior to the right.</text>
+  <text x="6" y="428" class="fig-label small">Ramus outline dashed.</text>
+</svg>`,
+
+  maxillaryArtery: `
+<svg viewBox="0 0 530 340" role="img" aria-label="Diagram of the maxillary artery in three parts defined by the lateral pterygoid, with the branches of each part">
+  <!-- lateral pterygoid as the reference -->
+  <rect x="190" y="118" width="140" height="44" rx="10" fill="var(--fig-muscle)" opacity=".5" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="260" y="246" text-anchor="middle" class="fig-label small">Lateral pterygoid (lower head)</text>
+  <!-- the artery in three parts -->
+  <path d="M30 140 L190 140" stroke="var(--fig-artery)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M190 140 L330 140" stroke="var(--fig-artery)" stroke-width="7" opacity=".75"/>
+  <path d="M330 140 L490 140" stroke="var(--fig-artery)" stroke-width="7" stroke-linecap="round" opacity=".55"/>
+  <g class="fig-label" font-weight="600">
+    <text x="110" y="128" text-anchor="middle">1st · mandibular</text>
+    <text x="260" y="110" text-anchor="middle">2nd · pterygoid</text>
+    <text x="410" y="128" text-anchor="middle">3rd · pterygopalatine</text>
+  </g>
+  <g class="fig-label small">
+    <text x="110" y="290" text-anchor="middle">behind lateral pterygoid,</text>
+    <text x="110" y="302" text-anchor="middle">between neck of mandible</text>
+    <text x="110" y="314" text-anchor="middle">and sphenomandibular lig.</text>
+    <text x="260" y="290" text-anchor="middle">on (usually superficial to)</text>
+    <text x="260" y="302" text-anchor="middle">the lower head</text>
+    <text x="410" y="290" text-anchor="middle">in the pterygopalatine fossa,</text>
+    <text x="410" y="302" text-anchor="middle">through the PTM fissure</text>
+  </g>
+  <!-- branches: 1st part (go through bone) -->
+  <g stroke="var(--fig-artery)" stroke-width="2" fill="none">
+    <path d="M50 140 L44 96"/><path d="M78 140 L76 90"/><path d="M110 140 L114 70"/><path d="M140 140 L150 84"/><path d="M168 140 L172 200"/>
+    <path d="M220 140 L214 92"/><path d="M250 140 L254 86"/><path d="M290 140 L296 92"/><path d="M316 140 L322 196"/>
+    <path d="M350 140 L344 92"/><path d="M380 140 L384 80"/><path d="M410 140 L414 196"/><path d="M440 140 L446 90"/><path d="M466 140 L472 196"/><path d="M488 140 L516 120"/>
+  </g>
+  <g class="fig-label small">
+    <text x="44" y="92" text-anchor="middle" transform="rotate(-50 44 92)">Deep auricular</text>
+    <text x="76" y="86" text-anchor="middle" transform="rotate(-50 76 86)">Ant. tympanic</text>
+    <text x="114" y="64" text-anchor="middle" font-weight="600">Middle meningeal</text>
+    <text x="150" y="80" text-anchor="start" transform="rotate(-40 150 80)">Accessory meningeal</text>
+    <text x="168" y="212" text-anchor="end">Inferior alveolar</text>
+    <text x="214" y="88" text-anchor="middle" transform="rotate(-50 214 88)">Deep temporal</text>
+    <text x="254" y="82" text-anchor="middle" transform="rotate(-50 254 82)">Pterygoid</text>
+    <text x="296" y="88" text-anchor="middle" transform="rotate(-50 296 88)">Masseteric</text>
+    <text x="312" y="212" text-anchor="end">Buccal</text>
+    <text x="344" y="88" text-anchor="middle" transform="rotate(-50 344 88)">Post. sup. alveolar</text>
+    <text x="384" y="76" text-anchor="middle" transform="rotate(-50 384 76)">Infraorbital</text>
+    <text x="414" y="212" text-anchor="end">Desc. palatine</text>
+    <text x="446" y="86" text-anchor="middle" transform="rotate(-50 446 86)">Pterygoid canal</text>
+    <text x="476" y="212" text-anchor="start">Pharyngeal</text>
+    <text x="526" y="112" text-anchor="end" font-weight="600">Sphenopalatine</text>
+  </g>
+  <text x="8" y="334" class="fig-label small">From the neck of the mandible (left) towards the nose (right).</text>
 </svg>`
 };

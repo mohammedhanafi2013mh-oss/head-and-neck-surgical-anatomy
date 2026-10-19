@@ -12,12 +12,14 @@ Modules so far:
 - **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
 - **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
 - **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
+- **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
 - **Parotid:** the facial nerve.
 - **Carotid triangle:** the external carotid and its branches.
 - **Thyroid:** both recurrent laryngeal nerves.
+- **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -133,6 +135,23 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: original diagrams of an axial section at the oropharynx and a midline sagittal view of how far the retropharyngeal, danger and prevertebral spaces extend. **Quiz**: six questions.
 - **References**: Grodinsky & Holyoke 1938, Harnsberger & Osborn 1991, Vieira 2008, Lemierre 1936, Estrera 1983, Gray's, Scott-Brown's and Shah.
 
+## What's in the infratemporal fossa module
+
+- **3D model** (right side) from Z-Anatomy:
+  - Bones: the mandible, maxilla and palatine bone, zygomatic, sphenoid, temporal and the lower parietal bone. The mandible is translucent so the fossa shows through the ramus.
+  - The TMJ capsule and disc, and the sphenomandibular, stylomandibular and pterygospinous ligaments.
+  - Muscles: both heads of lateral pterygoid and medial pterygoid. Masseter, temporalis and the parotid are an optional layer.
+  - Nerves: V3 with its divisions, the inferior alveolar, lingual, buccal and mylohyoid nerves, the chorda tympani, V2 and the facial nerve.
+  - Arteries: the maxillary artery and its branches (middle and accessory meningeal, inferior alveolar, deep temporal, buccal, posterior superior alveolar, descending palatine, sphenopalatine, artery of the pterygoid canal), the external and internal carotids and the superficial temporal artery.
+  - Veins: the maxillary and retromandibular veins and the internal jugular vein. Z-Anatomy has no model of the pterygoid plexus.
+  - Drawn for this app (Z-Anatomy lacks them): the auriculotemporal nerve with its two roots around the middle meningeal artery, the masseteric, deep temporal and medial pterygoid nerves, and the otic ganglion.
+  - A translucent outline of the fossa (optional layer).
+- **Foramina & landmarks layer**: pins on foramen ovale and spinosum, the spine of the sphenoid, the lateral pterygoid plate, the mandibular foramen, the mandibular notch, the pterygomaxillary fissure and the stylomastoid foramen.
+- **Structures**: notes on every structure, with courses for the maxillary and middle meningeal arteries and the main V3 branches. Includes the inferior alveolar and posterior superior alveolar blocks and third molar surgery.
+- **Surgery**: a 10-step lateral (preauricular–subtemporal) approach to the infratemporal fossa, with complications.
+- **Figures**: original diagrams of the fossa with the ramus removed and of the three parts of the maxillary artery. **Quiz**: six questions.
+- **References**: Fisch 1978, Sekhar 1987, Pogrel & Thamby 2000, Malamed, Frey 1923, Rhoton, Gray's, Scott-Brown's and Shah.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -209,6 +228,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshe
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-base-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend infratemporal data/infratemporal-meshes.js
 ```
 
 ## Licensing and credits
@@ -222,6 +242,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, infratemporal fossa, temporal bone
+- More regions: posterior triangle, pterygopalatine fossa, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores
