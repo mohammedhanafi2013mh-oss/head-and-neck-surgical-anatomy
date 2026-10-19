@@ -47,5 +47,10 @@ window.ANATOMY.catalog = [
     id: "infratemporal",
     title: "Infratemporal fossa",
     scripts: ["data/infratemporal.js", "data/infratemporal-meshes.js", "js/models/infratemporal-model.js"]
+  },
+  {
+    id: "pterygopalatine",
+    title: "Pterygopalatine fossa",
+    scripts: ["data/pterygopalatine.js", "data/pterygopalatine-meshes.js", "js/models/pterygopalatine-model.js"]
   }
 ];

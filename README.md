@@ -13,6 +13,7 @@ Modules so far:
 - **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
 - **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
 - **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
+- **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery), right side
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
@@ -20,6 +21,7 @@ Selected nerves and vessels can be **traced**: open one in Structures and press 
 - **Carotid triangle:** the external carotid and its branches.
 - **Thyroid:** both recurrent laryngeal nerves.
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
+- **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -152,6 +154,20 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: original diagrams of the fossa with the ramus removed and of the three parts of the maxillary artery. **Quiz**: six questions.
 - **References**: Fisch 1978, Sekhar 1987, Pogrel & Thamby 2000, Malamed, Frey 1923, Rhoton, Gray's, Scott-Brown's and Shah.
 
+## What's in the pterygopalatine fossa module
+
+- **3D model** (right side) from Z-Anatomy:
+  - Bones: the maxilla, palatine bone, sphenoid, vomer, ethmoid and inferior concha, and zygomatic bone, translucent so the fossa shows.
+  - The maxillary nerve, and the third part of the maxillary artery with the infraorbital, posterior superior alveolar, descending and greater palatine, sphenopalatine and pterygoid canal branches.
+  - Optional layer: the nasal lining, pterygoid muscles, Eustachian tube and petrous carotid.
+  - Drawn for this app (Z-Anatomy lacks them): the pterygopalatine ganglion and its roots from V2, and the Vidian, greater and lesser palatine, nasopalatine, posterior superior alveolar, zygomatic and pharyngeal nerves.
+  - Z-Anatomy runs its "artery of the pterygoid canal" medially towards the sphenopalatine foramen; the notes say its course in the model is unreliable.
+- **Openings layer**: pins on foramen rotundum, the pterygoid canal, the pterygomaxillary fissure, the sphenopalatine foramen, the inferior orbital fissure, the greater palatine canal and the incisive canal.
+- **Structures**: notes on every structure and opening.
+- **Surgery**: a 9-step endoscopic transnasal approach to the fossa, starting with sphenopalatine artery ligation.
+- **Figures**: an original diagram of the seven openings and what passes through them. **Quiz**: six questions.
+- **References**: Kassam 2008 (the Vidian canal as a landmark), Snyderman 1999, Holman & Miller 1965, Rhoton, Gray's and Scott-Brown's.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -229,6 +245,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-mes
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-base-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend infratemporal data/infratemporal-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend pterygopalatine data/pterygopalatine-meshes.js
 ```
 
 ## Licensing and credits
@@ -242,6 +259,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, pterygopalatine fossa, temporal bone
+- More regions: posterior triangle, orbit, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

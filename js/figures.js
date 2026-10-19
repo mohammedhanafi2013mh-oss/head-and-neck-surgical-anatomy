@@ -833,5 +833,55 @@ window.ANATOMY.figures = {
     <text x="526" y="112" text-anchor="end" font-weight="600">Sphenopalatine</text>
   </g>
   <text x="8" y="334" class="fig-label small">From the neck of the mandible (left) towards the nose (right).</text>
+</svg>`,
+
+  pterygopalatineFossa: `
+<svg viewBox="0 0 600 440" role="img" aria-label="Diagram of the pterygopalatine fossa and its seven openings, with the structures passing through each">
+  <line x1="105" y1="60" x2="270" y2="160" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="105" y1="180" x2="260" y2="200" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="105" y1="300" x2="272" y2="240" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="60" x2="320" y2="158" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="180" x2="340" y2="200" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="300" x2="330" y2="240" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="300" y1="390" x2="300" y2="290" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <!-- the fossa: inverted pyramid -->
+  <path d="M246 150 L354 150 L312 300 L288 300 Z" fill="#7fb8e6" opacity=".25" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <path d="M256 168 Q300 160 346 172" fill="none" stroke="var(--fig-nerve)" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="296" cy="190" rx="9" ry="6" fill="#e8a93a" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <line x1="292" y1="172" x2="294" y2="185" stroke="var(--fig-nerve)" stroke-width="1.5"/>
+  <path d="M350 232 Q320 226 310 214 Q302 204 320 200" fill="none" stroke="var(--fig-artery)" stroke-width="3" stroke-linecap="round"/>
+  <text x="300" y="148" class="fig-label small" text-anchor="middle">V2</text>
+  <text x="300" y="214" class="fig-label small" text-anchor="end">Ganglion</text>
+  <text x="302" y="262" class="fig-label small" text-anchor="middle">Maxillary a.</text>
+  <text x="300" y="276" class="fig-label small" text-anchor="middle">(3rd part)</text>
+  <rect x="16" y="30" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="48" class="fig-label" font-weight="600">Foramen rotundum</text>
+  <text x="24" y="64" class="fig-label small">↔ middle cranial fossa</text>
+  <text x="24" y="80" class="fig-label small">Maxillary nerve (V2)</text>
+  <rect x="16" y="150" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="168" class="fig-label" font-weight="600">Pterygoid (Vidian) canal</text>
+  <text x="24" y="184" class="fig-label small">↔ foramen lacerum</text>
+  <text x="24" y="200" class="fig-label small">Vidian nerve and artery</text>
+  <rect x="16" y="270" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="288" class="fig-label" font-weight="600">Palatovaginal canal</text>
+  <text x="24" y="304" class="fig-label small">↔ nasopharynx</text>
+  <text x="24" y="320" class="fig-label small">Pharyngeal nerve and artery</text>
+  <rect x="406" y="30" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="48" class="fig-label" font-weight="600">Inferior orbital fissure</text>
+  <text x="414" y="64" class="fig-label small">↔ orbit</text>
+  <text x="414" y="80" class="fig-label small">Infraorbital and zygomatic nn.</text>
+  <rect x="406" y="150" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="168" class="fig-label" font-weight="600">Sphenopalatine foramen</text>
+  <text x="414" y="184" class="fig-label small">↔ nasal cavity (medial)</text>
+  <text x="414" y="200" class="fig-label small">Sphenopalatine a., nasopalatine n.</text>
+  <rect x="406" y="270" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="288" class="fig-label" font-weight="600">Pterygomaxillary fissure</text>
+  <text x="414" y="304" class="fig-label small">↔ infratemporal fossa (lateral)</text>
+  <text x="414" y="320" class="fig-label small">Maxillary a. in; PSA nn. out</text>
+  <rect x="211" y="360" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="219" y="378" class="fig-label" font-weight="600">Greater palatine canal</text>
+  <text x="219" y="394" class="fig-label small">↔ oral cavity (palate)</text>
+  <text x="219" y="410" class="fig-label small">Greater and lesser palatine nn. and aa.</text>
+  <text x="8" y="434" class="fig-label small">Schematic, right side. Posterior openings on the left, anterior, medial and lateral on the right.</text>
 </svg>`
 };

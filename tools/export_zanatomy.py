@@ -677,6 +677,69 @@ REGIONS = {
                       "inflate": 0.0015},
         },
     },
+    "pterygopalatine": {
+        # Right pterygopalatine fossa, between the pterygoid process and the back of the maxilla.
+        "centre": (-0.016, -0.036, 1.572),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "maxilla": ["Maxilla.r", "Upper first molar tooth.r", "Upper second molar tooth.r"],
+            "palatine": ["Palatine bone.r"],
+            "sphenoid": ["Sphenoid bone"],
+            "vomer": ["Vomer"],
+            "ethmoid_conchae": ["Ethmoid bone", "Inferior nasal concha bone.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            # ---- soft tissue ----
+            "nasal_mucosa": ["Mucosa of nasal cavity"],
+            "auditory_tube": ["Auditory tube.r"],
+            "pterygoids": ["Medial pterygoid muscle.r", "Inferior head of lateral pterygoid muscle.r",
+                           "Superior head of lateral pterygoid muscle.r"],
+            # ---- nerves ----
+            "trigeminal": [("Trigeminal nerve (V).r", [(1, 0)])],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "maxillary_artery": ["Maxillary artery.r"],
+            "infraorbital_artery": ["Infra-orbital artery.r"],
+            "psa": ["Posterior superior alveolar artery.r"],
+            "descending_palatine": ["Descending palatine artery.r", "Greater palatine artery.r"],
+            "sphenopalatine": ["Posterior lateral nasal branches of sphenopalatine artery..r",
+                               "Posterior septal branches of sphenopalatine artery.r"],
+            "pterygoid_canal_artery": ["Artery of pterygoid canal.r"],
+            "ica": ["Internal carotid artery.r"],
+        },
+        "curve_scale": {"trigeminal": 2.4, "v2": 2.2, "maxillary_artery": 2.0, "infraorbital_artery": 1.3, "psa": 1.2,
+                        "descending_palatine": 1.3, "sphenopalatine": 1.1, "pterygoid_canal_artery": 1.1},
+        "bones": {"maxilla", "palatine", "sphenoid", "vomer", "ethmoid_conchae", "zygomatic"},
+        "clip": {"Sphenoid bone": (1.53, 1.61), "Internal carotid artery.r": (1.56, 1.60),
+                 "Maxilla.r": (1.53, 9), "Medial pterygoid muscle.r": (1.545, 9)},
+        "side": "r",
+        # Nerves Z-Anatomy lacks. See drawn_ppg() and below.
+        "drawn": {"ppg": 0.0018, "ganglionic_branches": 0.0006, "vidian": 0.0008, "greater_palatine_n": 0.0008,
+                  "nasopalatine": 0.0007, "psa_nerve": 0.0007, "zygomatic_nerve": 0.0007, "pharyngeal_nerve": 0.0006},
+        "points": {
+            "foramen_rotundum": ("anchor", "Foramen rotundum.j"),
+            "pterygoid_canal": ("anchor", "Pterygoid canal.j"),
+            "pterygomaxillary_fissure": ("spline_end", "Maxillary artery.r", 0),
+            "sphenopalatine_foramen": ("spline_start", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "greater_palatine_foramen": ("spline_start", "Descending palatine artery.r", 0),
+            "incisive_canal": ("spline_end", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "inferior_orbital_fissure": ("spline_point", "Maxillary nerve.r", 0, 7),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "v2": {"path": [("Maxillary nerve.r", 0)],
+                   "points": {"ganglion": "start", "rotundum": "@foramen_rotundum", "ppg": ("nearest", "ppg"),
+                              "iof": "@inferior_orbital_fissure", "foramen": "@infraorbital_foramen", "face": "end"}},
+            "vidian": {"path": [("vidian", 0)],
+                       "points": {"lacerum": "start", "canal": "@pterygoid_canal", "ganglion": "end"}},
+            "greater_palatine_n": {"path": [("greater_palatine_n", 0)],
+                                   "points": {"ganglion": "start", "foramen": "@greater_palatine_foramen", "palate": "end"}},
+            "nasopalatine": {"path": [("nasopalatine", 0)],
+                             "points": {"ganglion": "start", "spf": "@sphenopalatine_foramen", "incisive": "end"}},
+            "infraorbital_artery": {"path": [("Maxillary artery.r", 0), ("Infra-orbital artery.r", 0)],
+                                    "points": {"origin": "start", "ptm": "@pterygomaxillary_fissure", "foramen": "end"}},
+        },
+    },
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
@@ -1295,6 +1358,82 @@ def drawn_otic_ganglion(L):
 DRAWN.update({"auriculotemporal": drawn_auriculotemporal, "masseteric_nerve": drawn_masseteric_nerve,
               "deep_temporal_nerves": drawn_deep_temporal_nerves, "nerve_medial_pterygoid": drawn_nerve_medial_pterygoid,
               "otic_ganglion": drawn_otic_ganglion})
+
+# ---------- drawn nerves of the pterygopalatine fossa ----------
+# Placed from the right maxillary nerve (foramen rotundum at about (-16.7, -25.5, 1591.5) mm),
+# the anterior opening of the pterygoid canal (-14.6, -21.2, 1582.4), the descending
+# palatine and greater palatine arteries and the posterior septal artery. Nerves that
+# run in bony canals (Vidian, palatine, pharyngeal) are left in them; the others are
+# pushed clear of the bone with push_clear().
+
+PPF_BONES = ["Maxilla.r", "Palatine bone.r", "Sphenoid bone", "Vomer", "Zygomatic bone.r"]
+PPG = [Vector((-0.0164, -0.0262, 1.5806)), Vector((-0.0165, -0.0275, 1.5800)), Vector((-0.0166, -0.0288, 1.5793))]
+
+
+def drawn_ppg(L):
+    """The pterygopalatine ganglion, hanging below V2 in front of the pterygoid canal."""
+    return PPG
+
+
+def drawn_ganglionic_branches(L):
+    """Two short roots from V2 down to the ganglion (mostly sensory fibres passing through)."""
+    return [[Vector((-0.0181, -0.0262, 1.5882)), Vector((-0.0172, -0.0264, 1.5845)), PPG[0]],
+            [Vector((-0.0186, -0.0290, 1.5868)), Vector((-0.0176, -0.0291, 1.5830)), PPG[2]]]
+
+
+def drawn_vidian(L):
+    """Nerve of the pterygoid canal: greater and deep petrosal nerves joined at
+    foramen lacerum, forward through the canal to the ganglion."""
+    return [Vector((-0.0158, -0.0040, 1.5760)), Vector((-0.0153, -0.0120, 1.5790)), Vector((-0.0146, -0.0212, 1.5824)),
+            Vector((-0.0156, -0.0245, 1.5815)), PPG[0]]
+
+
+def drawn_greater_palatine_n(L):
+    """Greater palatine nerve down the greater palatine canal to the hard palate,
+    and the lesser palatine nerve to the soft palate (second spline)."""
+    canal = [PPG[2], Vector((-0.0166, -0.0350, 1.5730)), Vector((-0.0164, -0.0410, 1.5665)),
+             Vector((-0.0161, -0.0435, 1.5600)), Vector((-0.0152, -0.0456, 1.5550))]
+    palate = [Vector((-0.0150, -0.0510, 1.5500)), Vector((-0.0138, -0.0580, 1.5482)), Vector((-0.0118, -0.0640, 1.5476)),
+              Vector((-0.0083, -0.0705, 1.5468)), Vector((-0.0048, -0.0750, 1.5452))]
+    lesser = [Vector((-0.0161, -0.0435, 1.5600)), Vector((-0.0150, -0.0425, 1.5530)), Vector((-0.0128, -0.0400, 1.5495)),
+              Vector((-0.0105, -0.0380, 1.5480))]
+    return [canal + palate, lesser]
+
+
+def drawn_nasopalatine(L):
+    """Through the sphenopalatine foramen, across the roof of the nose to the
+    septum, then down and forward on the septum to the incisive canal."""
+    pts = [PPG[1], Vector((-0.0125, -0.0330, 1.5760)), Vector((-0.0095, -0.0385, 1.5725)), Vector((-0.0050, -0.0420, 1.5710)),
+           Vector((-0.0035, -0.0480, 1.5650)), Vector((-0.0037, -0.0610, 1.5615)), Vector((-0.0037, -0.0705, 1.5600)),
+           Vector((-0.0032, -0.0770, 1.5560)), Vector((-0.0025, -0.0790, 1.5450))]
+    return push_clear(pts, [None, None, None, P_OUT, P_OUT, P_OUT, P_OUT, P_OUT, None], gap=0.0008, bones=["Vomer"])
+
+
+def drawn_psa_nerve(L):
+    """Posterior superior alveolar nerves: from V2 out through the pterygomaxillary
+    fissure and down onto the maxillary tuberosity."""
+    pts = [Vector((-0.0200, -0.0360, 1.5832)), Vector((-0.0255, -0.0400, 1.5770)), Vector((-0.0290, -0.0430, 1.5680)),
+           Vector((-0.0285, -0.0450, 1.5600))]
+    return push_clear(pts, [None, P_BACK, P_OUT, P_OUT], bones=PPF_BONES)
+
+
+def drawn_zygomatic_nerve(L):
+    """From V2 through the inferior orbital fissure onto the lateral wall of the orbit."""
+    pts = [Vector((-0.0215, -0.0425, 1.5795)), Vector((-0.0262, -0.0465, 1.5800)), Vector((-0.0315, -0.0520, 1.5810)),
+           Vector((-0.0355, -0.0580, 1.5830))]
+    return push_clear(pts, [None, P_IN, P_IN, P_IN], bones=["Zygomatic bone.r", "Maxilla.r"])
+
+
+def drawn_pharyngeal_nerve(L):
+    """From the ganglion back through the palatovaginal canal to the roof of the nasopharynx."""
+    return [PPG[0], Vector((-0.0125, -0.0235, 1.5770)), Vector((-0.0085, -0.0200, 1.5730)), Vector((-0.0055, -0.0160, 1.5700))]
+
+
+DRAWN.update({"ppg": drawn_ppg, "ganglionic_branches": drawn_ganglionic_branches, "vidian": drawn_vidian,
+              "greater_palatine_n": drawn_greater_palatine_n, "nasopalatine": drawn_nasopalatine,
+              "psa_nerve": drawn_psa_nerve, "zygomatic_nerve": drawn_zygomatic_nerve,
+              "pharyngeal_nerve": drawn_pharyngeal_nerve})
+
 
 
 def curve_object(name, points, radius):
