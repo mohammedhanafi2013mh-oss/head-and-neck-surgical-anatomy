@@ -123,7 +123,7 @@ window.ANATOMY.regions.infratemporal = {
         "At the mandibular foramen: the lingula and sphenomandibular ligament medially, the ramus laterally",
         "In the canal: close to the roots of the third molar"
       ],
-      supply: { "Sensory": "Lower teeth and labial gingiva (incisive), lower lip and chin (mental)", "Motor": "Through the nerve to mylohyoid: mylohyoid and anterior belly of digastric" },
+      supply: { "Sensory": "Lower teeth (incisive branch for the anterior teeth); lower lip, chin and anterior labial gingiva (mental)", "Motor": "Through the nerve to mylohyoid: mylohyoid and anterior belly of digastric" },
       surgical: [
         "Inferior alveolar nerve block: the needle enters the pterygomandibular space lateral to the pterygomandibular raphe, about 1 cm above the occlusal plane, with the syringe over the opposite premolars, and is advanced until bone is felt near the lingula. The lingual nerve, just in front, is usually anaesthetised as well.",
         "Too deep or too far back, the needle enters the parotid and blocks the facial nerve (temporary facial palsy).",
@@ -294,7 +294,7 @@ window.ANATOMY.regions.infratemporal = {
       supply: { "Motor": "Muscles of facial expression" },
       surgical: [
         "In the Fisch infratemporal approaches the nerve is lifted out of its canal and moved forward (anterior rerouting), which often leaves some weakness.",
-        "The frontal branch crosses the zygomatic arch in the superficial temporal fascia and is protected by dissecting deep to that layer."
+        "The frontal branch crosses the zygomatic arch on the deep surface of the temporoparietal (superficial temporal) fascia. It is protected by incising the superficial layer of the deep temporal fascia above the arch and dissecting under it and subperiosteally over the arch."
       ],
       danger: ["Frontal branch over the zygomatic arch"],
       variations: [],
@@ -313,7 +313,7 @@ window.ANATOMY.regions.infratemporal = {
         { key: "mma", label: "Middle meningeal artery", text: "Up between the roots of the auriculotemporal nerve to foramen spinosum." },
         { key: "accessory", label: "Accessory meningeal artery", text: "Up through foramen ovale; mainly supplies pterygoids and tensor veli palatini." },
         { key: "deep_temporal", label: "2nd (pterygoid) part", text: "On the lower head of lateral pterygoid: deep temporal, pterygoid and masseteric branches." },
-        { key: "buccal", label: "Buccal, anterior deep temporal and posterior superior alveolar", text: "The buccal artery runs with the buccal nerve; the posterior superior alveolar runs down onto the maxillary tuberosity." },
+        { key: "buccal", label: "Buccal and anterior deep temporal (2nd part)", text: "The buccal artery runs with the buccal nerve. Just beyond, as the artery enters the fissure, the posterior superior alveolar artery (3rd part) runs down onto the maxillary tuberosity." },
         { key: "ppf", label: "Pterygomaxillary fissure (3rd part)", text: "Into the pterygopalatine fossa: infraorbital, descending palatine, artery of the pterygoid canal, pharyngeal and sphenopalatine branches." }
       ],
       relations: [
@@ -328,7 +328,7 @@ window.ANATOMY.regions.infratemporal = {
         "Le Fort I osteotomy: the descending palatine artery is protected at the back of the maxilla."
       ],
       danger: ["Medial to the neck of the mandible in condylar fracture surgery and condylectomy", "Pterygomaxillary disjunction"],
-      variations: ["Deep to the lower head of lateral pterygoid in about a third of people (more often in East Asian populations), and then sometimes looping between the branches of V3"],
+      variations: ["Deep to the lower head of lateral pterygoid in about a third of people of European origin (much less often, about one in ten, in East Asian populations), and then sometimes looping between the branches of V3"],
       refs: ["gray", "shah", "scottbrown"]
     },
     {
@@ -394,7 +394,7 @@ window.ANATOMY.regions.infratemporal = {
       summary: "From the second part, it runs forward and down with the buccal nerve to the outer surface of buccinator.",
       relations: ["With the buccal nerve"],
       supply: { "Territory": "Buccinator, cheek skin and mucosa" },
-      surgical: ["The pedicle of the buccinator myomucosal (FAMM and buccal) flaps used in palate and oral reconstruction."],
+      surgical: ["The pedicle of the posteriorly based buccinator myomucosal flap used in palate and oral reconstruction (the FAMM flap runs on the facial artery instead)."],
       danger: [],
       variations: [],
       refs: ["gray"]
@@ -663,7 +663,7 @@ window.ANATOMY.regions.infratemporal = {
       summary: "The temporomandibular joint is a synovial joint between the condyle and the mandibular fossa and articular eminence. Its loose capsule is reinforced laterally by the lateral (temporomandibular) ligament, from the zygomatic tubercle to the back of the condylar neck, which stops the condyle moving back.",
       relations: ["Behind: the auriculotemporal nerve and superficial temporal vessels; medially: the maxillary artery and middle meningeal artery"],
       supply: { "Nerve": "Auriculotemporal and masseteric nerves", "Blood": "Superficial temporal and maxillary arteries" },
-      surgical: ["Preauricular and endaural approaches to the joint keep deep to the superficial temporal fascia to protect the frontal branch of VII."],
+      surgical: ["Preauricular and endaural approaches to the joint protect the frontal branch of VII by dissecting under the superficial layer of the deep temporal fascia and subperiosteally over the arch."],
       danger: [],
       variations: [],
       refs: ["gray"]
@@ -878,7 +878,7 @@ window.ANATOMY.regions.infratemporal = {
       summary: "The notch between the coronoid and condylar processes.",
       relations: ["Transmits: masseteric nerve and vessels"],
       supply: {},
-      surgical: ["The route for a percutaneous (Gow-Gates style or sigmoid notch) approach to V3 and the maxillary nerve."],
+      surgical: ["The route for extraoral (sigmoid notch) blocks of V3 and the maxillary nerve."],
       danger: [],
       variations: [],
       refs: ["gray", "malamed"]

@@ -29,7 +29,7 @@ window.ANATOMY.regions.skull_base = {
     keyPoints: [
       "Anterior fossa: I. Middle fossa: II (optic canal), III, IV, V1 and VI (superior orbital fissure), V2 (rotundum), V3 (ovale), middle meningeal artery (spinosum). Posterior fossa: VII and VIII (internal acoustic meatus), IX, X, XI (jugular foramen), XII (hypoglossal canal), the spinal root of XI and the vertebral arteries (foramen magnum).",
       "The cavernous sinus holds III, IV, V1 and V2 in its lateral wall, and VI and the internal carotid inside it.",
-      "VI has the longest intracranial course, climbing the clivus and bending over the petrous apex, which is why it is so often affected by raised pressure.",
+      "VI has a long intracranial course (the longest subarachnoid course), climbing the clivus and bending over the petrous apex, which is why it is so often affected by raised pressure.",
       "The internal carotid has cervical, petrous, lacerum, cavernous, clinoid, ophthalmic and communicating segments (Bouthillier). It runs alongside the sphenoid sinus, where it can be injured in endonasal surgery.",
       "The facial nerve enters the internal acoustic meatus in its anterosuperior part and leaves the skull at the stylomastoid foramen."
     ],
@@ -291,7 +291,7 @@ window.ANATOMY.regions.skull_base = {
       id: "cn9",
       name: "Glossopharyngeal nerve (IX)",
       layer: "nerve",
-      summary: "Rootlets leave the upper medulla behind the olive. The nerve leaves through the anteromedial (nervous) part of the jugular foramen with X and XI, then runs down between the internal carotid and jugular vein to stylopharyngeus and the tongue base.",
+      summary: "Rootlets leave the upper medulla behind the olive. The nerve leaves through the anteromedial (nervous) part of the jugular foramen, in front of X and XI, then runs down between the internal carotid and jugular vein to stylopharyngeus and the tongue base.",
       course: [
         { key: "origin", label: "Medulla", text: "Postolivary sulcus, uppermost of the rootlets." },
         { key: "jugular", label: "Jugular foramen", text: "In its own dural sheath in front of X; superior and inferior ganglia; gives the tympanic (Jacobson's) nerve." },
@@ -311,7 +311,7 @@ window.ANATOMY.regions.skull_base = {
       summary: "Rootlets leave the medulla below IX. It leaves through the jugular foramen with IX and XI, where its superior ganglion lies, and the inferior (nodose) ganglion lies just below.",
       course: [
         { key: "origin", label: "Medulla", text: "Postolivary sulcus, below IX." },
-        { key: "jugular", label: "Jugular foramen", text: "Nervous part, behind IX, with XI; the auricular branch (Arnold's) leaves here." },
+        { key: "jugular", label: "Jugular foramen", text: "Vascular part, behind IX, with XI; the auricular branch (Arnold's) leaves here." },
         { key: "neck", label: "Carotid sheath", text: "Down the neck between the carotid and jugular vein." }
       ],
       relations: [],
@@ -329,7 +329,7 @@ window.ANATOMY.regions.skull_base = {
       course: [
         { key: "origin", label: "Medulla and cervical cord", text: "Cranial rootlets below X; spinal rootlets from C1 to about C5." },
         { key: "magnum", label: "Foramen magnum", text: "The spinal root climbs into the skull behind the vertebral artery." },
-        { key: "jugular", label: "Jugular foramen", text: "Leaves with IX and X; the cranial fibres join the vagus." },
+        { key: "jugular", label: "Jugular foramen", text: "Leaves with X through the vascular part, behind IX; the cranial fibres join the vagus." },
         { key: "neck", label: "Neck", text: "Crosses the internal jugular vein to sternocleidomastoid and across the posterior triangle to trapezius." }
       ],
       relations: [],
@@ -842,11 +842,11 @@ window.ANATOMY.regions.skull_base = {
       name: "Jugular foramen",
       layer: "foramina",
       pin: "jugular_foramen",
-      summary: "Between the petrous temporal and occipital bones. Its anteromedial (nervous) part holds IX; its posterolateral (vascular) part holds the jugular bulb with X and XI (pin at the nerves' exit).",
+      summary: "Between the petrous temporal and occipital bones. Its anteromedial (nervous) part holds IX with the inferior petrosal sinus; its posterolateral (vascular) part holds the jugular bulb with X and XI (pin at the nerves' exit).",
       relations: ["Transmits: inferior petrosal sinus, IX, X, XI, the jugular bulb (start of the internal jugular vein), meningeal branches of the ascending pharyngeal and occipital arteries"],
       supply: {},
       surgical: [
-        "Jugular foramen (Vernet's) syndrome: IX, X and XI palsies. With XII and the sympathetic trunk involved below the skull, it becomes Collet–Sicard and Villaret syndromes.",
+        "Jugular foramen (Vernet's) syndrome: IX, X and XI palsies. With XII also involved it is Collet–Sicard syndrome; with XII and the cervical sympathetic chain (Horner's), Villaret's syndrome.",
         "Glomus jugulare tumours (paragangliomas) arise here; the Fisch infratemporal fossa type A approach exposes it."
       ],
       danger: [],

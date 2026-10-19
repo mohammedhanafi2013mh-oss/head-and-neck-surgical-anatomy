@@ -25,7 +25,11 @@
     }
 
     load() {
-      if (!this.ready) this.ready = this.loadScript("data/scans/vhp-scans.js").then(() => (this.m = window.ANATOMY.scans));
+      if (!this.ready) {
+        this.ready = this.loadScript("data/scans/vhp-scans.js")
+          .then(() => (this.m = window.ANATOMY.scans))
+          .catch((e) => { this.ready = null; throw e; }); // allow a retry
+      }
       return this.ready;
     }
 
