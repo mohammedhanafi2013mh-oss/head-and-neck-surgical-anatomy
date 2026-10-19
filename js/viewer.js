@@ -212,7 +212,7 @@
       this.layerVisible = {};
       this.focusIds = new Set();
       this.selectedId = null;
-      this.showAllLabels = false;
+      this.labelMode = "some"; // "off" | "some" (pins and the selected structure) | "all"
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
@@ -380,7 +380,7 @@
           m.transparent = opacity < 1;
           m.depthWrite = opacity >= 1;
         });
-        s.label.classList.toggle("is-hidden", !s.root.visible || !(this.showAllLabels || highlighted));
+        s.label.classList.toggle("is-hidden", !s.root.visible || this.labelMode === "off" || (this.labelMode === "some" && !highlighted));
         s.label.classList.toggle("is-active", highlighted);
       }
       if (this.onRefresh) this.onRefresh();
@@ -424,7 +424,7 @@
       for (const g of [this.landmarks, this.coursePins]) {
         for (const pin of g.pins) {
           v.copy(pin.mesh.position).project(this.camera);
-          const show = pin.mesh.visible && g.group.visible && v.z <= 1;
+          const show = pin.mesh.visible && g.group.visible && v.z <= 1 && this.labelMode !== "off";
           pin.label.style.display = show ? "" : "none";
           if (show) pin.label.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(8px, -50%)`;
         }

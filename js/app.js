@@ -217,12 +217,22 @@
       else viewer.setView(...state.model.views[v]);
     })
   );
-  const labelsBtn = $("#labels-toggle");
-  labelsBtn.addEventListener("click", () => {
-    viewer.showAllLabels = !viewer.showAllLabels;
-    labelsBtn.setAttribute("aria-pressed", String(viewer.showAllLabels));
+  // Labels on the 3D model: off, some (pins and the selected structure) or all. Remembered per browser.
+  const labelsMode = $("#labels-mode");
+  try {
+    const saved = localStorage.getItem("labelMode");
+    if (["off", "some", "all"].includes(saved)) labelsMode.value = saved;
+  } catch (e) {}
+  const applyLabelMode = () => {
+    viewer.labelMode = labelsMode.value;
+    viewer.dirty = true;
     viewer.refresh();
+  };
+  labelsMode.addEventListener("change", () => {
+    try { localStorage.setItem("labelMode", labelsMode.value); } catch (e) {}
+    applyLabelMode();
   });
+  applyLabelMode();
 
   // ---------- tabs ----------
   document.querySelectorAll("[data-tab]").forEach((b) =>

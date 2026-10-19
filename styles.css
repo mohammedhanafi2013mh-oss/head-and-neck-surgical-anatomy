@@ -158,6 +158,15 @@ button, select { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .viewer-controls button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.viewer-controls select {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: inherit;
+  border-radius: 8px;
+  padding: 5px 6px;
+  font: inherit; font-size: 13px;
+  cursor: pointer;
+}
 .viewer-hint { position: absolute; left: 12px; bottom: 6px; margin: 0; font-size: 12px; color: var(--muted); }
 .viewer-badge {
   position: absolute; right: 12px; bottom: 6px; margin: 0;
@@ -168,19 +177,19 @@ button, select { font: inherit; color: inherit; }
 .label {
   position: absolute; left: 0; top: 0;
   pointer-events: auto;
-  padding: 2px 8px;
-  border-radius: 6px;
+  padding: 1px 6px;
+  border-radius: 5px;
   border: 1px solid var(--line);
   background: color-mix(in srgb, var(--surface) 92%, transparent);
-  font-size: 12px;
+  font-size: 11px;
   white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;
 }
 .label.is-active { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .label.is-hidden { display: none; }
-.pin-label { position: absolute; left: 0; top: 0; white-space: nowrap; pointer-events: none; padding: 2px 6px; border-radius: 6px; font: 600 11px/1.3 system-ui, sans-serif; color: #2a1d00; background: #ffd25e; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
-.pin-label.is-foramen { color: #3a2f12; background: rgba(255, 236, 170, .92); font-weight: 500; font-size: 10.5px; }
+.pin-label { position: absolute; left: 0; top: 0; white-space: nowrap; pointer-events: none; padding: 1px 5px; border-radius: 5px; font: 600 10px/1.3 system-ui, sans-serif; color: #2a1d00; background: #ffd25e; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
+.pin-label.is-foramen { color: #3a2f12; background: rgba(255, 236, 170, .92); font-weight: 500; font-size: 9.5px; }
 .tooltip {
   position: absolute; left: 0; top: 0;
   pointer-events: none;
