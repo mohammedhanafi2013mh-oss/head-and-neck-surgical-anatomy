@@ -532,5 +532,167 @@ window.ANATOMY.figures = {
     <line x1="118" y1="333" x2="192" y2="332"/>
   </g>
   <text x="8" y="452" class="fig-label small">Seen from above, anterior at the top: the patient's right (labelled) is on the right</text>
+</svg>`,
+  neckSpacesAxial: `
+<svg viewBox="0 0 460 400" role="img" aria-label="Axial section at the level of the oropharynx showing the parapharyngeal, masticator, parotid, carotid, peritonsillar, retropharyngeal, danger and prevertebral spaces">
+  <!-- skin outline -->
+  <path d="M230 18 Q330 22 390 110 Q430 190 410 270 Q380 360 230 386 Q80 360 50 270 Q30 190 70 110 Q130 22 230 18 Z" fill="none" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <!-- mandible body, tongue -->
+  <path d="M120 120 Q130 40 230 34 Q330 40 340 120 L326 122 Q316 54 230 50 Q144 54 134 122 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <ellipse cx="230" cy="104" rx="64" ry="42" fill="var(--fig-muscle)" opacity=".3" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <!-- paired structures: drawn on the image left (patient's right) and mirrored -->
+  <g id="nsa-half">
+    <!-- masticator space: masseter, ramus, medial pterygoid -->
+    <path d="M56 118 L128 112 L134 206 L60 208 Z" fill="#f08a4b" opacity=".32" stroke="#f08a4b" stroke-width="1.2"/>
+    <rect x="64" y="122" width="18" height="78" rx="6" fill="var(--fig-muscle)" opacity=".55"/>
+    <rect x="86" y="124" width="12" height="74" rx="3" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+    <path d="M102 132 L124 140 L126 196 L104 196 Z" fill="var(--fig-muscle)" opacity=".55"/>
+    <!-- parapharyngeal space (fat) -->
+    <path d="M132 140 L170 150 L176 204 L138 208 Z" fill="#f2c14e" opacity=".55" stroke="#c99a1e" stroke-width="1"/>
+    <!-- peritonsillar space and tonsil -->
+    <ellipse cx="180" cy="164" rx="9" ry="15" fill="#ff9db0" opacity=".7"/>
+    <ellipse cx="188" cy="164" rx="6" ry="12" fill="#c9a0d8" stroke="var(--fig-stroke)" stroke-width=".6"/>
+    <!-- parotid space -->
+    <path d="M48 214 L132 212 L140 262 L82 286 L46 250 Z" fill="#f7d76b" opacity=".55" stroke="#c9a52e" stroke-width="1"/>
+    <circle cx="104" cy="236" r="5" fill="var(--fig-vein)"/>
+    <!-- styloid process -->
+    <circle cx="140" cy="216" r="4" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+    <!-- carotid space: ICA, IJV, vagus -->
+    <ellipse cx="164" cy="234" rx="24" ry="16" fill="#e57fb0" opacity=".4" stroke="#c4528a" stroke-width="1"/>
+    <circle cx="174" cy="228" r="6" fill="var(--fig-artery)"/>
+    <circle cx="154" cy="238" r="8" fill="var(--fig-vein)"/>
+    <circle cx="166" cy="243" r="2.6" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".4"/>
+    <!-- longus capitis -->
+    <ellipse cx="210" cy="228" rx="13" ry="8" fill="var(--fig-muscle)" opacity=".55"/>
+    <!-- paraspinal muscles -->
+    <path d="M160 270 Q190 260 214 280 L214 340 Q170 340 150 310 Z" fill="var(--fig-muscle)" opacity=".4"/>
+  </g>
+  <use href="#nsa-half" transform="translate(460 0) scale(-1 1)"/>
+  <!-- pharynx: constrictor ring and airway -->
+  <ellipse cx="230" cy="170" rx="46" ry="32" fill="var(--fig-muscle)" opacity=".5" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <ellipse cx="230" cy="168" rx="28" ry="16" fill="#3b3226"/>
+  <!-- buccopharyngeal fascia -->
+  <ellipse cx="230" cy="170" rx="50" ry="36" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="3 2" stroke-width=".8"/>
+  <!-- retropharyngeal, alar fascia, danger, prevertebral fascia -->
+  <path d="M190 202 Q230 214 270 202 L272 209 Q230 221 188 209 Z" fill="#5fb3ff" opacity=".85"/>
+  <path d="M188 209 Q230 221 272 209 L274 215 Q230 227 186 215 Z" fill="#e0503c" opacity=".85"/>
+  <path d="M184 216 Q230 228 276 216 L280 282 Q230 296 180 282 Z" fill="#9b7be0" opacity=".3" stroke="#7d5cc4" stroke-width="1"/>
+  <!-- vertebral body, cord -->
+  <ellipse cx="230" cy="252" rx="26" ry="20" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M206 266 Q200 300 214 312 L246 312 Q260 300 254 266" fill="none" stroke="var(--fig-stroke)" stroke-width="5" opacity=".5"/>
+  <circle cx="230" cy="292" r="11" fill="#3b3226"/>
+  <circle cx="230" cy="292" r="6" fill="#e8d9b0"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="6" y="100">Masticator space</text>
+    <text x="6" y="112">(masseter, ramus, pterygoids, V3)</text>
+    <text x="6" y="300">Parotid space</text>
+    <text x="6" y="312">(retromandibular v., VII)</text>
+    <text x="300" y="316" text-anchor="start">Carotid space</text>
+    <text x="300" y="328" text-anchor="start">(ICA, IJV, X)</text>
+    <text x="6" y="156" font-weight="600">Parapharyngeal</text>
+    <text x="6" y="168" font-weight="600">space (fat)</text>
+    <text x="300" y="104" text-anchor="start">Peritonsillar space</text>
+    <text x="300" y="196" text-anchor="start">Pharynx · buccopharyngeal</text>
+    <text x="300" y="208" text-anchor="start">fascia (dashed)</text>
+    <text x="320" y="236">Retropharyngeal</text>
+    <text x="320" y="250">Danger</text>
+    <text x="320" y="264">Prevertebral</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".7" fill="none">
+    <line x1="60" y1="114" x2="70" y2="130"/>
+    <line x1="56" y1="302" x2="70" y2="270"/>
+    <line x1="298" y1="318" x2="290" y2="244"/>
+    <line x1="88" y1="164" x2="150" y2="176"/>
+    <line x1="306" y1="108" x2="276" y2="160"/>
+    <line x1="298" y1="198" x2="276" y2="186"/>
+    <line x1="318" y1="233" x2="264" y2="208"/>
+    <line x1="318" y1="247" x2="268" y2="214"/>
+    <line x1="318" y1="261" x2="272" y2="250"/>
+  </g>
+  <text x="6" y="374" class="fig-label small">Seen from below as on CT: anterior at the top, the patient's right on the image left.</text>
+  <text x="6" y="388" class="fig-label small">The styloid process (dot) divides the parapharyngeal space into pre- and post-styloid parts.</text>
+</svg>`,
+
+  neckSpacesSagittal: `
+<svg viewBox="0 0 540 490" role="img" aria-label="Midline sagittal view showing the retropharyngeal space ending at T1 to T2, the danger space reaching the diaphragm and the prevertebral space reaching the coccyx">
+  <!-- skull base -->
+  <path d="M40 30 L330 30 L360 50 L330 62 L250 52 L60 52 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- mandible, tongue, hyoid -->
+  <path d="M30 150 Q34 128 60 126 L72 126 L72 176 L44 184 Q30 176 30 150 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M74 120 Q110 70 200 84 Q236 96 236 140 Q220 170 160 172 L80 168 Z" fill="var(--fig-muscle)" opacity=".3" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <ellipse cx="150" cy="190" rx="14" ry="6" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- larynx and trachea -->
+  <path d="M168 200 L222 204 L222 460 L188 460 L188 286 Q166 260 168 200 Z" fill="#d9b8a8" opacity=".6" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- pharynx and oesophagus -->
+  <path d="M238 56 L268 56 L268 460 L238 460 Z" fill="var(--fig-muscle)" opacity=".45" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <path d="M236 56 Q228 120 236 196 L236 286" fill="none" stroke="#3b3226" stroke-width="2"/>
+  <!-- visceral (pretracheal) space between airway and oesophagus front -->
+  <path d="M222 286 L236 286 L236 460 L222 460 Z" fill="#6fcf97" opacity=".35"/>
+  <!-- retropharyngeal space: skull base to T1-T2 -->
+  <path d="M268 52 L276 52 L276 312 Q272 324 268 330 Z" fill="#5fb3ff" opacity=".9"/>
+  <!-- danger space: skull base to diaphragm -->
+  <path d="M276 52 L284 52 L284 452 L276 452 Z" fill="#e0503c" opacity=".85"/>
+  <path d="M280 450 L280 464" stroke="#e0503c" stroke-width="2"/>
+  <path d="M274 458 L280 468 L286 458 Z" fill="#e0503c"/>
+  <!-- prevertebral space: skull base to coccyx -->
+  <path d="M284 52 L298 52 L298 452 L284 452 Z" fill="#9b7be0" opacity=".45" stroke="#7d5cc4" stroke-width=".8"/>
+  <path d="M291 450 L291 464" stroke="#7d5cc4" stroke-width="2"/>
+  <path d="M285 458 L291 468 L297 458 Z" fill="#7d5cc4"/>
+  <!-- vertebral column -->
+  <g fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8">
+    <rect x="300" y="66" width="18" height="14" rx="3"/>
+    <path d="M300 86 L340 86 L340 120 L300 120 Z M314 66 L322 86 L310 86 Z"/>
+    <rect x="300" y="125" width="40" height="22" rx="3"/>
+    <rect x="300" y="152" width="40" height="22" rx="3"/>
+    <rect x="300" y="179" width="40" height="22" rx="3"/>
+    <rect x="300" y="206" width="40" height="22" rx="3"/>
+    <rect x="300" y="233" width="40" height="22" rx="3"/>
+    <rect x="300" y="260" width="40" height="22" rx="3"/>
+    <rect x="300" y="287" width="40" height="23" rx="3"/>
+    <rect x="300" y="315" width="40" height="23" rx="3"/>
+    <rect x="300" y="343" width="40" height="23" rx="3"/>
+    <rect x="300" y="371" width="40" height="23" rx="3"/>
+    <rect x="300" y="399" width="40" height="23" rx="3"/>
+    <rect x="300" y="427" width="40" height="23" rx="3"/>
+  </g>
+  <rect x="344" y="66" width="18" height="390" fill="#3b3226" opacity=".25"/>
+  <g class="fig-label small">
+    <text x="304" y="77">C1</text><text x="312" y="107">C2</text><text x="312" y="140">C3</text>
+    <text x="312" y="221">C6</text><text x="312" y="275">T1</text><text x="312" y="303">T2</text>
+    <text x="312" y="414">T6</text>
+  </g>
+  <!-- sternum -->
+  <path d="M120 300 L150 296 L156 460 L126 460 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="370" y="120">Retropharyngeal</text>
+    <text x="370" y="132">skull base → T1–T2</text>
+    <text x="370" y="168">Alar fascia</text>
+    <text x="370" y="200">Danger space</text>
+    <text x="370" y="212">skull base → diaphragm</text>
+    <text x="370" y="252">Prevertebral</text>
+    <text x="370" y="264">skull base → coccyx</text>
+    <text x="370" y="340">Alar fascia fuses</text>
+    <text x="370" y="352">with visceral fascia</text>
+    <text x="6" y="230">Hyoid</text>
+    <text x="6" y="276">Visceral space →</text>
+    <text x="6" y="288">anterior mediastinum</text>
+    <text x="160" y="482">Pharynx / oesophagus</text>
+    <text x="80" y="78">Tongue</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".7" fill="none">
+    <line x1="368" y1="124" x2="274" y2="124"/>
+    <line x1="368" y1="165" x2="277" y2="165"/>
+    <line x1="368" y1="204" x2="282" y2="204"/>
+    <line x1="368" y1="256" x2="292" y2="256"/>
+    <line x1="368" y1="344" x2="272" y2="326"/>
+    <line x1="40" y1="226" x2="136" y2="192"/>
+    <line x1="110" y1="282" x2="226" y2="300"/>
+  </g>
+  <text x="6" y="14" class="fig-label small">Midline sagittal, anterior on the left.</text>
+  <text x="380" y="420" class="fig-label small">Danger-space infection</text>
+  <text x="380" y="432" class="fig-label small">can reach the posterior</text>
+  <text x="380" y="444" class="fig-label small">mediastinum</text>
 </svg>`
 };

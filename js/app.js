@@ -14,6 +14,8 @@
     lymph: "#6fb36a",
     context: "#b9a48f",
     foramina: "#e8c14a",
+    spaces: "#5fb3ff",
+    fascia: "#b8b0d6",
     brain: "#c9a0b8",
     membrane: "#a79fcf",
     deep: "#7e9bb8"

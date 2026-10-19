@@ -324,6 +324,7 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 
 /* ---------- cross-sections ---------- */
 .sections { display: grid; gap: 12px; }
+.sections[hidden] { display: none; }
 .section-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 .seg button { border: 0; background: var(--surface-2); padding: 6px 12px; cursor: pointer; font-size: 13px; }

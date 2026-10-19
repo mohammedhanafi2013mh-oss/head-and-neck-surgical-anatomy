@@ -37,5 +37,10 @@ window.ANATOMY.catalog = [
     id: "skull_base",
     title: "Skull base",
     scripts: ["data/skull-base.js", "data/skull-base-meshes.js", "js/models/skull-base-model.js"]
+  },
+  {
+    id: "deep_neck",
+    title: "Deep neck spaces",
+    scripts: ["data/deep-neck.js", "data/deep-neck-meshes.js", "js/models/deep-neck-model.js"]
   }
 ];

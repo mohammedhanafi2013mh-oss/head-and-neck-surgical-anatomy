@@ -16,7 +16,9 @@
     vein: { color: 0x2d4a9e, roughness: 0.3, clearcoat: 0.7, clearcoatRoughness: 0.2 },
     nerve: { color: 0xf0d064, roughness: 0.4, clearcoat: 0.4, sheen: 0.5, sheenColor: 0xfff2c0 },
     node: { color: 0x86ad6a, roughness: 0.5, clearcoat: 0.3 },
-    cartilage: { color: 0xe7c3b4, roughness: 0.45, clearcoat: 0.3, sheen: 0.4, sheenColor: 0xffe2d6 }
+    cartilage: { color: 0xe7c3b4, roughness: 0.45, clearcoat: 0.3, sheen: 0.4, sheenColor: 0xffe2d6 },
+    // Fascial spaces: translucent volumes around their contents.
+    space: { color: 0x7fb8e6, roughness: 0.85, clearcoat: 0 }
   };
 
   const helpers = {
@@ -580,13 +582,12 @@
       const meshes = [];
       for (const s of this.structures.values()) if (s.root.visible) s.root.traverse((o) => o.isMesh && meshes.push(o));
       const hits = this.raycaster.intersectObjects(meshes, false);
-      // Prefer small structures (nerves, vessels) over sheets they sit on:
-      // take the first hit unless a nearby second hit is a non-sheet.
-      for (const hit of hits) {
-        const id = hit.object.userData.id;
-        const s = this.structures.get(id);
-        if (s.layer === "superficial" && hits.length > 1) continue;
-        return id;
+      // Prefer small structures (nerves, vessels) over the sheets and spaces
+      // around them: skip a sheet or space when something solid lies just behind it.
+      const sheet = (h) => ["superficial", "spaces", "fascia"].includes(this.structures.get(h.object.userData.id).layer);
+      for (let i = 0; i < hits.length; i++) {
+        if (sheet(hits[i]) && hits.slice(i + 1).some((h) => !sheet(h) && h.distance - hits[i].distance < 4)) continue;
+        return hits[i].object.userData.id;
       }
       return null;
     }

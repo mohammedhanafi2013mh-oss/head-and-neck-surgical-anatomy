@@ -551,6 +551,83 @@ REGIONS = {
                                          "jugular": ("spline_end", "Sigmoid sinus.r", 0), "neck": "end"}},
         },
     },
+    "deep_neck": {
+        # Midline, at the level of the hyoid and angle of the mandible.
+        "centre": (0.0, -0.012, 1.50),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone and cartilage ----
+            "mandible": ["Mandible"],
+            "skull_base": ["Sphenoid bone", "Temporal bone.l", "Temporal bone.r", "Occipital bone"],
+            "hyoid": ["Hyoid bone"],
+            "larynx": ["Thyroid cartilage", "Cricoid cartilage", "Epiglottis"],
+            "vertebrae": ["Atlas (C1)", "Axis (C2)", "Vertebra C3", "Vertebra C4", "Vertebra C5", "Vertebra C6", "Vertebra C7"],
+            # ---- fascia ----
+            "investing_fascia": ["Superficial investing cervical fascia.l", "Superficial investing cervical fascia.r"],
+            # ---- muscles ----
+            "constrictors": ["Superior pharyngeal constrictor.l", "Superior pharyngeal constrictor.r",
+                             "Middle pharyngeal constrictor.l", "Middle pharyngeal constrictor.r",
+                             "Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r"],
+            "longus": ["Longus colli muscle.l", "Longus colli muscle.r", "Longus capitis muscle.l", "Longus capitis muscle.r"],
+            "pterygoids": ["Medial pterygoid muscle.l", "Medial pterygoid muscle.r",
+                           "Inferior head of lateral pterygoid muscle.l", "Inferior head of lateral pterygoid muscle.r",
+                           "Superior head of lateral pterygoid muscle.l", "Superior head of lateral pterygoid muscle.r"],
+            "masseter": ["Superficial part of masseter.l", "Superficial part of masseter.r", "Deep part of masseter.l", "Deep part of masseter.r"],
+            "styloid_muscles": ["Stylopharyngeus muscle.l", "Stylopharyngeus muscle.r", "Stylohyoid muscle.l", "Stylohyoid muscle.r"],
+            "digastric": ["Posterior belly of digastric muscle.l", "Posterior belly of digastric muscle.r",
+                          "Anterior belly of digastric muscle.l", "Anterior belly of digastric muscle.r",
+                          "Intermediate tendon of digastric muscle.l", "Intermediate tendon of digastric muscle.r"],
+            "mylohyoid": ["Mylohyoid muscle.l", "Mylohyoid muscle.r"],
+            "scm": ["Sternocleidomastoid muscle.l", "Sternocleidomastoid muscle.r"],
+            # ---- viscera and glands ----
+            "pharynx": ["Nasopharynx", "Oropharynx", "Laryngopharynx", "Soft palate"],
+            "oesophagus_trachea": ["Oesophagus", "Trachea"],
+            "tonsils": ["Palatine tonsil.l", "Palatine tonsil.r"],
+            "parotid": ["Parotid gland.l", "Parotid gland.r"],
+            "smg": ["Submandibular gland.l", "Submandibular gland.r"],
+            "sublingual": ["Sublingual gland.l", "Sublingual gland.r"],
+            "thyroid": ["Thyroid gland"],
+            # ---- vessels and nodes ----
+            "carotids": ["Left common carotid artery", "Right common carotid artery", "Internal carotid artery.l",
+                         "Internal carotid artery.r", "External carotid artery.l", "External carotid artery.r"],
+            "rp_nodes": ["Retropharyngeal nodes.l", "Retropharyngeal nodes.r"],
+            "nodes_ii": ["Jugulodigastric node.l", "Jugulodigastric node.r", "Lateral superior jugular node.l", "Lateral superior jugular node.r"],
+        },
+        "curve_scale": {"carotids": 1.0},
+        "bones": {"mandible", "skull_base", "hyoid", "larynx", "vertebrae"},
+        "clip": {"Occipital bone": (0, 1.60), "Oesophagus": (1.40, 9), "Trachea": (1.40, 9),
+                 "Left common carotid artery": (1.40, 9), "Right common carotid artery": (1.40, 9),
+                 "Internal carotid artery.l": (0, 1.585), "Internal carotid artery.r": (0, 1.585),
+                 "Superficial investing cervical fascia.l": (1.40, 9), "Superficial investing cervical fascia.r": (1.40, 9),
+                 "Sternocleidomastoid muscle.l": (1.40, 9), "Sternocleidomastoid muscle.r": (1.40, 9),
+                 "Longus colli muscle.l": (1.40, 9), "Longus colli muscle.r": (1.40, 9)},
+        # The internal jugular veins and vagus nerves as redrawn in the carotid region (Z-Anatomy puts them medial to the carotids).
+        "drawn": {"ijv": 0.0055, "vagus": 0.0012},
+        # Fascial spaces (both sides unless noted). See build_space().
+        "spaces": {
+            "s_parapharyngeal": {"type": "pps"},
+            "s_retropharyngeal": {"type": "rp", "part": "retro"},
+            "s_danger": {"type": "rp", "part": "danger"},
+            "s_prevertebral": {"type": "loft", "objects": ["Longus colli muscle.l", "Longus colli muscle.r",
+                                                            "Longus capitis muscle.l", "Longus capitis muscle.r"],
+                               "levels": (1.40, 1.566, 0.006), "margin": 0.0012},
+            "s_carotid": {"type": "loft", "objects": ["Internal carotid artery.r", "Right common carotid artery", "ijv", "vagus"],
+                          "side": -1, "mirror": True, "levels": (1.40, 1.572, 0.006), "margin": 0.002},
+            "s_visceral": {"type": "loft", "objects": ["Thyroid cartilage", "Cricoid cartilage", "Trachea", "Oesophagus",
+                                                        "Thyroid gland", "Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r"],
+                           "levels": (1.40, 1.496, 0.006), "margin": 0.0015},
+            "s_masticator": {"type": "hull", "objects": ["Superficial part of masseter.r", "Deep part of masseter.r", "Medial pterygoid muscle.r",
+                                                          "Inferior head of lateral pterygoid muscle.r", "Superior head of lateral pterygoid muscle.r"],
+                             "inflate": 0.0015, "mirror": True},
+            "s_parotid": {"type": "hull", "objects": ["Parotid gland.r", "Retromandibular vein.r"], "inflate": 0.002, "mirror": True},
+            "s_submandibular": {"type": "hull", "objects": ["Submandibular gland.r", "Submandibular nodes.r",
+                                                             "Intermediate tendon of digastric muscle.r"], "inflate": 0.002, "mirror": True},
+            "s_sublingual": {"type": "hull", "objects": ["Sublingual gland.r", "Submandibular duct.r"], "inflate": 0.002, "mirror": True},
+            "s_submental": {"type": "hull", "objects": ["Anterior belly of digastric muscle.r", "Anterior belly of digastric muscle.l"],
+                            "inflate": 0.001},
+            "s_peritonsillar": {"type": "hull", "objects": ["Palatine tonsil.r"], "inflate": 0.002, "mirror": True},
+        },
+    },
 }
 
 cfg = REGIONS[REGION]
@@ -904,12 +981,18 @@ CAROTID_VAGUS = [(-0.0273, 0.0080, 1.570), (-0.0300, 0.0060, 1.556), (-0.0330, 0
                  (-0.0240, -0.0080, 1.435)]
 
 
+def mirror_x(points):
+    return [Vector((-p.x, p.y, p.z)) for p in points]
+
+
 def drawn_ijv(L):
-    return [Vector(p) for p in CAROTID_IJV]
+    right = [Vector(p) for p in CAROTID_IJV]
+    return [right, mirror_x(right)] if 1 in SIDES else right
 
 
 def drawn_vagus(L):
-    return [Vector(p) for p in CAROTID_VAGUS]
+    right = [Vector(p) for p in CAROTID_VAGUS]
+    return [right, mirror_x(right)] if 1 in SIDES else right
 
 
 def drawn_hypoglossal(L):
@@ -1144,6 +1227,190 @@ for sid, radius in cfg.get("drawn", {}).items():
         clip(bm, *cfg["clip"][sid])
     add(sid, f"{sid} (drawn)", *to_arrays(bm))
     bm.free()
+
+
+# ---------- fascial spaces (schematic volumes) ----------
+
+EVAL_CACHE = {}
+
+
+def eval_verts(name):
+    if name not in EVAL_CACHE:
+        o = D[name]
+        me = o.evaluated_get(deps).to_mesh()
+        EVAL_CACHE[name] = [o.matrix_world @ v.co for v in me.vertices]
+    return EVAL_CACHE[name]
+
+
+def slab(names, z, half=0.0025, side=None):
+    return [v for n in names for v in eval_verts(n) if abs(v.z - z) < half and (side is None or v.x * side > 0)]
+
+
+def hull2d(points):
+    pts = sorted(set((round(p[0], 5), round(p[1], 5)) for p in points))
+    if len(pts) < 3:
+        return pts
+    cross = lambda o, a, b: (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lower, upper = [], []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    return lower[:-1] + upper[:-1]
+
+
+def resample(poly, n=24, grow=0.0):
+    """A closed polygon resampled to n points evenly by arc length, pushed out from its centre by grow."""
+    cx = sum(p[0] for p in poly) / len(poly)
+    cy = sum(p[1] for p in poly) / len(poly)
+    if grow:
+        poly = [(cx + (x - cx) * (1 + grow / max(1e-6, ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5)),
+                 cy + (y - cy) * (1 + grow / max(1e-6, ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5))) for x, y in poly]
+    segs = list(zip(poly, poly[1:] + poly[:1]))
+    lens = [((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5 for a, b in segs]
+    total = sum(lens) or 1
+    out, k, acc = [], 0, 0.0
+    for i in range(n):
+        t = total * i / n
+        while acc + lens[k] < t and k < len(lens) - 1:
+            acc += lens[k]
+            k += 1
+        (ax, ay), (bx, by) = segs[k]
+        f = (t - acc) / (lens[k] or 1)
+        out.append((ax + (bx - ax) * f, ay + (by - ay) * f))
+    # start each ring at its most anterior point so neighbouring rings line up
+    start = min(range(n), key=lambda i: out[i][1])
+    return out[start:] + out[:start]
+
+
+def loft(rings):
+    """Closed tube through rings of (x, y, z) tuples, all the same length, capped at both ends."""
+    bm = bmesh.new()
+    vs = [[bm.verts.new(p) for p in ring] for ring in rings]
+    n = len(rings[0])
+    for a, b in zip(vs, vs[1:]):
+        for i in range(n):
+            bm.faces.new((a[i], a[(i + 1) % n], b[(i + 1) % n], b[i]))
+    bm.faces.new(vs[0][::-1])
+    bm.faces.new(vs[-1])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return bm
+
+
+def hull3d(points, inflate):
+    bm = bmesh.new()
+    for p in points:
+        bm.verts.new(p)
+    res = bmesh.ops.convex_hull(bm, input=bm.verts)
+    loose = {g for g in res["geom_interior"] + res["geom_unused"] if isinstance(g, bmesh.types.BMVert)}
+    bmesh.ops.delete(bm, geom=list(loose), context="VERTS")
+    c = sum((v.co for v in bm.verts), Vector()) / len(bm.verts)
+    for v in bm.verts:
+        d = v.co - c
+        v.co = c + d * (1 + inflate / max(d.length, 1e-6))
+    return bm
+
+
+def frange(lo, hi, step):
+    out, z = [], lo
+    while z <= hi + 1e-9:
+        out.append(round(z, 5))
+        z += step
+    return out
+
+
+# Parapharyngeal (prestyloid) space, right side: corners (x, y in mm) at each
+# height, from the skull base to the apex at the greater horn of the hyoid.
+# Medial: pharyngobasilar fascia and constrictor; lateral: medial pterygoid and
+# the deep lobe of the parotid; anterior: pterygomandibular raphe; posterior:
+# the styloid diaphragm in front of the carotid space.
+PPS_CORNERS = [
+    (1.578, [(-10, -27), (-16, -26), (-26, -10), (-14, -8)]),
+    (1.566, [(-11, -29), (-16.5, -28), (-28, -9), (-15, -7)]),
+    (1.554, [(-12.5, -31), (-18.5, -30), (-30, -8), (-17, -6)]),
+    (1.542, [(-14, -30), (-22, -29), (-31, -9), (-19, -6.5)]),
+    (1.530, [(-16, -25), (-27, -22), (-31, -10), (-21, -7)]),
+    (1.519, [(-18, -18), (-25, -17), (-28.5, -9), (-21, -7.5)]),
+    (1.511, [(-20.5, -11), (-24.5, -10.5), (-26, -6.5), (-21.5, -5.5)]),
+]
+
+
+def pps_rings(side):
+    rings = []
+    for z, corners in PPS_CORNERS:
+        poly = [(side * -x / 1000, y / 1000) for x, y in corners]
+        rings.append([(x, y, z) for x, y in resample(poly if side < 0 else poly[::-1], 24)])
+    return rings
+
+
+def rp_rings(part):
+    """Retropharyngeal and danger spaces: thin layers where the back of the
+    pharynx and oesophagus meets the prevertebral muscles (in life the
+    retropharyngeal space lies in front of the alar fascia, the danger space
+    behind it), reaching laterally to the carotid sheaths."""
+    phar = ["Superior pharyngeal constrictor.l", "Superior pharyngeal constrictor.r", "Middle pharyngeal constrictor.l",
+            "Middle pharyngeal constrictor.r", "Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r",
+            "Nasopharynx", "Oropharynx", "Laryngopharynx", "Oesophagus"]
+    lon = ["Longus colli muscle.l", "Longus colli muscle.r", "Longus capitis muscle.l", "Longus capitis muscle.r"]
+    rings, last = [], None
+    for z in frange(1.40, 1.575, 0.005):
+        P = [v for v in slab(phar, z) if abs(v.x) < 0.012]
+        Lg = slab(lon, z)
+        if P and Lg:
+            yi = (max(v.y for v in P) + min(v.y for v in Lg)) / 2
+            I = slab(["Internal carotid artery.r", "Right common carotid artery"], z, 0.003)
+            w = min(0.022, max(0.012, (min(-v.x for v in I) - 0.007) if I else 0.02))
+            last = (yi, w)
+        if last is None:
+            continue
+        yi, w = last
+        y0, y1 = (yi - 0.0032, yi) if part == "retro" else (yi + 0.0004, yi + 0.0026)
+        poly = [(-w, y0), (w, y0), (w, y1), (-w, y1)]
+        rings.append([(x, y, z) for x, y in resample(poly, 28)])
+    return rings
+
+
+def build_space(sid, spec):
+    """Mesh object(s) for a fascial space (marked as drawn in the app)."""
+    pieces = []
+    if spec["type"] == "hull":
+        pts = [v for n in spec["objects"] for v in eval_verts(n)]
+        pieces.append(hull3d(pts, spec["inflate"]))
+        if spec.get("mirror"):
+            pieces.append(hull3d(mirror_x(pts), spec["inflate"]))
+    elif spec["type"] == "loft":
+        side = spec.get("side")
+        rings = []
+        for z in frange(*spec["levels"]):
+            pts = slab(spec["objects"], z, 0.003, side)
+            if len(pts) >= 3:
+                poly = hull2d([(p.x, p.y) for p in pts])
+                if len(poly) >= 3:
+                    rings.append([(x, y, z) for x, y in resample(poly, 28, spec["margin"])])
+        pieces.append(loft(rings))
+        if spec.get("mirror"):
+            pieces.append(loft([[(-x, y, z) for x, y, z in ring[::-1]] for ring in rings]))
+    elif spec["type"] == "pps":
+        pieces += [loft(pps_rings(-1)), loft(pps_rings(1))]
+    elif spec["type"] == "rp":
+        pieces.append(loft(rp_rings(spec["part"])))
+    for k, bm in enumerate(pieces):
+        me = bpy.data.meshes.new(f"{sid}.{k}")
+        bm.to_mesh(me)
+        bm.free()
+        obj = bpy.data.objects.new(f"{sid}.{k}", me)
+        bpy.context.scene.collection.objects.link(obj)
+        out = world_bmesh(obj, sid)
+        add(sid, f"{sid} (drawn) {k}", *to_arrays(out))
+        out.free()
+
+
+for sid, spec in cfg.get("spaces", {}).items():
+    build_space(sid, spec)
 
 lo = Vector((min(v[i] for p in parts for v in p[2]) for i in range(3)))
 hi = Vector((max(v[i] for p in parts for v in p[2]) for i in range(3)))

@@ -12,13 +12,13 @@
     ct: {
       background: 0x000000,
       body: 0x272727,
-      kinds: { bone: 1, cartilage: 0.78, muscle: 0.53, gland: 0.5, duct: 0.36, artery: 1, vein: 0.86, nerve: 0.46, node: 0.5 },
+      kinds: { bone: 1, cartilage: 0.78, muscle: 0.53, gland: 0.5, duct: 0.36, artery: 1, vein: 0.86, nerve: 0.46, node: 0.5, space: 0.3 },
       ids: { thyroid: 0.7, parotid: 0.42, larynx: 0.8, auricle: 0.6 }
     },
     t1: {
       background: 0x000000,
       body: 0xd8d8d8,
-      kinds: { bone: 0.55, cartilage: 0.22, muscle: 0.3, gland: 0.48, duct: 0.14, artery: 0.03, vein: 0.1, nerve: 0.36, node: 0.38 },
+      kinds: { bone: 0.55, cartilage: 0.22, muscle: 0.3, gland: 0.48, duct: 0.14, artery: 0.03, vein: 0.1, nerve: 0.36, node: 0.38, space: 0.72 },
       ids: { parotid: 0.7, thyroid: 0.42, larynx: 0.25, auricle: 0.3 }
     },
     anatomy: { background: 0x15130f, body: 0xe6c9a2 }
@@ -36,7 +36,8 @@
   };
 
   // Small structures draw last so they sit on top of what they run through.
-  const ORDER = { bone: 1, cartilage: 1, muscle: 2, gland: 3, node: 4, vein: 5, artery: 6, nerve: 7, duct: 8 };
+  // Spaces draw first, so their contents are capped on top of them.
+  const ORDER = { space: 0, bone: 1, cartilage: 1, muscle: 2, gland: 3, node: 4, vein: 5, artery: 6, nerve: 7, duct: 8 };
 
   // Camera placement per plane, following radiology convention.
   // keep: the side of the plane that stays (the camera looks from the other side).
@@ -127,7 +128,7 @@
           list.push({ id, kind, layer: s.layer, source: o });
         });
       }
-      list.sort((a, b) => (ORDER[a.kind] || 2) - (ORDER[b.kind] || 2));
+      list.sort((a, b) => (ORDER[a.kind] ?? 2) - (ORDER[b.kind] ?? 2));
       const clip = [this.plane];
       list.forEach((e, i) => {
         const stencil = (side, op) => new THREE.MeshBasicMaterial({
@@ -448,7 +449,7 @@
       if (!this.showLabels || this.mode === "mri" || !this.cutCentres || !this.active) return;
       const W = (this.mode === "ct" ? this.realCanvas : this.canvas).clientWidth;
       const v = this.viewer;
-      const rank = { artery: 0, nerve: 0, vein: 1, gland: 2, duct: 2, muscle: 3, cartilage: 3, node: 4, bone: 4 };
+      const rank = { space: -1, artery: 0, nerve: 0, vein: 1, gland: 2, duct: 2, muscle: 3, cartilage: 3, node: 4, bone: 4 };
       const kind = (id) => (this.model.look[id] || {}).kind || "muscle";
       const items = [...this.cutCentres]
         .map(([id, c]) => ({ id, c, sel: id === v.selectedId || v.focusIds.has(id) }))

@@ -11,6 +11,7 @@ Modules so far:
 - **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
 - **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
 - **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
+- **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
@@ -118,6 +119,20 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: an original diagram of the internal skull base with the foramina and their contents. **Quiz**: six questions.
 - **References**: Rhoton, Bouthillier 1996, Cappabianca 2004, Hadad 2006, Fisch 1978, Gray's and Scott-Brown's.
 
+## What's in the deep neck spaces module
+
+- **3D model**: twelve spaces drawn as coloured, translucent volumes, built for this app from the Z-Anatomy structures each space contains or lies between (Z-Anatomy has no fascial spaces).
+  - Suprahyoid: parapharyngeal, masticator, parotid, peritonsillar, submandibular, sublingual and submental.
+  - Whole length of the neck: retropharyngeal, danger, prevertebral, carotid and visceral.
+  - The parapharyngeal space is drawn from anatomical corner points. The constrictors in the source model flare too far laterally for a measured outline.
+  - The retropharyngeal and danger spaces are thin layers at the pharynx–longus interface, where the source model has the two touching.
+  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, and the retropharyngeal and level II nodes.
+- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae.
+- **CT / MRI**: the spaces are labelled on the simulated slices, which is how they are usually seen in practice.
+- **Surgery**: an 8-step transcervical drainage of a parapharyngeal and submandibular abscess.
+- **Figures**: original diagrams of an axial section at the oropharynx and a midline sagittal view of how far the retropharyngeal, danger and prevertebral spaces extend. **Quiz**: six questions.
+- **References**: Grodinsky & Holyoke 1938, Harnsberger & Osborn 1991, Vieira 2008, Lemierre 1936, Estrera 1983, Gray's, Scott-Brown's and Shah.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -193,6 +208,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-mes
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-base-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck-meshes.js
 ```
 
 ## Licensing and credits
@@ -206,6 +222,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, deep neck spaces, infratemporal fossa, temporal bone
+- More regions: posterior triangle, infratemporal fossa, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores
