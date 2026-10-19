@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Head & Neck Surgical Anatomy</title>
-<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular region, parotid and facial nerve, and lateral neck, with CT and MRI-style cross-sections.">
+<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular, parotid, lateral neck, thyroid, larynx, carotid triangle and skull base, with CT and MRI cross-sections.">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -34,7 +34,14 @@
         <button data-view="inferior" type="button">Inferior</button>
         <button data-view="anterior" type="button">Anterior</button>
         <button data-view="reset" type="button">Reset</button>
-        <button id="labels-toggle" type="button" aria-pressed="false">Labels</button>
+        <label class="labels-mode" title="Name tags on the 3D model">
+          <span class="visually-hidden">Labels</span>
+          <select id="labels-mode">
+            <option value="off">No labels</option>
+            <option value="some" selected>Some labels</option>
+            <option value="all">All labels</option>
+          </select>
+        </label>
       </div>
       <p class="viewer-hint">Drag to rotate · scroll or pinch to zoom · shift-drag or right-drag to pan · tap a structure</p>
       <p class="viewer-badge">Z-Anatomy · CC BY-SA</p>
@@ -82,6 +89,7 @@
       <span class="ori ori-bottom"></span>
       <span class="ori ori-left"></span>
       <span class="ori ori-right"></span>
+      <div class="section-marks" aria-hidden="true"></div>
       <div class="section-tip" hidden></div>
       <div class="scale"><span class="scale-bar"></span>1 cm</div>
       <span class="section-caption"></span>
@@ -91,7 +99,8 @@
       <input id="section-level" type="range" min="0" max="1000" value="500">
       <span class="level-hi">Superior</span>
     </label>
-    <label class="section-check section-check-cut"><input id="section-cut" type="checkbox" checked> Cut the 3D model at this level</label>
+    <label class="section-check section-check-labels"><input id="section-labels" type="checkbox" checked> Label structures on the slice</label>
+    <label class="section-check section-check-cut"><input id="section-cut" type="checkbox"> Cut away the 3D model above this level (otherwise the slice is shown as an outline on the whole model)</label>
     <label class="section-check section-check-outlines" hidden><input id="section-outlines" type="checkbox"> Overlay all model outlines (the selected structure is always outlined)</label>
     <p id="section-selected" class="section-selected"></p>
     <p class="section-note">Simulated from the 3D model, not patient imaging. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts. Hover over a structure to name it; click or tap to select it.</p>

@@ -27,5 +27,25 @@ window.ANATOMY.catalog = [
     id: "larynx",
     title: "Larynx",
     scripts: ["data/larynx.js", "data/larynx-meshes.js", "js/models/larynx-model.js"]
+  },
+  {
+    id: "carotid",
+    title: "Carotid triangle",
+    scripts: ["data/carotid.js", "data/carotid-meshes.js", "js/models/carotid-model.js"]
+  },
+  {
+    id: "skull_base",
+    title: "Skull base",
+    scripts: ["data/skull-base.js", "data/skull-base-meshes.js", "js/models/skull-base-model.js"]
+  },
+  {
+    id: "deep_neck",
+    title: "Deep neck spaces",
+    scripts: ["data/deep-neck.js", "data/deep-neck-meshes.js", "js/models/deep-neck-model.js"]
+  },
+  {
+    id: "infratemporal",
+    title: "Infratemporal fossa",
+    scripts: ["data/infratemporal.js", "data/infratemporal-meshes.js", "js/models/infratemporal-model.js"]
   }
 ];

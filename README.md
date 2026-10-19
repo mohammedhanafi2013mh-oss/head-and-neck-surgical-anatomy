@@ -9,6 +9,17 @@ Modules so far:
 - **Lateral neck** (neck dissection levels I–VI), left side
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
 - **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
+- **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
+- **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
+- **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
+- **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
+
+Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+- **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
+- **Parotid:** the facial nerve.
+- **Carotid triangle:** the external carotid and its branches.
+- **Thyroid:** both recurrent laryngeal nerves.
+- **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -25,7 +36,7 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **3D model**: real anatomical meshes of the right submandibular region from [Z-Anatomy](https://www.z-anatomy.com), with 29 selectable structures. They include the mandible with molars, hyoid, digastric, stylohyoid, mylohyoid, hyoglossus, the submandibular gland and duct, the facial, submental and external carotid arteries, the facial, retromandibular and internal jugular veins, the marginal mandibular, lingual, hypoglossal and mylohyoid nerves, level IA/IB nodes and platysma. A "Surrounding" layer adds the parotid, sublingual gland, masseter, medial pterygoid, genioglossus, geniohyoid and sternocleidomastoid.
   - Rendering uses environment lighting, film-style tone mapping and procedural surface detail: muscle fibres along each muscle's line of pull, gland lobules and bone grain.
   - Drag to rotate, scroll or pinch to zoom, shift-drag or right-drag to pan.
-  - Tap a structure to open its notes. Toggle layers (bone, muscle, vessels, nerves…) and labels.
+  - Tap a structure to open its notes. Toggle layers (bone, muscle, vessels, nerves…). The labels menu shows no labels, some (pins and the selected structure) or all structure labels; the choice is remembered.
 - **Structures**: for each one, a summary, relations, blood and nerve supply, surgical relevance, danger points, variations and references. The lingual artery and submandibular ganglion have notes but aren't in the 3D model, because Z-Anatomy doesn't include them.
 - **Surgery**: an 8-step transcervical submandibular gland excision. Each step sets the model to the layers you would see at that point and highlights the key structures. Complications are listed at the end.
 - **Figures**: original labelled diagrams of the triangle's boundaries and a coronal section.
@@ -76,20 +87,90 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: original diagrams of the larynx seen at laryngoscopy and a coronal section of the subsites. **Quiz**: six questions.
 - **References**: Gray's, Scott-Brown's, Shah, Hirano 1974, Tucker & Smith 1962, Difficult Airway Society 2015, the European Laryngological Society cordectomy classification (Remacle 2000), Singer & Blom 1980, Paydarfar 2006, Cernea 1992 and AJCC 8th edition.
 
+## What's in the carotid triangle module
+
+- **3D model**: the right carotid triangle from Z-Anatomy, with a translucent marker of the triangle itself. It includes:
+  - the common, internal and external carotids, with the facial, occipital and ascending pharyngeal arteries
+  - the facial, lingual, superior thyroid, retromandibular and external jugular veins
+  - the hypoglossal, accessory and glossopharyngeal nerves and the sympathetic trunk
+  - sternocleidomastoid, digastric, stylohyoid, the strap muscles, hyoglossus, mylohyoid and the constrictors
+  - the mandible, temporal bone, hyoid and larynx, and level II and III nodes; the glands and spine are an optional layer
+- **Drawn structures**: Z-Anatomy has no lingual artery, ansa cervicalis, superior thyroid or superior laryngeal artery, or superior laryngeal nerve, so the exporter draws them.
+- **Redrawn structures**: at the right bifurcation Z-Anatomy places the internal jugular vein and vagus medial to the carotids, and the loop of the hypoglossal nerve medial to the external carotid. The exporter redraws these segments in their usual positions: the vein lateral, the vagus behind between artery and vein, and XII crossing superficial to both carotids under the occipital artery. The common facial vein is redrawn too. The notes for these structures say they were redrawn.
+- **Structures**: notes on every structure. The carotid sinus and carotid body have notes only, including Shamblin's groups for carotid body tumours.
+- **Surgery**: a 10-step carotid endarterectomy, from incision to the clamp and release order and patch closure, with complications.
+- **Figures**: an original diagram of the triangle's boundaries and contents. **Quiz**: six questions.
+- **References**: NASCET 1991, ECST 1998, Rothwell 2004, GALA 2008, ESVS 2023, Shamblin 1971, Rutherford's, Gray's and Shah.
+
+## What's in the skull base module
+
+- **3D model** from Z-Anatomy:
+  - Bones of both sides, with the vault removed: occipital, sphenoid, temporal, ethmoid and the orbital plates of the frontal bone. Optional layers add the facial skeleton, mandible, C1–C2 and the tentorium.
+  - The brainstem, optic chiasm and tracts, and the pituitary.
+  - Right-sided nerves: cranial nerves I–XII with V1–V3, the lingual, inferior alveolar and chorda tympani nerves.
+  - Right-sided arteries: the internal carotid and vertebral arteries, the basilar artery, the posterior, middle and anterior cerebral arteries and the cerebellar arteries, and the ophthalmic, middle meningeal and maxillary arteries.
+  - Right-sided veins: the cavernous, petrosal, transverse and sigmoid sinuses and the jugular bulb.
+  - "From above" and "From below" views; from above, anterior is at the top.
+- **Foramina layer**: pins on every foramen and canal. Where Z-Anatomy has a label anchor (foramen magnum, ovale, rotundum, spinosum, optic, hypoglossal, condylar and pterygoid canals) its point is used. The rest are found where the nerve or vessel passing through them meets the bone:
+  - jugular foramen and cribriform plate: the nearest point to the bone
+  - carotid canal and internal acoustic meatus: the first point inside the bone
+  - foramen lacerum and stylomastoid foramen: the last point inside the bone
+  - superior orbital fissure: the nearest point to the sphenoid
+- **Structures**: notes on every structure and foramen, with what passes through each. Every nerve and the main vessels have a course with origin, foramina and branches.
+- **Surgery**: a 9-step endoscopic endonasal transsphenoidal approach to the pituitary, with complications.
+- **Figures**: an original diagram of the internal skull base with the foramina and their contents. **Quiz**: six questions.
+- **References**: Rhoton, Bouthillier 1996, Cappabianca 2004, Hadad 2006, Fisch 1978, Gray's and Scott-Brown's.
+
+## What's in the deep neck spaces module
+
+- **3D model**: twelve spaces drawn as coloured, translucent volumes, built for this app from the Z-Anatomy structures each space contains or lies between (Z-Anatomy has no fascial spaces).
+  - Suprahyoid: parapharyngeal, masticator, parotid, peritonsillar, submandibular, sublingual and submental.
+  - Whole length of the neck: retropharyngeal, danger, prevertebral, carotid and visceral.
+  - The parapharyngeal space is drawn from anatomical corner points. The constrictors in the source model flare too far laterally for a measured outline.
+  - The retropharyngeal and danger spaces are thin layers at the pharynx–longus interface, where the source model has the two touching.
+  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, and the retropharyngeal and level II nodes.
+- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae.
+- **CT / MRI**: the spaces are labelled on the simulated slices, which is how they are usually seen in practice.
+- **Surgery**: an 8-step transcervical drainage of a parapharyngeal and submandibular abscess.
+- **Figures**: original diagrams of an axial section at the oropharynx and a midline sagittal view of how far the retropharyngeal, danger and prevertebral spaces extend. **Quiz**: six questions.
+- **References**: Grodinsky & Holyoke 1938, Harnsberger & Osborn 1991, Vieira 2008, Lemierre 1936, Estrera 1983, Gray's, Scott-Brown's and Shah.
+
+## What's in the infratemporal fossa module
+
+- **3D model** (right side) from Z-Anatomy:
+  - Bones: the mandible, maxilla and palatine bone, zygomatic, sphenoid, temporal and the lower parietal bone. The mandible is translucent so the fossa shows through the ramus.
+  - The TMJ capsule and disc, and the sphenomandibular, stylomandibular and pterygospinous ligaments.
+  - Muscles: both heads of lateral pterygoid and medial pterygoid. Masseter, temporalis and the parotid are an optional layer.
+  - Nerves: V3 with its divisions, the inferior alveolar, lingual, buccal and mylohyoid nerves, the chorda tympani, V2 and the facial nerve.
+  - Arteries: the maxillary artery and its branches (middle and accessory meningeal, inferior alveolar, deep temporal, buccal, posterior superior alveolar, descending palatine, sphenopalatine, artery of the pterygoid canal), the external and internal carotids and the superficial temporal artery.
+  - Veins: the maxillary and retromandibular veins and the internal jugular vein. Z-Anatomy has no model of the pterygoid plexus.
+  - Drawn for this app (Z-Anatomy lacks them): the auriculotemporal nerve with its two roots around the middle meningeal artery, the masseteric, deep temporal and medial pterygoid nerves, and the otic ganglion.
+  - A translucent outline of the fossa (optional layer).
+- **Foramina & landmarks layer**: pins on foramen ovale and spinosum, the spine of the sphenoid, the lateral pterygoid plate, the mandibular foramen, the mandibular notch, the pterygomaxillary fissure and the stylomastoid foramen.
+- **Structures**: notes on every structure, with courses for the maxillary and middle meningeal arteries and the main V3 branches. Includes the inferior alveolar and posterior superior alveolar blocks and third molar surgery.
+- **Surgery**: a 10-step lateral (preauricular–subtemporal) approach to the infratemporal fossa, with complications.
+- **Figures**: original diagrams of the fossa with the ramus removed and of the three parts of the maxillary artery. **Quiz**: six questions.
+- **References**: Fisch 1978, Sekhar 1987, Pogrel & Thamby 2000, Malamed, Frey 1923, Rhoton, Gray's, Scott-Brown's and Shah.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
 
 - The cut surface of every structure is filled by stencil capping and shaded as **CT** (soft-tissue window, contrast-filled vessels), **T1 MRI** (bright fat, dark flow voids) or **anatomy colours**.
 - Orientation follows radiology convention: axial viewed from the feet with the patient's right on the image left; R/L/A/P/S/I markers and a 1 cm scale bar are shown.
-- Hover names a structure; clicking selects it in the 3D view. The 3D model is cut at the same level, with the plane outlined.
+- Structures on the slice are labelled, with vessels and nerves first. Hover names any structure; clicking selects it in the 3D view.
+- The 3D model stays whole, and the slice is drawn on it as a moving outline (the cursor). Ticking "Cut away the 3D model" removes everything above the slice instead.
 - These are **simulations from the model, not patient imaging**. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts (convex hull grown by 6 mm).
 
 ### Real CT and MRI (Visible Human)
 
 The same tab has **Real CT** and **Real MRI** modes showing scans of the Visible Human male from the U.S. National Library of Medicine. This is the body BodyParts3D, and so Z-Anatomy, was built from.
 
-- **Real CT** (post-mortem, no contrast; axial, plus coronal and sagittal reconstructions; soft-tissue and bone windows) is **matched to the model slice**. `tools/export_vhp_scans.py` registers the model's skeleton to the CT skeleton by ICP: median bone surface distance 1.5 mm, 90th percentile 5.9 mm, 3° rotation. The app picks the CT slice at the model slice's level and frames it the same way. Hovering names structures and the selected structure is outlined, both from the registered model, so treat them as approximate for soft tissue.
+- **Real CT** (post-mortem, no contrast; axial, plus coronal and sagittal reconstructions; soft-tissue and bone windows) is **matched to the model slice**:
+  - **Global fit:** `tools/register_vhp_ct.py` registers the model's skeleton to the CT skeleton by ICP: median bone surface distance 1.5 mm, 90th percentile 5.9 mm, 3° rotation.
+  - **Per-region refinement:** `tools/refine_vhp_registration.py` re-fits each region on its own bones and keeps the result where it is clearly better. Thyroid: 2.9 → 1.7 mm. Larynx: 1.4 → 1.1 mm. The other regions were already about 1 mm.
+  - **Display:** the app picks the CT slice at the model slice's level and shows the whole body cross-section, framed from boxes recorded by `tools/add_ct_body_boxes.py`.
+  - **Labels, hover and outlines** come from the registered model, so treat them as approximate for soft tissue.
 - **Real MRI** (T1 and T2, axial and coronal) is a separate scan that isn't registered to the model; browse it with the slider.
 - Data: NCI Imaging Data Commons collection `nlm_visible_human_project` (patient VHP-M), used under the National Library of Medicine terms and conditions (May 21, 2019). Credit: *Courtesy of the U.S. National Library of Medicine.*
 
@@ -102,6 +183,8 @@ pip install idc-index pydicom scipy pillow
 python tools/export_model_bones.py Z-Anatomy/Startup.blend model_bone_mm.npy      # needs bpy
 python tools/register_vhp_ct.py CT_SERIES_DIR model_bone_mm.npy WORK_DIR
 python tools/export_vhp_scans.py WORK_DIR MR_ROOT data/scans
+python tools/add_ct_body_boxes.py data/scans
+python tools/refine_vhp_registration.py WORK_DIR data/scans/vhp-scans.js data/*-meshes.js
 ```
 
 ## Project layout
@@ -142,6 +225,10 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend parotid data/parotid-mes
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/lateral-neck-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-base-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend infratemporal data/infratemporal-meshes.js
 ```
 
 ## Licensing and credits
@@ -155,6 +242,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: carotid triangle, posterior triangle, deep neck spaces, skull base
+- More regions: posterior triangle, pterygopalatine fossa, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

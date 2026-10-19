@@ -184,6 +184,11 @@ window.ANATOMY.regions.thyroid = {
       id: "rln_right",
       name: "Right recurrent laryngeal nerve",
       layer: "nerve",
+      course: [
+        { key: "loop", label: "Under the subclavian artery", text: "Leaves the vagus in front of the right subclavian artery and hooks under it." },
+        { key: "ita", label: "Crosses the inferior thyroid artery", text: "Near the lower lobe; in front of, behind or between the artery's branches." },
+        { key: "entry", label: "Enters the larynx", text: "Behind the cricothyroid joint, under the inferior constrictor, beside Berry's ligament." }
+      ],
       drawn: true,
       summary:
         "Leaves the vagus in front of the right subclavian artery, hooks under it, and climbs up and in behind the common carotid towards the tracheo-oesophageal groove. Its course in the lower neck is more oblique and lateral than the left nerve's.",
@@ -214,6 +219,11 @@ window.ANATOMY.regions.thyroid = {
       id: "rln_left",
       name: "Left recurrent laryngeal nerve",
       layer: "nerve",
+      course: [
+        { key: "loop", label: "Under the aortic arch", text: "Hooks under the arch beside the ligamentum arteriosum, then climbs in the tracheo-oesophageal groove." },
+        { key: "ita", label: "Crosses the inferior thyroid artery", text: "More often behind the artery on the left." },
+        { key: "entry", label: "Enters the larynx", text: "Behind the left cricothyroid joint, beside Berry's ligament." }
+      ],
       drawn: true,
       summary:
         "Leaves the vagus in the chest, hooks under the aortic arch beside the ligamentum arteriosum, and climbs almost vertically in the left tracheo-oesophageal groove.",
