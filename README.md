@@ -15,6 +15,7 @@ Modules so far:
 - **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
 - **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery), right side
 - **Orbit** (bony orbit, globe, extraocular muscles, orbital apex, nerves II–VI and V1, ophthalmic vessels, lacrimal apparatus), right side
+- **Nose & paranasal sinuses** (lateral nasal wall, ostiomeatal unit, frontal, ethmoid, maxillary and sphenoid sinuses and their drainage), right side
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
@@ -24,6 +25,7 @@ Selected nerves and vessels can be **traced**: open one in Structures and press 
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
+- **Nose & sinuses:** the drainage routes of the frontal, maxillary and sphenoid sinuses, and the anterior ethmoidal artery.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -187,6 +189,21 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: an original diagram of the orbital apex seen from the front. **Quiz**: six questions.
 - **References**: Rontal 1979, Tessier 1973, Kanski's, Rhoton, Gray's and Scott-Brown's.
 
+## What's in the nose & paranasal sinuses module
+
+- **3D model** (right side; septum, frontal and sphenoid sinuses midline) from Z-Anatomy:
+  - Translucent bones: frontal, ethmoid with the conchae, inferior concha, maxilla, sphenoid, vomer, nasal, lacrimal and palatine.
+  - The septal, upper and lower lateral cartilages.
+  - The frontal and sphenoid sinuses and the anterior, middle and posterior ethmoid cells.
+  - The nasolacrimal duct, the olfactory, optic and maxillary nerves, and the ethmoidal, sphenopalatine and palatine arteries.
+  - Optional layers: the nasal lining, nasopharynx, globe and medial rectus, carotid and pituitary.
+  - Built for this app: the **maxillary sinus**. Z-Anatomy's maxilla is solid, so the exporter's new `interior` space type lofts the inside of the maxillary body, 1.5 mm in from its surface. Also drawn: **drainage routes** from the frontal, maxillary and sphenoid sinuses to their openings.
+- **Openings layer**: pins on the maxillary ostium, frontal recess and sphenoid ostium (approximate positions), the nasolacrimal duct opening, sphenopalatine foramen, cribriform plate and anterior ethmoidal foramen.
+- **Structures**: notes on every structure, including the ostiomeatal unit, the basal lamella, Keros, Onodi cells, the sphenoid's lateral wall and the CLOSE checklist.
+- **Surgery**: a 9-step functional endoscopic sinus surgery.
+- **Figures**: an original coronal diagram of the ostiomeatal unit. **Quiz**: six questions.
+- **References**: Stammberger, Lund 2014 (EPOS terminology), Keros 1962, Wormald 2016 (IFAC), Chandler 1970, Rhoton, Gray's and Scott-Brown's.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -266,6 +283,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend infratemporal data/infratemporal-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend pterygopalatine data/pterygopalatine-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend orbit data/orbit-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend sinonasal data/sinonasal-meshes.js
 ```
 
 ## Licensing and credits
@@ -279,6 +297,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, nasal cavity and paranasal sinuses, temporal bone
+- More regions: posterior triangle, oral cavity and tongue, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

@@ -960,5 +960,77 @@ window.ANATOMY.figures = {
     <line x1="328" y1="266" x2="330" y2="262"/>
   </g>
   <text x="6" y="432" class="fig-label small">Right orbit seen from the front: lateral on the left, medial on the right. Not to scale.</text>
+</svg>`,
+
+  ostiomeatalUnit: `
+<svg viewBox="0 0 560 470" role="img" aria-label="Coronal section through the right ostiomeatal unit: orbit, ethmoid cells, ethmoid bulla, uncinate process, infundibulum, maxillary sinus and ostium, middle and inferior turbinates, septum and the cribriform plate with the lateral lamella">
+  <!-- skull base: fovea ethmoidalis, lateral lamella, cribriform plate -->
+  <path d="M120 60 L260 60 L272 98 L300 98" fill="none" stroke="var(--fig-stroke)" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M272 98 L300 98" stroke="#d9b27a" stroke-width="4" stroke-dasharray="3 2"/>
+  <!-- septum -->
+  <rect x="298" y="60" width="8" height="350" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- orbit with lamina papyracea -->
+  <circle cx="130" cy="130" r="62" fill="#f2efe8" stroke="var(--fig-stroke)"/>
+  <circle cx="170" cy="150" r="10" fill="var(--fig-muscle)" opacity=".7"/>
+  <line x1="200" y1="66" x2="200" y2="186" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <!-- ethmoid cells -->
+  <g fill="#6fcf97" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".7">
+    <rect x="206" y="66" width="28" height="30" rx="8"/><rect x="238" y="70" width="26" height="26" rx="8"/>
+    <rect x="206" y="100" width="30" height="32" rx="8"/><rect x="240" y="102" width="26" height="30" rx="8"/>
+  </g>
+  <!-- ethmoid bulla -->
+  <circle cx="234" cy="166" r="24" fill="#6fcf97" opacity=".75" stroke="var(--fig-stroke)"/>
+  <!-- middle turbinate hanging from the skull base -->
+  <path d="M286 98 L286 150 Q290 205 266 236 Q254 246 258 226 Q274 196 272 150 L272 104" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- maxillary sinus with ostium -->
+  <path d="M86 196 L200 192 L204 210 L206 330 Q150 360 90 330 Q66 270 86 196 Z" fill="#f2c14e" opacity=".5" stroke="var(--fig-stroke)"/>
+  <rect x="198" y="196" width="10" height="10" fill="#3b3226"/>
+  <!-- uncinate process: from the lateral wall, hooking up and back -->
+  <path d="M206 250 Q214 222 214 196" fill="none" stroke="var(--fig-stroke)" stroke-width="4" stroke-linecap="round"/>
+  <!-- infundibulum (between uncinate and lamina/bulla) -->
+  <path d="M204 206 Q208 196 212 190" fill="none" stroke="#2fb7a0" stroke-width="3"/>
+  <!-- mucociliary route: sinus → ostium → infundibulum → hiatus → middle meatus -->
+  <path d="M150 300 Q180 240 202 202 Q212 186 226 196 Q240 214 246 238" fill="none" stroke="#2fb7a0" stroke-width="2" stroke-dasharray="5 3"/>
+  <path d="M242 232 L248 242 L252 230 Z" fill="#2fb7a0"/>
+  <!-- inferior turbinate, lateral nasal wall, palate -->
+  <line x1="206" y1="250" x2="206" y2="400" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <path d="M206 300 Q260 290 262 322 Q262 350 226 352 Q212 350 206 340" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <rect x="80" y="400" width="226" height="14" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="330" y="54">Fovea ethmoidalis (ethmoid roof)</text>
+    <text x="330" y="96">Lateral lamella + cribriform plate</text>
+    <text x="330" y="110">(Keros: depth of this step)</text>
+    <text x="330" y="140">Ethmoid cells</text>
+    <text x="330" y="172">Ethmoid bulla</text>
+    <text x="330" y="200">Lamina papyracea</text>
+    <text x="330" y="216">Infundibulum</text>
+    <text x="330" y="232">Hiatus semilunaris → middle meatus</text>
+    <text x="330" y="252">Uncinate process</text>
+    <text x="330" y="268">Middle turbinate</text>
+    <text x="330" y="290">Maxillary ostium</text>
+    <text x="330" y="330">Inferior turbinate</text>
+    <text x="330" y="372">Inferior meatus (nasolacrimal duct)</text>
+    <text x="330" y="400">Septum</text>
+    <text x="96" y="130">Orbit</text>
+    <text x="110" y="280">Maxillary sinus</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" fill="none">
+    <line x1="328" y1="51" x2="230" y2="62"/>
+    <line x1="328" y1="93" x2="286" y2="99"/>
+    <line x1="328" y1="137" x2="266" y2="116"/>
+    <line x1="328" y1="169" x2="258" y2="166"/>
+    <line x1="328" y1="197" x2="202" y2="150"/>
+    <line x1="328" y1="213" x2="210" y2="198"/>
+    <line x1="328" y1="229" x2="244" y2="226"/>
+    <line x1="328" y1="249" x2="214" y2="232"/>
+    <line x1="328" y1="265" x2="282" y2="200"/>
+    <line x1="328" y1="287" x2="206" y2="202"/>
+    <line x1="328" y1="327" x2="262" y2="324"/>
+    <line x1="328" y1="369" x2="222" y2="372"/>
+    <line x1="328" y1="397" x2="306" y2="380"/>
+  </g>
+  <text x="6" y="438" class="fig-label small">Seen from the front as on coronal CT: the patient's right side, lateral on the left, septum at the midline.</text>
+  <text x="6" y="454" class="fig-label small">Teal: mucociliary route from the maxillary sinus. Not to scale.</text>
 </svg>`
 };

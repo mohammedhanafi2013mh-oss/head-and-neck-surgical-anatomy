@@ -57,5 +57,10 @@ window.ANATOMY.catalog = [
     id: "orbit",
     title: "Orbit",
     scripts: ["data/orbit.js", "data/orbit-meshes.js", "js/models/orbit-model.js"]
+  },
+  {
+    id: "sinonasal",
+    title: "Nose & paranasal sinuses",
+    scripts: ["data/sinonasal.js", "data/sinonasal-meshes.js", "js/models/sinonasal-model.js"]
   }
 ];

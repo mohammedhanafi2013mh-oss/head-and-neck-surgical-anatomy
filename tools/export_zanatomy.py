@@ -831,6 +831,84 @@ REGIONS = {
                                              "ethmoidal": "@anterior_ethmoidal_foramen", "nose": "end"}},
         },
     },
+    "sinonasal": {
+        # Right nasal cavity and paranasal sinuses (the septum and frontal and sphenoid sinuses are midline).
+        "centre": (-0.012, -0.062, 1.578),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "frontal": ["Frontal bone"],
+            "ethmoid": ["Ethmoid bone"],
+            "inferior_concha": ["Inferior nasal concha bone.r"],
+            "maxilla": ["Maxilla.r"],
+            "sphenoid": ["Sphenoid bone"],
+            "vomer": ["Vomer"],
+            "nasal_bones": ["Nasal bone.r", "Lacrimal bone.r"],
+            "palatine": ["Palatine bone.r"],
+            # ---- cartilage ----
+            "septal_cartilage": ["Nasal septal cartilage"],
+            "upper_lateral": ["Lateral process of nasal septal cartilage.r"],
+            "alar": ["Major alar cartilage.r"],
+            # ---- sinuses (air spaces) ----
+            "frontal_sinus": ["Sinus of frontal bone"],
+            "sphenoid_sinus": ["Sinus of sphenoid bone"],
+            "anterior_ethmoid": ["Anterior cells of ethmoid bone.r"],
+            "middle_ethmoid": ["Middle cells of ethmoid bone.r"],
+            "posterior_ethmoid": ["Posterior cells of ethmoid bone.r"],
+            # ---- soft tissue ----
+            "nasal_mucosa": ["Mucosa of nasal cavity"],
+            "nasopharynx": ["Nasopharynx"],
+            "nasolacrimal": ["Lacrimal sac.r", "Nasolacrimal duct.r"],
+            "orbit_contents": ["Sclera.r", "Medial rectus muscle.r"],
+            "pituitary": ["Adenohypophysis", "Neurohypophysis"],
+            # ---- nerves ----
+            "cn1": ["Olfactory nerve (I).r"],
+            "cn2": ["Optic nerve (II).r"],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "ethmoidal_arteries": ["Anterior ethmoidal artery.r", "Posterior ethmoidal artery.r",
+                                   "Anterior septal branches of anterior ethmoidal artery.r",
+                                   "Septal branches of posterior ethmoidal artery.r"],
+            "sphenopalatine": ["Posterior lateral nasal branches of sphenopalatine artery..r",
+                               "Posterior septal branches of sphenopalatine artery.r"],
+            "greater_palatine": ["Greater palatine artery.r", "Descending palatine artery.r"],
+            "ica": ["Internal carotid artery.r"],
+        },
+        "curve_scale": {"cn1": 1.2, "cn2": 3.0, "v2": 1.8, "ethmoidal_arteries": 1.0, "sphenopalatine": 1.1,
+                        "greater_palatine": 1.1},
+        "bones": {"frontal", "ethmoid", "inferior_concha", "maxilla", "sphenoid", "vomer", "nasal_bones", "palatine"},
+        "clip": {"Frontal bone": (0, 1.645), "Sphenoid bone": (1.545, 1.62), "Internal carotid artery.r": (1.575, 1.61),
+                 "Optic nerve (II).r": (0, 9), "Nasopharynx": (1.55, 9)},
+        "side": "r",
+        # Mucociliary drainage routes from each sinus to its opening (drawn).
+        "drawn": {"frontal_drainage": 0.0006, "maxillary_drainage": 0.0006, "sphenoid_drainage": 0.0006},
+        "points": {
+            "frontal_recess": ("at", (-0.0090, -0.0760, 1.6000)),
+            "maxillary_ostium": ("at", (-0.0145, -0.0570, 1.5750)),
+            "sphenoid_ostium": ("at", (-0.0040, -0.0395, 1.5950)),
+            "nasolacrimal_opening": ("at", (-0.0095, -0.0631, 1.5547)),
+            "sphenopalatine_foramen": ("spline_start", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "anterior_ethmoidal_foramen": ("spline_start", "Anterior ethmoidal artery.r", 0),
+            "cribriform_plate": ("closest", ("Olfactory nerve (I).r", 1), ["Ethmoid bone"], (1.59, 1.62)),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "frontal_drainage": {"path": [("frontal_drainage", 0)],
+                                 "points": {"sinus": "start", "recess": "@frontal_recess", "meatus": "end"}},
+            "maxillary_drainage": {"path": [("maxillary_drainage", 0)],
+                                   "points": {"sinus": "start", "ostium": "@maxillary_ostium", "meatus": "end"}},
+            "sphenoid_drainage": {"path": [("sphenoid_drainage", 0)],
+                                  "points": {"sinus": "start", "ostium": "@sphenoid_ostium", "recess": "end"}},
+            "ethmoidal_arteries": {"path": [("Anterior ethmoidal artery.r", 0)],
+                                   "points": {"foramen": "start", "nose": "end"}},
+        },
+        "spaces": {
+            # Z-Anatomy's maxilla is solid: the sinus is its body's interior, 1.5 mm in from the surface.
+            "maxillary_sinus": {"type": "interior", "object": "Maxilla.r", "exclude": ["Mucosa of nasal cavity"],
+                                "box": ((-0.044, -0.010), (-0.085, -0.042)), "levels": (1.546, 1.580, 0.002),
+                                "clear": 0.0015},
+        },
+    },
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
@@ -1580,6 +1658,34 @@ DRAWN.update({"nasociliary": drawn_nasociliary, "lacrimal_nerve": drawn_lacrimal
               "ciliary_ganglion": drawn_ciliary_ganglion, "ciliary_roots": drawn_ciliary_roots,
               "short_ciliary": drawn_short_ciliary})
 
+# ---------- drawn drainage routes of the paranasal sinuses ----------
+# Schematic mucociliary routes, placed from the Z-Anatomy sinus volumes, the ethmoid
+# (middle turbinate at about z 1.570-1.578), the maxillary sinus built from the maxilla
+# and the sphenoid sinus's front wall (y -39.7 mm).
+
+def drawn_frontal_drainage(L):
+    """Frontal sinus → frontal recess → anterior middle meatus."""
+    return [Vector((-0.0120, -0.0800, 1.6120)), Vector((-0.0095, -0.0775, 1.6040)), Vector((-0.0090, -0.0760, 1.6000)),
+            Vector((-0.0095, -0.0730, 1.5930)), Vector((-0.0110, -0.0670, 1.5840)), Vector((-0.0118, -0.0610, 1.5770))]
+
+
+def drawn_maxillary_drainage(L):
+    """Mucus swept up the walls to the natural ostium high on the medial wall,
+    through the ethmoid infundibulum and hiatus semilunaris to the middle meatus."""
+    return [Vector((-0.0270, -0.0640, 1.5560)), Vector((-0.0230, -0.0610, 1.5660)), Vector((-0.0185, -0.0585, 1.5730)),
+            Vector((-0.0145, -0.0570, 1.5750)), Vector((-0.0125, -0.0600, 1.5770)), Vector((-0.0118, -0.0640, 1.5745))]
+
+
+def drawn_sphenoid_drainage(L):
+    """Sphenoid sinus → ostium on its front wall → sphenoethmoidal recess."""
+    return [Vector((-0.0070, -0.0300, 1.5920)), Vector((-0.0050, -0.0360, 1.5945)), Vector((-0.0040, -0.0395, 1.5950)),
+            Vector((-0.0042, -0.0430, 1.5925)), Vector((-0.0045, -0.0465, 1.5880))]
+
+
+DRAWN.update({"frontal_drainage": drawn_frontal_drainage, "maxillary_drainage": drawn_maxillary_drainage,
+              "sphenoid_drainage": drawn_sphenoid_drainage})
+
+
 
 
 
@@ -1927,6 +2033,22 @@ def build_space(sid, spec):
         pieces.append(loft(rings))
         if spec.get("mirror"):
             pieces.append(loft([[(-x, y, z) for x, y, z in ring[::-1]] for ring in rings]))
+    elif spec["type"] == "interior":
+        # Air space inside a solid bone model: each level's interior points (with clearance), hulled and lofted.
+        t, (xr, yr), rings = bone_bvh(spec["object"]), spec["box"], []
+        excl = [bone_bvh(n) for n in spec.get("exclude", [])]
+        for z in frange(*spec["levels"]):
+            pts = []
+            for i in range(int((xr[1] - xr[0]) / 0.001) + 1):
+                for j in range(int((yr[1] - yr[0]) / 0.001) + 1):
+                    p = Vector((xr[0] + i * 0.001, yr[0] + j * 0.001, z))
+                    if inside_bone(p, t) and t.find_nearest(p)[3] >= spec["clear"] and not any(inside_bone(p, e) for e in excl):
+                        pts.append(p)
+            if len(pts) >= 6:
+                poly = hull2d([(p.x, p.y) for p in pts])
+                if len(poly) >= 3:
+                    rings.append([(x, y, z) for x, y in resample(poly, 28, 0.0)])
+        pieces.append(loft(rings))
     elif spec["type"] == "pps":
         pieces += [loft(pps_rings(-1)), loft(pps_rings(1))]
     elif spec["type"] == "rp":
@@ -2020,6 +2142,8 @@ def course_point(spec, path):
     if isinstance(spec, str) and spec.startswith("@"):
         return POINTS[spec[1:]]
     kind = spec[0]
+    if kind == "at":
+        return Vector(spec[1])
     if kind == "anchor":
         o = D[spec[1]]
         me = o.evaluated_get(deps).to_mesh()
@@ -2062,7 +2186,7 @@ def app_point(p):
 
 courses = {}
 for key, spec in cfg.get("points", {}).items():
-    POINTS[key] = course_point(spec, None) if spec[0] == "anchor" else course_point(spec, [])
+    POINTS[key] = course_point(spec, None) if spec[0] in ("anchor", "at") else course_point(spec, [])
 for sid, c in cfg.get("courses", {}).items():
     path = []
     for piece in c["path"]:
