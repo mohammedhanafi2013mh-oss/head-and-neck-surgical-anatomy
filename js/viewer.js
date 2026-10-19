@@ -387,6 +387,7 @@
     }
 
     resetView() {
+      this.stopFly();
       const h = this.home || { target: [0, 0, 0], radius: 24, theta: 1, phi: 1.7 };
       this.target.copy(V3(h.target));
       Object.assign(this.spherical, { radius: h.radius, theta: h.theta, phi: h.phi });
@@ -451,6 +452,8 @@
     setPins(g, pins) {
       for (const pin of g.pins) {
         g.group.remove(pin.mesh);
+        pin.mesh.geometry.dispose();
+        pin.mesh.material.dispose();
         pin.label.remove();
       }
       g.pins = pins.map((q) => {
@@ -563,6 +566,7 @@
 
     // Glide the camera's target to a point and close in on it.
     flyTo(p, radius) {
+      this.stopFly();
       const from = this.target.clone(), to = new THREE.Vector3(...p);
       const r0 = this.spherical.radius, r1 = radius || Math.min(r0, 12);
       const start = performance.now();
@@ -570,9 +574,15 @@
         const t = Math.min(1, (now - start) / 600), e = t * t * (3 - 2 * t);
         this.target.lerpVectors(from, to, e);
         this.spherical.radius = r0 + (r1 - r0) * e;
-        if (t < 1) requestAnimationFrame(step);
+        this.flyFrame = t < 1 ? requestAnimationFrame(step) : null;
       };
-      requestAnimationFrame(step);
+      this.flyFrame = requestAnimationFrame(step);
+    }
+
+    // Cancel a camera glide (a new one, a region change or the user grabbing the view).
+    stopFly() {
+      if (this.flyFrame) cancelAnimationFrame(this.flyFrame);
+      this.flyFrame = null;
     }
 
     pick(clientX, clientY) {
@@ -581,10 +591,13 @@
       this.raycaster.setFromCamera(this.pointer, this.camera);
       const meshes = [];
       for (const s of this.structures.values()) if (s.root.visible) s.root.traverse((o) => o.isMesh && meshes.push(o));
-      const hits = this.raycaster.intersectObjects(meshes, false);
-      // Prefer small structures (nerves, vessels) over the sheets and spaces
-      // around them: skip a sheet or space when something solid lies just behind it.
-      const sheet = (h) => ["superficial", "spaces", "fascia"].includes(this.structures.get(h.object.userData.id).layer);
+      // Ignore hits on geometry cut away by the section's clipping planes.
+      const hits = this.raycaster.intersectObjects(meshes, false).filter((h) =>
+        !(h.object.material.clippingPlanes || []).some((pl) => pl.distanceToPoint(h.point) < 0));
+      // Prefer small structures (nerves, vessels) over the translucent sheets and
+      // spaces around them: skip one when something solid lies just behind it.
+      const sheet = (h) => ["spaces", "fascia"].includes(this.structures.get(h.object.userData.id).layer) ||
+        h.object.userData.baseOpacity < 0.5;
       for (let i = 0; i < hits.length; i++) {
         if (sheet(hits[i]) && hits.slice(i + 1).some((h) => !sheet(h) && h.distance - hits[i].distance < 4)) continue;
         return hits[i].object.userData.id;
@@ -599,6 +612,7 @@
       let mode = null, last = null, downAt = null, pinchStart = 0, radiusStart = 0;
 
       el.addEventListener("pointerdown", (e) => {
+        this.stopFly();
         el.setPointerCapture(e.pointerId);
         pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
         downAt = { x: e.clientX, y: e.clientY, t: performance.now() };

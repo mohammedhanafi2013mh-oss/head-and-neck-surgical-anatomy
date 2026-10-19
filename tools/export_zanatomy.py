@@ -1125,9 +1125,12 @@ def drawn_hypoglossal(L):
     """Loop of XII: down between the internal carotid and the vein, hooking
     under the occipital artery, then forward superficial to the external
     carotid, rejoining Z-Anatomy's nerve on its way to hyoglossus."""
-    return [Vector((-0.0259, 0.0014, 1.5601)), Vector((-0.0310, 0.0030, 1.557)), Vector((-0.0380, -0.0010, 1.552)),
-            Vector((-0.0440, -0.0010, 1.5485)), Vector((-0.0455, -0.0060, 1.546)), Vector((-0.0410, -0.0120, 1.542)),
-            Vector((-0.0340, -0.0140, 1.539)), Vector((-0.0273, -0.0134, 1.5379))]
+    pts = [Vector((-0.0259, 0.0014, 1.5601)), Vector((-0.0310, 0.0030, 1.557)), Vector((-0.0380, -0.0010, 1.552)),
+           Vector((-0.0410, -0.0010, 1.5485)), Vector((-0.0410, -0.0060, 1.546)), Vector((-0.0380, -0.0120, 1.542)),
+           Vector((-0.0340, -0.0140, 1.539)), Vector((-0.0273, -0.0134, 1.5379))]
+    # Keep the loop behind and then medial to the ramus, and clear of the styloid and occipital bone.
+    return push_clear(pts, [None, P_IN, P_IN, P_BACK, P_BACK, P_IN, P_IN, None],
+                      bones=["Mandible", "Temporal bone.r", "Occipital bone"])
 
 
 def drawn_facial_vein(L):
@@ -1178,36 +1181,104 @@ DRAWN = {"phrenic": drawn_phrenic, "thoracic_duct": drawn_thoracic_duct,
 
 # ---------- drawn mandibular nerve branches (infratemporal region) ----------
 # Hand-placed from the right mandibular nerve (division point (-22.9, -15.0, 1576.8) mm),
-# the middle meningeal artery, the neck of the mandible and the mandibular notch.
+# the middle meningeal artery, the neck of the mandible and the mandibular notch,
+# then pushed clear of the bone surfaces (push_clear) so no path runs through bone.
+
+ITF_BONES = ["Mandible", "Sphenoid bone", "Temporal bone.r", "Maxilla.r", "Zygomatic bone.r", "Parietal bone.r"]
+BVH_CACHE = {}
+
+
+def bone_bvh(name):
+    from mathutils.bvhtree import BVHTree
+    if name not in BVH_CACHE:
+        o = D[name]
+        me = o.evaluated_get(deps).to_mesh()
+        BVH_CACHE[name] = BVHTree.FromPolygons([o.matrix_world @ v.co for v in me.vertices],
+                                               [tuple(f.vertices) for f in me.polygons])
+    return BVH_CACHE[name]
+
+
+def inside_bone(p, tree):
+    """Ray parity test: an odd number of crossings means p is inside the closed mesh."""
+    d, o, n = Vector((0.31, 0.83, 0.47)).normalized(), p.copy(), 0
+    for _ in range(64):
+        hit = tree.ray_cast(o, d)[0]
+        if hit is None:
+            break
+        n, o = n + 1, hit + d * 1e-5
+    return n % 2 == 1
+
+
+def push_clear(line, dirs, gap=0.0016, step=0.00025, spacing=0.0006, bones=None):
+    """Resample the polyline every ~1 mm and move each sample along its
+    direction until it lies outside every bone with at least `gap` clearance.
+    dirs: one (dx, dy, dz) per input point, or None to keep it fixed; samples
+    take the direction of the point that ends their segment."""
+    pts, ds = [Vector(line[0])], [dirs[0]]
+    for a, b, d in zip(line, line[1:], dirs[1:]):
+        a, b = Vector(a), Vector(b)
+        n = max(1, int((b - a).length / spacing))
+        pts += [a.lerp(b, k / n) for k in range(1, n + 1)]
+        ds += [d] * n
+    out = []
+    for p, d in zip(pts, ds):
+        if d is not None:
+            d = Vector(d).normalized()
+            for _ in range(200):
+                ok = True
+                for name in bones or ITF_BONES:
+                    t = bone_bvh(name)
+                    near = t.find_nearest(p)
+                    if inside_bone(p, t) or (near[0] is not None and near[3] < gap):
+                        ok = False
+                        break
+                if ok:
+                    break
+                p = p + d * step
+        out.append(p)
+    return out[:-1:2] + out[-1:]  # every other sample (~1.2 mm) keeps the tube light
+
+
+P_DOWN, P_OUT, P_BACK, P_IN = (0, 0, -1), (-1, 0, 0), (0, 1, 0), (1, 0, 0)  # push_clear directions
+
 
 def drawn_auriculotemporal(L):
     """Two roots from the posterior division encircling the middle meningeal
     artery, then back behind the neck of the mandible and up through the
-    parotid with the superficial temporal vessels."""
+    parotid with the superficial temporal vessels, outside the temporal bone."""
     o = Vector((-0.0249, -0.0156, 1.5721))
-    join = Vector((-0.0350, -0.0075, 1.5770))
-    upper = [o, Vector((-0.0280, -0.0120, 1.5810)), Vector((-0.0320, -0.0090, 1.5825)), join]
-    lower = [o, Vector((-0.0290, -0.0115, 1.5720)), Vector((-0.0330, -0.0085, 1.5730)), join]
-    trunk = [join, Vector((-0.0400, -0.0030, 1.5705)), Vector((-0.0460, 0.0015, 1.5680)), Vector((-0.0540, 0.0010, 1.5720)),
-             Vector((-0.0600, 0.0005, 1.5850)), Vector((-0.0640, 0.0010, 1.6050)), Vector((-0.0670, 0.0020, 1.6250))]
+    join = Vector((-0.0350, -0.0075, 1.5740))
+    upper = push_clear([o, Vector((-0.0280, -0.0120, 1.5790)), Vector((-0.0320, -0.0090, 1.5800)), join],
+                       [None, P_DOWN, P_DOWN, P_DOWN])
+    lower = push_clear([o, Vector((-0.0290, -0.0115, 1.5700)), Vector((-0.0330, -0.0085, 1.5705)), join],
+                       [None, P_DOWN, P_DOWN, P_DOWN])
+    join = (upper[-1] + lower[-1]) / 2
+    upper[-1] = lower[-1] = join
+    trunk = push_clear([join, Vector((-0.0400, -0.0020, 1.5640)), Vector((-0.0470, 0.0015, 1.5620)),
+                        Vector((-0.0560, 0.0030, 1.5660)), Vector((-0.0640, 0.0000, 1.5850)),
+                        Vector((-0.0680, 0.0000, 1.6050)), Vector((-0.0700, 0.0010, 1.6250))],
+                       [None, P_DOWN, P_DOWN, P_OUT, P_OUT, P_OUT, P_OUT])
     return [upper, lower, trunk]
 
 
 def drawn_masseteric_nerve(L):
     """Above the lateral pterygoid and through the mandibular notch, behind
     the tendon of temporalis, into the deep surface of masseter."""
-    return [Vector((-0.0245, -0.0165, 1.5750)), Vector((-0.0320, -0.0220, 1.5830)), Vector((-0.0400, -0.0280, 1.5740)),
-            Vector((-0.0440, -0.0300, 1.5610)), Vector((-0.0480, -0.0310, 1.5520)), Vector((-0.0500, -0.0330, 1.5400))]
+    pts = [Vector((-0.0245, -0.0165, 1.5750)), Vector((-0.0320, -0.0220, 1.5780)), Vector((-0.0400, -0.0280, 1.5720)),
+           Vector((-0.0440, -0.0300, 1.5610)), Vector((-0.0480, -0.0310, 1.5520)), Vector((-0.0500, -0.0330, 1.5400))]
+    return push_clear(pts, [None, P_DOWN, P_DOWN, P_DOWN, P_OUT, P_OUT])
 
 
 def drawn_deep_temporal_nerves(L):
     """Anterior and posterior deep temporal nerves: over the upper head of
-    lateral pterygoid into the deep surface of temporalis."""
-    posterior = [Vector((-0.0250, -0.0170, 1.5750)), Vector((-0.0330, -0.0220, 1.5850)), Vector((-0.0420, -0.0230, 1.5880)),
-                 Vector((-0.0500, -0.0240, 1.6000)), Vector((-0.0560, -0.0250, 1.6150))]
-    anterior = [Vector((-0.0270, -0.0195, 1.5700)), Vector((-0.0340, -0.0300, 1.5840)), Vector((-0.0420, -0.0370, 1.5920)),
-                Vector((-0.0480, -0.0400, 1.6050)), Vector((-0.0500, -0.0420, 1.6150))]
-    return [posterior, anterior]
+    lateral pterygoid, round the infratemporal crest and up on the bone of
+    the temporal fossa, deep to temporalis."""
+    posterior = [Vector((-0.0250, -0.0170, 1.5750)), Vector((-0.0330, -0.0220, 1.5790)), Vector((-0.0440, -0.0230, 1.5800)),
+                 Vector((-0.0520, -0.0240, 1.5950)), Vector((-0.0570, -0.0250, 1.6150))]
+    anterior = [Vector((-0.0270, -0.0195, 1.5700)), Vector((-0.0340, -0.0300, 1.5780)), Vector((-0.0440, -0.0370, 1.5820)),
+                Vector((-0.0500, -0.0400, 1.6000)), Vector((-0.0520, -0.0420, 1.6150))]
+    dirs = [None, P_DOWN, P_DOWN, P_OUT, P_OUT]
+    return [push_clear(posterior, dirs), push_clear(anterior, dirs)]
 
 
 def drawn_nerve_medial_pterygoid(L):

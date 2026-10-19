@@ -116,7 +116,11 @@
       this.regionId = regionId;
       this.meshCentre = window.ANATOMY.meshes[regionId].header.centre;
       this.level = model.sectionLevel ?? 0.5;
-      for (const e of this.entries) for (const m of [e.back, e.front, e.cap]) this.scene.remove(m);
+      for (const e of this.entries) {
+        this.scene.remove(e.back, e.front, e.cap);
+        for (const m of [e.back, e.front, e.cap]) m.material.dispose();
+        e.cap.geometry.dispose(); // back and front share the viewer's geometry, disposed there
+      }
       this.entries = [];
       this.bounds = new THREE.Box3();
       const list = [];
@@ -185,6 +189,7 @@
             try {
               await this.scans.load();
             } catch (err) {
+              // update() skips drawing until the scans arrive; clicking the button again retries.
               this.scans.message("Couldn't load the scans. Check that data/scans sits next to index.html.");
               return;
             }
@@ -245,6 +250,7 @@
       const dpr = Math.min(window.devicePixelRatio, 2);
       this.realCanvas.width = this.realCanvas.height = Math.round(size * dpr);
       this.realCanvas.style.width = this.realCanvas.style.height = size + "px";
+      if (this.pickTarget) this.pickTarget.dispose();
       this.pickTarget = null;
       if (this.active && this.entries.length) this.update();
     }
@@ -260,6 +266,7 @@
         this.apply3d();
         this.outline();
         this.fit();
+        if (this.mode !== "sim" && !this.scans.m) return; // scans still loading
         if (this.mode === "sim") this.draw();
         else if (this.mode === "ct") this.scans.drawCt();
         else this.scans.drawMri();
@@ -520,6 +527,7 @@
       const size = new THREE.Vector2();
       this.renderer.getDrawingBufferSize(size);
       if (!this.pickTarget || this.pickTarget.width !== size.x) {
+        if (this.pickTarget) this.pickTarget.dispose();
         this.pickTarget = new THREE.WebGLRenderTarget(size.x, size.y, { stencilBuffer: true });
       }
       this.renderer.setRenderTarget(this.pickTarget);

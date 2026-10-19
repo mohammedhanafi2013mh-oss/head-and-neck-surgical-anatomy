@@ -13,7 +13,7 @@ window.ANATOMY.regions.larynx = {
       "The larynx guards the airway, makes the voice and closes during swallowing and coughing. It is a framework of cartilages (thyroid, cricoid, the paired arytenoids, and the epiglottis) joined by membranes and moved by small muscles. It hangs from the hyoid (C3) and sits in front of the laryngopharynx, from about C3 to C6. Surgeons divide it into three subsites: supraglottis, glottis and subglottis. The subsites differ in embryology, lymphatic drainage and how cancer spreads in them. That, and the deep spaces between the mucosa and the cartilage, decide which operation is possible.",
     boundaries: [
       { label: "Supraglottis", text: "Epiglottis, aryepiglottic folds, arytenoids, vestibular (false) folds and ventricles, down to the apex of the ventricle" },
-      { label: "Glottis", text: "The vocal folds, with the anterior and posterior commissures, to about 1 cm below the free edge" },
+      { label: "Glottis", text: "The vocal folds, with the anterior and posterior commissures, to a horizontal plane about 1 cm below the apex of the ventricle (AJCC)" },
       { label: "Subglottis", text: "From there to the lower border of the cricoid" },
       { label: "Anterior", text: "Strap muscles, the thyroid isthmus over the upper trachea, and the pre-epiglottic space behind the hyoid and thyrohyoid membrane" },
       { label: "Posterior", text: "The laryngopharynx: piriform fossae on either side, the postcricoid region behind the cricoid" }
@@ -138,7 +138,7 @@ window.ANATOMY.regions.larynx = {
       summary: "The larynx hangs from it (C3) by the thyrohyoid membrane. It anchors the tongue, the suprahyoid and infrahyoid muscles and the middle constrictor.",
       relations: ["The pre-epiglottic space lies behind it and the thyrohyoid membrane"],
       supply: {},
-      surgical: ["Removed with the larynx in a total laryngectomy when the pre-epiglottic space must be cleared; the hypoglossal nerves and lingual arteries run just above and lateral to the greater horns."],
+      surgical: ["Usually removed with the larynx in a total laryngectomy, which takes the pre-epiglottic space en bloc; the hypoglossal nerves and lingual arteries run just above and lateral to the greater horns."],
       danger: ["Hypoglossal nerves and lingual arteries above the greater horns"],
       variations: [],
       refs: ["gray", "shah"]
@@ -220,7 +220,7 @@ window.ANATOMY.regions.larynx = {
         "A cone of elastic tissue from the upper border of the cricoid up to the vocal processes and the thyroid angle. Its thickened free upper edge is the vocal ligament; its thick midline front is the cricothyroid membrane.",
       relations: ["Lies medial to the paraglottic space and the thyroarytenoid; forms the wall of the subglottis"],
       supply: {},
-      surgical: ["Tumours spreading down from the glottis into the subglottis tend to follow it; once they breach it they reach the cricothyroid membrane and the outside of the larynx."],
+      surgical: ["Tumours spreading down from the glottis into the subglottis tend to follow it; once they breach it they spread through the cricothyroid space to the outside of the larynx."],
       danger: [],
       variations: [],
       refs: ["gray", "tucker"]
@@ -520,7 +520,7 @@ window.ANATOMY.regions.larynx = {
       id: "ijv",
       name: "Internal jugular veins",
       layer: "vein",
-      summary: "Lateral to the carotids; they receive the superior laryngeal and superior thyroid veins.",
+      summary: "Lateral to the carotids; they receive the superior thyroid veins, which bring blood from the superior laryngeal veins.",
       relations: [],
       supply: {},
       surgical: [],
@@ -748,7 +748,7 @@ window.ANATOMY.regions.larynx = {
   },
 
   figures: [
-    { id: "fig-laryngoscopy", title: "The larynx seen from above, as at laryngoscopy", svg: "laryngoscopy" },
+    { id: "fig-laryngoscopy", title: "The larynx seen from above, as at direct laryngoscopy from the head end (patient's right on the right)", svg: "laryngoscopy" },
     { id: "fig-larynx-coronal", title: "Coronal section: subsites, folds and paraglottic space", svg: "larynxCoronal" }
   ],
 

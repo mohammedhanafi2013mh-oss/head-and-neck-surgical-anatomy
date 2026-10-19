@@ -750,7 +750,7 @@ window.ANATOMY.regions.carotid = {
     ],
     complications: [
       "Stroke, from emboli during dissection or clamping, thrombosis at the site, or hyperperfusion. Guidelines expect perioperative stroke or death under about 6% for symptomatic and 3% for asymptomatic patients",
-      "Cranial nerve injury in a few percent, mostly temporary: hypoglossal, vagus/recurrent laryngeal, marginal mandibular, superior laryngeal, and the great auricular nerve",
+      "Nerve injury in a few percent, mostly temporary: cranial nerve branches (hypoglossal, vagus/recurrent laryngeal, marginal mandibular, superior laryngeal) and the great auricular nerve (cervical plexus)",
       "Neck haematoma, which can obstruct the airway; release it and return to theatre",
       "Hyperperfusion syndrome: headache, seizures or intracerebral haemorrhage after a tight stenosis is opened; control blood pressure",
       "Blood pressure instability from carotid sinus dysfunction; myocardial infarction",

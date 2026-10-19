@@ -337,7 +337,7 @@ window.ANATOMY.figures = {
   <text x="110" y="366" class="fig-label small">Cuneiform tubercle</text>
   <line x1="150" y1="356" x2="170" y2="294" stroke="var(--fig-stroke)" stroke-width=".7"/>
   <text x="230" y="376" class="fig-label small" text-anchor="middle">Posterior</text>
-  <text x="14" y="16" class="fig-label small">R</text><text x="440" y="16" class="fig-label small">L</text>
+  <text x="14" y="16" class="fig-label small">L</text><text x="440" y="16" class="fig-label small">R</text>
 </svg>`,
 
   larynxCoronal: `

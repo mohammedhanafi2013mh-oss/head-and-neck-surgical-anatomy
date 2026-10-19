@@ -102,7 +102,10 @@
     });
   }
 
+  // Bumped on every request, so a slow load that finishes after a later one is dropped.
+  let loadSeq = 0;
   async function loadRegion(id) {
+    const seq = ++loadSeq;
     const entry = catalog.find((r) => r.id === id) || catalog[0];
     select.value = entry.id;
     const loading = $("#viewer-loading");
@@ -113,9 +116,11 @@
         if (!loaded.has(src)) {
           await loadScript(src);
           loaded.add(src);
+          if (seq !== loadSeq) return;
         }
       }
     } catch (err) {
+      if (seq !== loadSeq) return;
       loading.textContent = `${err.message}. Check that the data folder sits next to index.html.`;
       return;
     }
@@ -177,9 +182,9 @@
     }
     else if (pinFor(s)) {
       viewer.showCourse(null, [{ p: pinFor(s), label: short(s.name) }]);
-      viewer.flyTo(pinFor(s), 10);
+      if (shownCourse !== s.id) viewer.flyTo(pinFor(s), 10);
     } else viewer.clearCourse();
-    shownCourse = course ? s.id : null;
+    shownCourse = course || pinFor(s) ? s.id : null;
   }
 
   // ---------- viewer controls ----------
@@ -480,7 +485,9 @@
     });
     body.querySelectorAll("[data-ref]").forEach((b) =>
       b.addEventListener("click", () => {
+        if (state.tab === "surgery") exitWalkthrough();
         state.tab = "refs";
+        sections.setActive(false);
         render();
         const li = document.getElementById("ref-" + b.dataset.ref);
         li.scrollIntoView({ block: "center" });
