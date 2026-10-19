@@ -104,6 +104,16 @@ window.ANATOMY.regions.parotid = {
       name: "Facial nerve trunk",
       aka: "Cranial nerve VII, from the stylomastoid foramen to the pes anserinus",
       layer: "nerve",
+      course: [
+        { key: "stylomastoid", label: "Stylomastoid foramen", text: "Leaves the skull between the styloid and mastoid processes." },
+        { key: "posterior_auricular", label: "Posterior auricular nerve", text: "First extracranial branch, to the auricular muscles and occipitalis; branches to digastric and stylohyoid follow." },
+        { key: "pes", label: "Pes anserinus", text: "Divides in the gland into the upper (temporofacial) and lower (cervicofacial) divisions." },
+        { key: "temporal", label: "Temporal branch", text: "Over the zygomatic arch to frontalis (Pitanguy's line)." },
+        { key: "zygomatic", label: "Zygomatic branch", text: "To orbicularis oculi: eye closure." },
+        { key: "buccal", label: "Buccal branches", text: "Along the parotid duct to the cheek and upper lip; richly interconnected." },
+        { key: "cervical", label: "Cervical branch", text: "Down to platysma." },
+        { key: "mmn", label: "Marginal mandibular branch", text: "Along the lower border of the mandible to the lower lip depressors." }
+      ],
       summary:
         "Leaves the skull through the stylomastoid foramen between the mastoid and styloid processes. It gives the posterior auricular, digastric and stylohyoid branches, then runs forward and slightly down into the gland, where it divides at the pes anserinus.",
       relations: [

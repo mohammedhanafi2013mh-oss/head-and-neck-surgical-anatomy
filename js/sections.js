@@ -65,7 +65,8 @@
       this.planeName = "axial";
       this.style = "ct";
       this.level = 0.5;
-      this.cut3d = true;
+      this.cut3d = false; // the 3D model stays whole; the slice is drawn on it as an outline
+      this.showLabels = true;
       this.active = false;
       this.entries = [];
 
@@ -89,6 +90,16 @@
       ));
       this.indicator.visible = false;
       viewer.scene.add(this.indicator);
+      // The slice's outline on every structure it crosses: the cursor that
+      // moves along the whole model as the level changes.
+      this.contour = new THREE.LineSegments(
+        new THREE.BufferGeometry(),
+        new THREE.LineBasicMaterial({ color: 0x3fd0ff, depthTest: false, transparent: true, opacity: 0.95 })
+      );
+      this.contour.renderOrder = 999;
+      this.contour.visible = false;
+      viewer.scene.add(this.contour);
+      this.marks = el.querySelector(".section-marks");
       viewer.renderer.localClippingEnabled = true;
       this.clip3d = new THREE.Plane();
       this.clipList = [this.clip3d]; // one array, so materials recompile only when cutting turns on or off
@@ -101,6 +112,7 @@
 
     rebuild(model, regionId) {
       this.model = model;
+      this.regionId = regionId;
       this.meshCentre = window.ANATOMY.meshes[regionId].header.centre;
       this.level = model.sectionLevel ?? 0.5;
       for (const e of this.entries) for (const m of [e.back, e.front, e.cap]) this.scene.remove(m);
@@ -211,6 +223,11 @@
         this.cut3d = cut.checked;
         this.apply3d();
       });
+      const labels = this.el.querySelector("#section-labels");
+      labels.addEventListener("change", () => {
+        this.showLabels = labels.checked;
+        this.renderMarks();
+      });
       this.canvas.addEventListener("pointermove", (e) => this.hover(e));
       this.canvas.addEventListener("pointerleave", () => (this.tip.hidden = true));
       this.canvas.addEventListener("click", (e) => {
@@ -246,6 +263,7 @@
         else if (this.mode === "ct") this.scans.drawCt();
         else this.scans.drawMri();
         this.chrome();
+        this.renderMarks();
       });
     }
 
@@ -302,6 +320,8 @@
       const linked = this.active && this.entries.length > 0 && this.mode !== "mri";
       const on = linked && this.cut3d;
       this.indicator.visible = linked;
+      this.contour.visible = linked;
+      this.indicator.material.opacity = on ? 0.12 : 0.07;
       // In 3D, keep the same half as the slice so the cut faces the camera side.
       this.clip3d.copy(this.plane);
       for (const s of this.viewer.structures.values()) {
@@ -322,6 +342,7 @@
       const n = this.plane.normal, c = this.plane.constant;
       const { right, up } = this.basis;
       const pts = [];
+      const segs = [];
       this.cutCentres = new Map();
       const a = new THREE.Vector3(), b = new THREE.Vector3(), d = new THREE.Vector3(), p = new THREE.Vector3();
       for (const e of this.entries) {
@@ -341,7 +362,9 @@
             if ((d1 > 0) === (d2 > 0)) continue;
             a.fromBufferAttribute(pos, i1);
             b.fromBufferAttribute(pos, i2);
-            p.copy(a).lerp(b, d1 / (d1 - d2)).sub(this.centre);
+            p.copy(a).lerp(b, d1 / (d1 - d2));
+            segs.push(p.x, p.y, p.z);
+            p.sub(this.centre);
             const u = p.dot(right), v = p.dot(up);
             pts.push([u, v]);
             e.cut.push([u, v]);
@@ -350,9 +373,12 @@
         }
         if (count) {
           const prev = this.cutCentres.get(e.id);
-          if (!prev || count > prev.count) this.cutCentres.set(e.id, { u: sx / count, v: sy / count, count });
+          if (!prev || count > prev.count) this.cutCentres.set(e.id, { ...anchor(e.cut, sx / count, sy / count), count });
         }
       }
+      const cg = this.contour.geometry;
+      cg.setAttribute("position", new THREE.Float32BufferAttribute(segs.length % 6 ? segs.slice(0, segs.length - (segs.length % 6)) : segs, 3));
+      cg.computeBoundingSphere();
       const hull = convexHull(pts);
       const geo = this.body.geometry;
       this.sliceBox = null;
@@ -395,6 +421,64 @@
       const cmPx = width / (this.camera.right - this.camera.left);
       const bar = this.el.querySelector(".scale-bar");
       bar.style.width = cmPx + "px";
+    }
+
+    // ---------- labels ----------
+
+    // Screen position (CSS px within the view) of a point on the slice.
+    markPos(u, v) {
+      if (this.mode === "ct") {
+        const s = this.scans, view = s.view;
+        if (!view) return null;
+        const p = this.centre.clone().addScaledVector(this.basis.right, u).addScaledVector(this.basis.up, v);
+        const [px, py] = s.toPixel(s.appToCt(p), view.plane.frame);
+        const k = this.realCanvas.clientWidth / this.realCanvas.width;
+        return [(px - view.sx) * view.kx * k, (py - view.sy) * view.ky * k];
+      }
+      const c = this.camera, w = this.canvas.clientWidth;
+      return [((u - c.left) / (c.right - c.left)) * w, ((c.top - v) / (c.top - c.bottom)) * w];
+    }
+
+    // Name the structures the slice cuts, placed so labels don't overlap.
+    // Vessels and nerves first, then glands, muscles and bone; the selected
+    // structure always gets a label.
+    renderMarks() {
+      const box = this.marks;
+      box.innerHTML = "";
+      if (!this.showLabels || this.mode === "mri" || !this.cutCentres || !this.active) return;
+      const W = (this.mode === "ct" ? this.realCanvas : this.canvas).clientWidth;
+      const v = this.viewer;
+      const rank = { artery: 0, nerve: 0, vein: 1, gland: 2, duct: 2, muscle: 3, cartilage: 3, node: 4, bone: 4 };
+      const kind = (id) => (this.model.look[id] || {}).kind || "muscle";
+      const items = [...this.cutCentres]
+        .map(([id, c]) => ({ id, c, sel: id === v.selectedId || v.focusIds.has(id) }))
+        .sort((a, b) => b.sel - a.sel || (rank[kind(a.id)] ?? 3) - (rank[kind(b.id)] ?? 3) || b.c.count - a.c.count);
+      const placed = [], dots = [];
+      const max = W < 400 ? 12 : 20;
+      const hit = (r) => placed.some((o) => r[0] < o[0] + o[2] && r[0] + r[2] > o[0] && r[1] < o[1] + o[3] && r[1] + r[3] > o[1])
+        || dots.some(([x, y]) => x > r[0] - 3 && x < r[0] + r[2] + 3 && y > r[1] - 3 && y < r[1] + r[3] + 3);
+      for (const it of items) {
+        if (placed.length >= max) break;
+        const pos = this.markPos(it.c.u, it.c.v);
+        if (!pos) continue;
+        const [x, y] = pos;
+        if (x < 4 || y < 4 || x > W - 4 || y > W - 4) continue;
+        const name = v.structures.get(it.id).name.replace(/ \(.*\)$/, "");
+        const w = name.length * 5.9 + 2, h = 13;
+        const spots = [[x + 6, y - h / 2], [x - 6 - w, y - h / 2], [x - w / 2, y - 7 - h], [x - w / 2, y + 7]];
+        const spot = spots.find(([lx, ly]) => lx >= 2 && ly >= 14 && lx + w <= W - 2 && ly + h <= W - 18 && !hit([lx, ly, w, h]));
+        if (!spot) continue;
+        placed.push([spot[0], spot[1], w, h]);
+        dots.push([x, y]);
+        const dot = document.createElement("span");
+        dot.className = "section-mark-dot";
+        dot.style.transform = `translate(${x}px, ${y}px)`;
+        const label = document.createElement("span");
+        label.className = "section-mark" + (it.sel ? " selected" : "");
+        label.textContent = name;
+        label.style.transform = `translate(${spot[0]}px, ${spot[1]}px)`;
+        box.append(dot, label);
+      }
     }
 
     // ---------- drawing ----------
@@ -487,6 +571,7 @@
       style.innerHTML = options.map(([v, t]) => `<option value="${v}"${v === current ? " selected" : ""}>${t}</option>`).join("");
       el.querySelector("#section-level").value = Math.round((mode === "mri" ? this.scans.mriLevel[this.planeName] : this.level) * 1000);
       el.querySelector(".section-check-cut").hidden = mode === "mri";
+      el.querySelector(".section-check-labels").hidden = mode === "mri";
       el.querySelector(".section-check-outlines").hidden = mode !== "ct";
       el.querySelector(".section-note").textContent = NOTES[mode];
     }
@@ -499,11 +584,31 @@
         bar.style.width = (this.scans.mriCmCss || 0) + "px";
         caption.textContent = this.scans.mriLabel || "";
       } else {
+        const view = this.mode === "ct" && this.scans.view;
+        if (view) bar.style.width = (10 / this.scans.m.ct.mmPerPixel) * view.kx * (this.realCanvas.clientWidth / this.realCanvas.width) + "px";
         caption.textContent = this.mode === "ct" && this.scans.view
           ? `Real CT · slice ${this.scans.view.k + 1} of ${this.scans.view.plane.positions.length}`
           : "";
       }
     }
+  }
+
+  // Where to pin a structure's label: the centre of its cut for small cuts;
+  // for larger ones (rings, U-shapes, both thyroid lobes) the cut point
+  // nearest that centre, so the pin always lands on the structure.
+  function anchor(cut, cu, cv) {
+    let minU = Infinity, maxU = -Infinity, minV = Infinity, maxV = -Infinity;
+    for (const [u, v] of cut) {
+      minU = Math.min(minU, u); maxU = Math.max(maxU, u);
+      minV = Math.min(minV, v); maxV = Math.max(maxV, v);
+    }
+    if (Math.max(maxU - minU, maxV - minV) < 1) return { u: cu, v: cv };
+    let best = cut[0], bd = Infinity;
+    for (const q of cut) {
+      const d = (q[0] - cu) ** 2 + (q[1] - cv) ** 2;
+      if (d < bd) { bd = d; best = q; }
+    }
+    return { u: best[0], v: best[1] };
   }
 
   // Andrew's monotone chain.

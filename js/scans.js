@@ -41,18 +41,24 @@
     }
 
     // ---------- coordinates ----------
+
+    // The region's own refined registration if there is one, else the global fit.
+    reg() {
+      return (this.m.regions || {})[this.s.regionId] || this.m.registration;
+    }
+
     // App space (cm, region-centred, y up, z anterior) <-> Z-Anatomy world
     // (mm, x left, y posterior, z superior) <-> CT patient space (mm, LPS).
 
     appToCt(p) {
       const c = this.s.meshCentre;
       const w = [(p.x / 100 + c[0]) * 1000, (c[1] - p.z / 100) * 1000, (c[2] + p.y / 100) * 1000];
-      const { R, t } = this.m.registration;
+      const { R, t } = this.reg();
       return [0, 1, 2].map((i) => R[i][0] * w[0] + R[i][1] * w[1] + R[i][2] * w[2] + t[i]);
     }
 
     ctToApp(q) {
-      const { R, t } = this.m.registration;
+      const { R, t } = this.reg();
       const d = [q[0] - t[0], q[1] - t[1], q[2] - t[2]];
       const w = [0, 1, 2].map((i) => R[0][i] * d[0] + R[1][i] * d[1] + R[2][i] * d[2]); // R transposed
       const c = this.s.meshCentre;
@@ -81,6 +87,7 @@
 
     // ---------- CT ----------
 
+    // The CT slice nearest the model slice, framed on the body.
     ctView() {
       const s = this.s, plane = this.m.ct.planes[s.planeName];
       const q = this.appToCt(s.centre);
@@ -90,13 +97,17 @@
         if (Math.abs(p - value) < Math.abs(plane.positions[k] - value)) k = i;
       });
       const outside = Math.abs(plane.positions[k] - value) > 3;
-      // Frame the real slice exactly like the model slice.
-      const cam = s.camera, { right, up } = s.basis;
-      const corner = (u, v) => this.toPixel(this.appToCt(s.centre.clone().addScaledVector(right, u).addScaledVector(up, v)), plane.frame);
-      const [sx, sy] = corner(cam.left, cam.top);
-      const [ex, ey] = corner(cam.right, cam.bottom);
-      const W = this.canvas.width, H = this.canvas.height;
-      return { plane, k, outside, sx, sy, kx: W / (ex - sx), ky: H / (ey - sy) };
+      // Frame the whole body on this slice (box recorded by
+      // tools/add_ct_body_boxes.py), square and with a margin, so the complete
+      // cross-section is always in view. The tiles are already in radiological
+      // orientation, so screen axes follow tile axes.
+      const { tile } = this.m.ct;
+      const b = (plane.body && plane.body[k]) || [0, 0, tile, tile];
+      const size = Math.min(tile, Math.max(b[2] - b[0], b[3] - b[1]) * 1.12 + 8);
+      const cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+      const sx = cx - size / 2, sy = cy - size / 2;
+      const W = this.canvas.width;
+      return { plane, k, outside, sx, sy, kx: W / size, ky: W / size };
     }
 
     drawCt() {

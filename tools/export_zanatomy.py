@@ -215,6 +215,17 @@ REGIONS = {
                        "Platysma.r": 1.470, "External jugular vein.r": 1.470},
         "side": "r",
         "drawn": {"great_auricular": 0.0011},
+        "courses": {
+            "facial_trunk": {"path": [("Facial nerve (VII).r", 0, 12)],
+                             "points": {"stylomastoid": ("last_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+                                        "posterior_auricular": ("spline_start", "Facial nerve (VII).r", 9),
+                                        "pes": ("spline_point", "Facial nerve (VII).r", 0, 15),
+                                        "temporal": ("spline_start", "Facial nerve (VII).r", 8),
+                                        "zygomatic": ("spline_start", "Facial nerve (VII).r", 7),
+                                        "buccal": ("spline_start", "Facial nerve (VII).r", 3),
+                                        "cervical": ("spline_start", "Facial nerve (VII).r", 2),
+                                        "mmn": "end"}},
+        },
     },
 
     "thyroid": {
@@ -272,6 +283,12 @@ REGIONS = {
         # Structures Z-Anatomy lacks, drawn as paths on its anatomy.
         "drawn": {"rln_right": 0.0012, "rln_left": 0.0012, "sln": 0.0010, "ebsln": 0.0008,
                   "superior_thyroid_artery": 0.0013, "middle_thyroid_vein": 0.0013, "inferior_thyroid_veins": 0.0013},
+        "courses": {
+            "rln_right": {"path": [("rln_right", 0)],
+                          "points": {"loop": "start", "ita": ("nearest", "Inferior thyroid artery.r"), "entry": "end"}},
+            "rln_left": {"path": [("rln_left", 0)],
+                         "points": {"loop": "start", "ita": ("nearest", "Inferior thyroid artery.l"), "entry": "end"}},
+        },
     },
     "larynx": {
         # Midline, at the glottis.
@@ -389,9 +406,150 @@ REGIONS = {
                  "Hypoglossal nerve (XII).r": (0, 1.575)},
         # Z-Anatomy puts the right internal jugular vein and vagus medial to the
         # carotids at the bifurcation; they are redrawn in their usual places.
+        "courses": {
+            "eca": {"path": [("External carotid artery.r", 0)],
+                    "points": {"origin": "start", "sta": ("nearest_start", "superior_thyroid_artery"),
+                               "lingual": ("nearest_start", "lingual_artery"), "facial": ("nearest_start", "Facial artery.r"),
+                               "occipital": ("nearest_start", "Occipital artery.r"), "parotid": "end"}},
+        },
         "drawn": {"ijv": 0.0055, "vagus": 0.0012, "hypoglossal": 0.0010, "facial_vein": 0.0022,
                   "lingual_artery": 0.0011, "ansa_cervicalis": 0.0006, "superior_thyroid_artery": 0.0012,
                   "superior_laryngeal_artery": 0.0007, "sln": 0.0009, "ebsln": 0.0007},
+    },
+    "skull_base": {
+        # Midline, at the level of the petrous temporal bones.
+        "centre": (0.0, -0.005, 1.575),
+        "fill_clipped": True,  # close meshes cut by "clip", so cross-sections cap them correctly
+        "structures": {
+            # ---- bone (both sides) ----
+            "occipital": ["Occipital bone"],
+            "sphenoid": ["Sphenoid bone"],
+            "temporal": ["Temporal bone.l", "Temporal bone.r"],
+            "ethmoid": ["Ethmoid bone"],
+            "frontal": ["Frontal bone"],
+            "atlas_axis": ["Atlas (C1)", "Axis (C2)"],
+            "facial_skeleton": ["Maxilla.l", "Maxilla.r", "Palatine bone.l", "Palatine bone.r", "Vomer",
+                                "Zygomatic bone.l", "Zygomatic bone.r", "Nasal bone.l", "Nasal bone.r"],
+            "mandible": ["Mandible"],
+            # ---- brain and dura ----
+            "brainstem": ["Medulla oblongata.l", "Medulla oblongata.r", "Pons.l", "Pons.r", "Midbrain.l", "Midbrain.r"],
+            "optic_chiasm": ["Optic chiasm.l", "Optic chiasm.r", "Optic tract.l", "Optic tract.r"],
+            "pituitary": ["Adenohypophysis", "Neurohypophysis"],
+            "tentorium": ["Tentorium cerebelli.l", "Tentorium cerebelli.r"],
+            # ---- cranial nerves (right) ----
+            "cn1": ["Olfactory nerve (I).r"],
+            "cn2": ["Optic nerve (II).r"],
+            "cn3": ["Oculomotor nerve (III).r"],
+            "cn4": ["Trochlear nerve (IV).r"],
+            "cn5": ["Trigeminal nerve (V).r"],
+            "v1": ["Ophthalmic nerve.r"],
+            "v2": ["Maxillary nerve.r"],
+            "v3": ["Anterior division of mandibular nerve.r", "Posterior division of mandibular nerve.r",
+                   "Inferior alveolar nerve.r", "Lingual nerve.r"],
+            "cn6": ["Abducens nerve (VI).r"],
+            "cn7": ["Facial nerve (VII).r"],
+            "chorda": ["Chorda tympani.r"],
+            "cn8": ["Vestibulocochlear nerve (VIII).r"],
+            "cn9": ["Glossopharyngeal nerve (IX).r"],
+            "cn10": [("Vagus nerve (X).r", [(2, 0)])],
+            "cn11": ["Accessory nerve (XI).r"],
+            "cn12": ["Hypoglossal nerve (XII).r"],
+            # ---- arteries ----
+            "ica": ["Internal carotid artery.r"],
+            "vertebral": ["Vertebral artery.r", "Vertebral artery.l"],
+            "basilar": ["Basilar artery"],
+            "pca": ["Posterior cerebral artery.r", "Posterior communicating artery.r"],
+            "cerebellar_arteries": ["Superior cerebellar artery.r", "Anterior inferior cerebellar artery.r",
+                                    "Posterior inferior cerebellar artery.r"],
+            "anterior_circulation": ["Middle cerebral artery (M1-segment).r", "Anterior cerebral artery.r"],
+            "ophthalmic_artery": ["Ophthalmic artery.r"],
+            "middle_meningeal": ["Middle meningeal artery.r"],
+            "maxillary_artery": ["Maxillary artery.r"],
+            # ---- veins and dural sinuses ----
+            "cavernous_sinus": ["Cavernous sinus.r"],
+            "sigmoid_sinus": ["Transverse sinus.r", "Sigmoid sinus.r"],
+            "petrosal_sinuses": ["Superior petrosal sinus.r", "Inferior petrosal sinus.r"],
+            "ijv": ["Internal jugular vein.r"],
+        },
+        "curve_scale": {"cn1": 1.2, "cn2": 3.0, "cn3": 1.8, "cn4": 1.4, "cn5": 3.2, "v1": 1.8, "v2": 2.0, "v3": 1.8,
+                        "cn6": 1.5, "cn7": 1.8, "chorda": 1.3, "cn8": 2.6, "cn9": 1.5, "cn10": 1.8, "cn11": 1.5,
+                        "cn12": 1.6, "ophthalmic_artery": 1.3, "middle_meningeal": 1.5, "cerebellar_arteries": 1.2,
+                        "pca": 1.2, "petrosal_sinuses": 1.4},
+        "bones": {"occipital", "sphenoid", "temporal", "ethmoid", "frontal", "atlas_axis", "facial_skeleton", "mandible"},
+        # (below, above) heights in metres; geometry outside is dropped.
+        "clip": {"Occipital bone": (0, 1.602), "Frontal bone": (0, 1.622),
+                 "Internal carotid artery.r": (1.50, 9), "Vertebral artery.r": (1.50, 9), "Vertebral artery.l": (1.50, 9),
+                 "Glossopharyngeal nerve (IX).r": (1.50, 9), "Vagus nerve (X).r": (1.50, 9),
+                 "Accessory nerve (XI).r": (1.50, 9), "Hypoglossal nerve (XII).r": (1.50, 9),
+                 "Internal jugular vein.r": (1.50, 9), "Posterior cerebral artery.r": (0, 1.62)},
+        # Named points (right side): foramina from Z-Anatomy's label anchors, or
+        # where a nerve or vessel passes through bone. See course_point().
+        "points": {
+            "foramen_magnum": ("anchor", "Foramen magnum.j"),
+            "foramen_ovale": ("anchor", "Foramen ovale.j"),
+            "foramen_rotundum": ("anchor", "Foramen rotundum.j"),
+            "foramen_spinosum": ("anchor", "Foramen spinosum.j"),
+            "hypoglossal_canal": ("anchor", "Hypoglossal canal.j"),
+            "optic_canal": ("anchor", "Optic canal.j"),
+            "condylar_canal": ("anchor", "Condylar canal.j"),
+            "pterygoid_canal": ("anchor", "Pterygoid canal.j"),
+            "mental_foramen": ("anchor", "Mental foramen.j"),
+            "jugular_foramen": ("closest", ("Vagus nerve (X).r", 2), ["Occipital bone", "Temporal bone.r"], (1.545, 1.575)),
+            "carotid_canal": ("first_in", ("Internal carotid artery.r", 0), ["Temporal bone.r"], 0.0015),
+            "foramen_lacerum": ("last_in", ("Internal carotid artery.r", 0), ["Temporal bone.r"], 0.0015),
+            "internal_acoustic_meatus": ("first_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+            "stylomastoid_foramen": ("last_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+            "superior_orbital_fissure": ("closest", ("Oculomotor nerve (III).r", 0), ["Sphenoid bone"], (1.58, 1.61), -0.040),
+            "cribriform_plate": ("closest", ("Olfactory nerve (I).r", 1), ["Ethmoid bone"], (1.59, 1.62)),
+        },
+        # Course of each traced structure: its main path (objects and splines,
+        # joined end to end) and the waypoints the app pins along it.
+        "courses": {
+            "cn1": {"path": [("Olfactory nerve (I).r", 1)], "points": {"bulb": "start", "cribriform": "@cribriform_plate"}},
+            "cn2": {"path": [("Optic nerve (II).r", 0)], "points": {"chiasm": "start", "canal": "@optic_canal", "orbit": "end"}},
+            "cn3": {"path": [("Oculomotor nerve (III).r", 0)],
+                    "points": {"origin": "start", "cavernous": ("nearest", "Cavernous sinus.r"), "sof": "@superior_orbital_fissure", "orbit": "end"}},
+            "cn4": {"path": [("Trochlear nerve (IV).r", 0)],
+                    "points": {"origin": "start", "cavernous": ("nearest", "Cavernous sinus.r"), "sof": "@superior_orbital_fissure", "orbit": "end"}},
+            "cn5": {"path": [("Trigeminal nerve (V).r", 0), ("Trigeminal nerve (V).r", 1)],
+                    "points": {"origin": "start", "ganglion": ("spline_end", "Trigeminal nerve (V).r", 0), "ovale": "@foramen_ovale"}},
+            "v1": {"path": [("Ophthalmic nerve.r", 0)],
+                   "points": {"ganglion": "start", "cavernous": ("nearest", "Cavernous sinus.r"), "sof": "@superior_orbital_fissure", "orbit": "end"}},
+            "v2": {"path": [("Maxillary nerve.r", 0)],
+                   "points": {"ganglion": "start", "rotundum": "@foramen_rotundum", "ppf": ("spline_start", "Maxillary nerve.r", 1), "infraorbital": "end"}},
+            "v3": {"path": [("Trigeminal nerve (V).r", 1), ("Posterior division of mandibular nerve.r", 0),
+                            ("Inferior alveolar nerve.r", 0), ("Inferior alveolar nerve.r", 1)],
+                   "points": {"ovale": "@foramen_ovale", "lingual": ("spline_start", "Lingual nerve.r", 0),
+                              "mandibular_foramen": ("first_in", None, ["Mandible"], 0.002), "mental": "@mental_foramen"}},
+            "cn6": {"path": [("Abducens nerve (VI).r", 0)],
+                    "points": {"origin": "start", "dorello": ("closest", None, ["Temporal bone.r", "Sphenoid bone"], (1.585, 1.600)),
+                               "cavernous": ("nearest", "Cavernous sinus.r"), "sof": "@superior_orbital_fissure", "orbit": "end"}},
+            "cn7": {"path": [("Facial nerve (VII).r", 0)],
+                    "points": {"origin": "start", "iam": "@internal_acoustic_meatus", "chorda": ("nearest_start", "Chorda tympani.r"),
+                               "stylomastoid": "@stylomastoid_foramen", "face": "end"}},
+            "cn8": {"path": [("Vestibulocochlear nerve (VIII).r", 0)], "points": {"origin": "start", "iam": "end"}},
+            "cn9": {"path": [("Glossopharyngeal nerve (IX).r", 0)], "zmin": 1.50,
+                    "points": {"origin": "start", "jugular": "@jugular_foramen", "neck": "end"}},
+            "cn10": {"path": [("Vagus nerve (X).r", 2)], "zmin": 1.50,
+                     "points": {"origin": "start", "jugular": "@jugular_foramen", "neck": "end"}},
+            "cn11": {"path": [("Accessory nerve (XI).r", 0)], "zmin": 1.50,
+                     "points": {"origin": "start", "magnum": "@foramen_magnum", "jugular": "@jugular_foramen", "neck": "end"}},
+            "cn12": {"path": [("Hypoglossal nerve (XII).r", 0)], "zmin": 1.50,
+                     "points": {"origin": "start", "canal": "@hypoglossal_canal", "neck": "end"}},
+            "ica": {"path": [("Internal carotid artery.r", 0)], "zmin": 1.50,
+                    "points": {"neck": "start", "canal": "@carotid_canal", "lacerum": "@foramen_lacerum",
+                               "cavernous": ("nearest", "Cavernous sinus.r"), "ophthalmic": ("nearest_start", "Ophthalmic artery.r"), "terminal": "end"}},
+            "vertebral": {"path": [("Vertebral artery.r", 0)], "zmin": 1.50,
+                          "points": {"atlas": ("closest", None, ["Atlas (C1)"], (1.50, 1.56)), "magnum": "@foramen_magnum", "basilar": "end"}},
+            "basilar": {"path": [("Basilar artery", 0)],
+                        "points": {"formed": "start", "aica": ("nearest_start", "Anterior inferior cerebellar artery.r"),
+                                   "sca": ("nearest_start", "Superior cerebellar artery.r"), "top": "end"}},
+            "middle_meningeal": {"path": [("Maxillary artery.r", 0), ("Middle meningeal artery.r", 0)],
+                                 "points": {"maxillary": ("nearest_start", "Middle meningeal artery.r"), "spinosum": "@foramen_spinosum", "end": "end"}},
+            "sigmoid_sinus": {"path": [("Transverse sinus.r", 0), ("Sigmoid sinus.r", 0), ("Internal jugular vein.r", 0)], "zmin": 1.50,
+                              "points": {"confluence": "start", "sigmoid": ("spline_start", "Sigmoid sinus.r", 0),
+                                         "jugular": ("spline_end", "Sigmoid sinus.r", 0), "neck": "end"}},
+        },
     },
 }
 
@@ -881,6 +1039,10 @@ def clip(bm, z, top=9.0):
     gone = [f for f in bm.faces if all(v.co.z < z for v in f.verts) or all(v.co.z > top for v in f.verts)]
     bmesh.ops.delete(bm, geom=gone, context="FACES")
     bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces], context="VERTS")
+    if cfg.get("fill_clipped"):
+        # Close the cut so the mesh stays watertight for cross-section capping.
+        made = bmesh.ops.holes_fill(bm, edges=[e for e in bm.edges if e.is_boundary], sides=0)
+        bmesh.ops.triangulate(bm, faces=made["faces"])
 
 
 def to_arrays(bm):
@@ -1007,10 +1169,123 @@ for sid, name, verts, tris in parts:
         blob += b"\0"
     meshes.append(entry)
 
+
+# ---------- named points and courses (traced structures) ----------
+
+def spline_world(name, i):
+    o = D[name]
+    sp = o.data.splines[i]
+    pts = sp.bezier_points or sp.points
+    return [o.matrix_world @ (p.co.xyz if len(p.co) == 4 else p.co) for p in pts]
+
+
+def dense(points, step=0.0008):
+    """Resample a polyline every ~0.8 mm."""
+    out = []
+    for a, b in zip(points, points[1:]):
+        n = max(1, int((b - a).length / step))
+        out += [a.lerp(b, k / n) for k in range(n)]
+    return out + points[-1:]
+
+
+BONE_CACHE = {}
+
+
+def bone_tree(names):
+    from mathutils.kdtree import KDTree
+    key = tuple(names)
+    if key not in BONE_CACHE:
+        verts = []
+        for n in names:
+            o = D[n]
+            me = o.evaluated_get(deps).to_mesh()
+            verts += [o.matrix_world @ v.co for v in me.vertices]
+        tree = KDTree(len(verts))
+        for k, v in enumerate(verts):
+            tree.insert(v, k)
+        tree.balance()
+        BONE_CACHE[key] = tree
+    return BONE_CACHE[key]
+
+
+POINTS = {}
+
+
+def course_point(spec, path):
+    """Resolve a waypoint spec to a Blender world point (metres)."""
+    if spec == "start":
+        return path[0]
+    if spec == "end":
+        return path[-1]
+    if isinstance(spec, str) and spec.startswith("@"):
+        return POINTS[spec[1:]]
+    kind = spec[0]
+    if kind == "anchor":
+        o = D[spec[1]]
+        me = o.evaluated_get(deps).to_mesh()
+        p = o.matrix_world @ me.vertices[1].co  # the hooked vertex sits on the bone
+        return Vector((-abs(p.x), p.y, p.z))  # this region's nerves and vessels are right-sided
+    if kind == "spline_point":
+        return spline_world(spec[1], spec[2])[spec[3]]
+    if kind in ("spline_start", "spline_end"):
+        pts = spline_world(spec[1], spec[2])
+        return pts[0] if kind == "spline_start" else pts[-1]
+    if kind in ("nearest", "nearest_start"):
+        o = D[spec[1]]
+        if kind == "nearest_start":
+            # The branch's origin: whichever end of its first spline is nearer the path.
+            ends = spline_world(spec[1], 0)
+            line = dense(path)
+            target = [min((ends[0], ends[-1]), key=lambda e: min((p - e).length for p in line))]
+        else:
+            me = o.evaluated_get(deps).to_mesh()
+            target = [o.matrix_world @ v.co for v in me.vertices]
+        return min(dense(path), key=lambda p: min((p - t).length for t in target[::7] or target))
+    line = dense(path if spec[1] is None else spline_world(*spec[1]))
+    tree = bone_tree(spec[2])
+    dist = [tree.find(p)[2] for p in line]
+    if kind == "closest":
+        lo, hi = spec[3]
+        ymax = spec[4] if len(spec) > 4 else 9
+        cand = [k for k, p in enumerate(line) if lo <= p.z <= hi and p.y <= ymax] or range(len(line))
+        return line[min(cand, key=lambda k: dist[k])]
+    inside = [k for k, d in enumerate(dist) if d < spec[3]]
+    if not inside:
+        return line[min(range(len(line)), key=lambda k: dist[k])]
+    return line[inside[0] if kind == "first_in" else inside[-1]]
+
+
+def app_point(p):
+    q = TO_APP @ p
+    return [round(q.x, 3), round(q.y, 3), round(q.z, 3)]
+
+
+courses = {}
+for key, spec in cfg.get("points", {}).items():
+    POINTS[key] = course_point(spec, None) if spec[0] == "anchor" else course_point(spec, [])
+for sid, c in cfg.get("courses", {}).items():
+    path = []
+    for piece in c["path"]:
+        name, i = piece[:2]
+        pts = spline_world(name, i)[piece[2] if len(piece) > 2 else 0:]
+        if path and (pts[0] - path[-1]).length > (pts[-1] - path[-1]).length:
+            pts = pts[::-1]  # join each piece end to end
+        path += pts[1:] if path and (pts[0] - path[-1]).length < 1e-4 else pts
+    if "zmin" in c:
+        path = [p for p in path if p.z >= c["zmin"]]
+    courses[sid] = {"path": [app_point(p) for p in path],
+                    "points": {k: app_point(course_point(v, path)) for k, v in c["points"].items()}}
+    print("course", sid, len(path), "points", list(courses[sid]["points"]))
+points_out = {k: app_point(v) for k, v in POINTS.items()}
+
 header = {"min": list(lo), "max": list(hi), "meshes": meshes,
           # Blender world position (metres) of the app origin, for matching to scans.
           "centre": [round(c, 6) for c in centre],
           "credit": "Z-Anatomy (CC BY-SA 4.0), based on BodyParts3D (c) The Database Center for Life Science (CC BY-SA 2.1 JP)"}
+if courses:
+    header["courses"] = courses
+if points_out:
+    header["points"] = points_out
 with open(OUT, "w") as f:
     f.write("// Generated by tools/export_zanatomy.py from Z-Anatomy (CC BY-SA 4.0),\n")
     f.write("// based on BodyParts3D (CC BY-SA 2.1 JP). Do not edit by hand.\n")

@@ -10,6 +10,13 @@ Modules so far:
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
 - **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
 - **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
+- **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
+
+Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+- **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
+- **Parotid:** the facial nerve.
+- **Carotid triangle:** the external carotid and its branches.
+- **Thyroid:** both recurrent laryngeal nerves.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -92,20 +99,44 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: an original diagram of the triangle's boundaries and contents. **Quiz**: six questions.
 - **References**: NASCET 1991, ECST 1998, Rothwell 2004, GALA 2008, ESVS 2023, Shamblin 1971, Rutherford's, Gray's and Shah.
 
+## What's in the skull base module
+
+- **3D model** from Z-Anatomy:
+  - Bones of both sides, with the vault removed: occipital, sphenoid, temporal, ethmoid and the orbital plates of the frontal bone. Optional layers add the facial skeleton, mandible, C1–C2 and the tentorium.
+  - The brainstem, optic chiasm and tracts, and the pituitary.
+  - Right-sided nerves: cranial nerves I–XII with V1–V3, the lingual, inferior alveolar and chorda tympani nerves.
+  - Right-sided arteries: the internal carotid and vertebral arteries, the basilar artery, the posterior, middle and anterior cerebral arteries and the cerebellar arteries, and the ophthalmic, middle meningeal and maxillary arteries.
+  - Right-sided veins: the cavernous, petrosal, transverse and sigmoid sinuses and the jugular bulb.
+  - "From above" and "From below" views; from above, anterior is at the top.
+- **Foramina layer**: pins on every foramen and canal. Where Z-Anatomy has a label anchor (foramen magnum, ovale, rotundum, spinosum, optic, hypoglossal, condylar and pterygoid canals) its point is used. The rest are found where the nerve or vessel passing through them meets the bone:
+  - jugular foramen and cribriform plate: the nearest point to the bone
+  - carotid canal and internal acoustic meatus: the first point inside the bone
+  - foramen lacerum and stylomastoid foramen: the last point inside the bone
+  - superior orbital fissure: the nearest point to the sphenoid
+- **Structures**: notes on every structure and foramen, with what passes through each. Every nerve and the main vessels have a course with origin, foramina and branches.
+- **Surgery**: a 9-step endoscopic endonasal transsphenoidal approach to the pituitary, with complications.
+- **Figures**: an original diagram of the internal skull base with the foramina and their contents. **Quiz**: six questions.
+- **References**: Rhoton, Bouthillier 1996, Cappabianca 2004, Hadad 2006, Fisch 1978, Gray's and Scott-Brown's.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
 
 - The cut surface of every structure is filled by stencil capping and shaded as **CT** (soft-tissue window, contrast-filled vessels), **T1 MRI** (bright fat, dark flow voids) or **anatomy colours**.
 - Orientation follows radiology convention: axial viewed from the feet with the patient's right on the image left; R/L/A/P/S/I markers and a 1 cm scale bar are shown.
-- Hover names a structure; clicking selects it in the 3D view. The 3D model is cut at the same level, with the plane outlined.
+- Structures on the slice are labelled, with vessels and nerves first. Hover names any structure; clicking selects it in the 3D view.
+- The 3D model stays whole, and the slice is drawn on it as a moving outline (the cursor). Ticking "Cut away the 3D model" removes everything above the slice instead.
 - These are **simulations from the model, not patient imaging**. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts (convex hull grown by 6 mm).
 
 ### Real CT and MRI (Visible Human)
 
 The same tab has **Real CT** and **Real MRI** modes showing scans of the Visible Human male from the U.S. National Library of Medicine. This is the body BodyParts3D, and so Z-Anatomy, was built from.
 
-- **Real CT** (post-mortem, no contrast; axial, plus coronal and sagittal reconstructions; soft-tissue and bone windows) is **matched to the model slice**. `tools/export_vhp_scans.py` registers the model's skeleton to the CT skeleton by ICP: median bone surface distance 1.5 mm, 90th percentile 5.9 mm, 3° rotation. The app picks the CT slice at the model slice's level and frames it the same way. Hovering names structures and the selected structure is outlined, both from the registered model, so treat them as approximate for soft tissue.
+- **Real CT** (post-mortem, no contrast; axial, plus coronal and sagittal reconstructions; soft-tissue and bone windows) is **matched to the model slice**:
+  - **Global fit:** `tools/register_vhp_ct.py` registers the model's skeleton to the CT skeleton by ICP: median bone surface distance 1.5 mm, 90th percentile 5.9 mm, 3° rotation.
+  - **Per-region refinement:** `tools/refine_vhp_registration.py` re-fits each region on its own bones and keeps the result where it is clearly better. Thyroid: 2.9 → 1.7 mm. Larynx: 1.4 → 1.1 mm. The other regions were already about 1 mm.
+  - **Display:** the app picks the CT slice at the model slice's level and shows the whole body cross-section, framed from boxes recorded by `tools/add_ct_body_boxes.py`.
+  - **Labels, hover and outlines** come from the registered model, so treat them as approximate for soft tissue.
 - **Real MRI** (T1 and T2, axial and coronal) is a separate scan that isn't registered to the model; browse it with the slider.
 - Data: NCI Imaging Data Commons collection `nlm_visible_human_project` (patient VHP-M), used under the National Library of Medicine terms and conditions (May 21, 2019). Credit: *Courtesy of the U.S. National Library of Medicine.*
 
@@ -118,6 +149,8 @@ pip install idc-index pydicom scipy pillow
 python tools/export_model_bones.py Z-Anatomy/Startup.blend model_bone_mm.npy      # needs bpy
 python tools/register_vhp_ct.py CT_SERIES_DIR model_bone_mm.npy WORK_DIR
 python tools/export_vhp_scans.py WORK_DIR MR_ROOT data/scans
+python tools/add_ct_body_boxes.py data/scans
+python tools/refine_vhp_registration.py WORK_DIR data/scans/vhp-scans.js data/*-meshes.js
 ```
 
 ## Project layout
@@ -159,6 +192,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend lateral_neck data/latera
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend thyroid data/thyroid-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend larynx data/larynx-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend carotid data/carotid-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-base-meshes.js
 ```
 
 ## Licensing and credits
@@ -172,6 +206,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, deep neck spaces, skull base
+- More regions: posterior triangle, deep neck spaces, infratemporal fossa, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores

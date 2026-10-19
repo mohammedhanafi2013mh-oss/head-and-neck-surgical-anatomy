@@ -469,5 +469,68 @@ window.ANATOMY.figures = {
   <text x="8" y="128" class="fig-label small">Common facial v.</text>
   <line x1="100" y1="125" x2="256" y2="160" stroke="var(--fig-stroke)" stroke-width=".7"/>
   <text x="250" y="226" class="fig-label small">Bifurcation</text>
+</svg>`,
+
+  skullBase: `
+<svg viewBox="0 0 460 460" role="img" aria-label="Internal skull base seen from above with the foramina of the right side labelled with their contents">
+  <!-- outline of the cranial cavity -->
+  <path d="M230 18 Q330 22 372 110 Q404 190 396 270 Q386 360 330 404 Q280 432 230 432 Q180 432 130 404 Q74 360 64 270 Q56 190 88 110 Q130 22 230 18 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- anterior fossa / lesser wings -->
+  <path d="M96 150 Q160 128 206 152 L254 152 Q300 128 364 150" fill="none" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <!-- petrous ridges -->
+  <path d="M84 300 L196 232 M376 300 L264 232" fill="none" stroke="var(--fig-stroke)" stroke-width="3"/>
+  <!-- cribriform plate -->
+  <rect x="214" y="70" width="32" height="64" rx="10" fill="#cdbb94" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <g fill="var(--fig-stroke)" opacity=".6">
+    <circle cx="222" cy="84" r="1.6"/><circle cx="230" cy="84" r="1.6"/><circle cx="238" cy="84" r="1.6"/>
+    <circle cx="222" cy="98" r="1.6"/><circle cx="230" cy="98" r="1.6"/><circle cx="238" cy="98" r="1.6"/>
+    <circle cx="222" cy="112" r="1.6"/><circle cx="230" cy="112" r="1.6"/><circle cx="238" cy="112" r="1.6"/>
+  </g>
+  <!-- sella and clivus -->
+  <ellipse cx="230" cy="190" rx="22" ry="16" fill="#e6c8a8" stroke="var(--fig-stroke)"/>
+  <path d="M214 214 L246 214 L240 330 L220 330 Z" fill="#d9c9a2" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- foramen magnum -->
+  <ellipse cx="230" cy="352" rx="30" ry="34" fill="#3b3226" stroke="var(--fig-stroke)"/>
+  <!-- right-side foramina (image right: seen from above, anterior at the top) -->
+  <g transform="translate(460 0) scale(-1 1)" fill="#3b3226" stroke="var(--fig-stroke)" stroke-width=".8">
+    <ellipse cx="206" cy="160" rx="5" ry="4"/>
+    <path d="M200 168 Q176 172 150 160 L148 166 Q178 182 198 174 Z"/>
+    <circle cx="186" cy="188" r="4"/>
+    <ellipse cx="176" cy="212" rx="7" ry="4.5"/>
+    <circle cx="160" cy="220" r="3"/>
+    <ellipse cx="200" cy="222" rx="5" ry="4"/>
+    <ellipse cx="160" cy="268" rx="5" ry="4"/>
+    <path d="M168 300 Q184 296 190 306 Q182 316 166 312 Z"/>
+    <ellipse cx="196" cy="332" rx="4" ry="3"/>
+  </g>
+  <!-- labels with contents -->
+  <g class="fig-label small">
+    <text x="208" text-anchor="end" y="80">Cribriform plate · I</text>
+    <text x="452" text-anchor="end" y="140">Optic canal · II, ophthalmic a.</text>
+    <text x="452" text-anchor="end" y="160">Sup. orbital fissure · III, IV, V1, VI</text>
+    <text x="452" text-anchor="end" y="186">F. rotundum · V2</text>
+    <text x="452" text-anchor="end" y="208">F. ovale · V3</text>
+    <text x="452" text-anchor="end" y="246">F. spinosum · middle meningeal a.</text>
+    <text x="208" text-anchor="end" y="232">F. lacerum (carotid passes above)</text>
+    <text x="452" text-anchor="end" y="262">Int. acoustic meatus · VII, VIII</text>
+    <text x="452" text-anchor="end" y="300">Jugular foramen · IX, X, XI, IJV</text>
+    <text x="452" text-anchor="end" y="336">Hypoglossal canal · XII</text>
+    <text x="192" text-anchor="end" y="352">Foramen magnum · medulla,</text>
+    <text x="192" text-anchor="end" y="366">vertebral aa., spinal root of XI</text>
+    <text x="208" text-anchor="end" y="194">Sella · pituitary</text>
+    <text x="160" text-anchor="end" y="120">Anterior fossa</text>
+    <text x="130" text-anchor="end" y="262">Middle fossa</text>
+    <text x="160" text-anchor="end" y="300">Posterior fossa</text>
+    <text x="196" y="430">Posterior</text>
+    <text x="200" y="14">Anterior</text>
+  </g>
+  <g transform="translate(460 0) scale(-1 1)" stroke="var(--fig-stroke)" stroke-width=".7">
+    <line x1="134" y1="137" x2="202" y2="158"/><line x1="160" y1="157" x2="170" y2="168"/>
+    <line x1="90" y1="183" x2="182" y2="188"/><line x1="70" y1="205" x2="168" y2="211"/>
+    <line x1="130" y1="242" x2="158" y2="222"/><line x1="250" y1="229" x2="206" y2="222"/>
+    <line x1="140" y1="259" x2="155" y2="266"/><line x1="140" y1="297" x2="166" y2="304"/>
+    <line x1="118" y1="333" x2="192" y2="332"/>
+  </g>
+  <text x="8" y="452" class="fig-label small">Seen from above, anterior at the top: the patient's right (labelled) is on the right</text>
 </svg>`
 };

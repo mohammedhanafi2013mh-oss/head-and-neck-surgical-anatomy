@@ -32,5 +32,10 @@ window.ANATOMY.catalog = [
     id: "carotid",
     title: "Carotid triangle",
     scripts: ["data/carotid.js", "data/carotid-meshes.js", "js/models/carotid-model.js"]
+  },
+  {
+    id: "skull_base",
+    title: "Skull base",
+    scripts: ["data/skull-base.js", "data/skull-base-meshes.js", "js/models/skull-base-model.js"]
   }
 ];

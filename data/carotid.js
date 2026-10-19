@@ -105,6 +105,14 @@ window.ANATOMY.regions.carotid = {
       id: "eca",
       name: "External carotid artery",
       layer: "artery",
+      course: [
+        { key: "origin", label: "Carotid bifurcation", text: "Usually anteromedial to the internal carotid at its origin." },
+        { key: "sta", label: "Superior thyroid artery", text: "Usually the first branch, from the front, curving down to the thyroid. The ascending pharyngeal artery arises from the medial side near here (not pinned: the source model starts it higher)." },
+        { key: "lingual", label: "Lingual artery", text: "Opposite the tip of the greater horn of the hyoid; loops up, crossed by XII." },
+        { key: "facial", label: "Facial artery", text: "Above the lingual (often a shared linguofacial trunk), deep to digastric and stylohyoid." },
+        { key: "occipital", label: "Occipital artery", text: "From the back, along the lower border of the posterior belly of digastric; XII hooks round it." },
+        { key: "parotid", label: "Into the parotid", text: "Gives the posterior auricular artery and divides in the gland into the maxillary and superficial temporal arteries." }
+      ],
       summary: "Usually anteromedial to the internal carotid at its origin. It gives the superior thyroid, lingual and facial arteries in front, the ascending pharyngeal from its medial side, and the occipital and posterior auricular behind, then enters the parotid.",
       relations: ["The hypoglossal nerve crosses it superficially; the superior laryngeal nerve and its external branch pass deep to it"],
       supply: { "Supplies": "Neck, face, scalp, tongue, pharynx and dura (middle meningeal)" },

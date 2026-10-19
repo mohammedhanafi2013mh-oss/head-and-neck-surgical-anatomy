@@ -241,6 +241,19 @@
       this.spherical = { radius: 24, theta: 1.0, phi: 1.75 };
       this.home = null;
 
+      // Course tracing: pins at named points (foramina, origins, branches),
+      // a path line and a tracer that runs along it. Drawn over everything so
+      // a nerve can be followed through bone.
+      this.landmarks = this.makePinGroup();
+      this.coursePins = this.makePinGroup();
+      this.trail = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ color: 0x3fd0ff, depthTest: false, transparent: true, opacity: 0.9 }));
+      this.trail.renderOrder = 1001;
+      this.trail.visible = false;
+      this.tracer = new THREE.Mesh(new THREE.SphereGeometry(0.16, 20, 14), new THREE.MeshBasicMaterial({ color: 0x3fd0ff, depthTest: false }));
+      this.tracer.renderOrder = 1002;
+      this.tracer.visible = false;
+      this.scene.add(this.trail, this.tracer);
+
       this.raycaster = new THREE.Raycaster();
       this.pointer = new THREE.Vector2();
       this.bindControls();
@@ -265,6 +278,8 @@
     }
 
     load(region, model) {
+      this.clearCourse();
+      this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
         this.scene.remove(s.root);
         s.label.remove();
@@ -404,6 +419,14 @@
     positionLabels() {
       const w = this.container.clientWidth, h = this.container.clientHeight;
       const v = new THREE.Vector3();
+      for (const g of [this.landmarks, this.coursePins]) {
+        for (const pin of g.pins) {
+          v.copy(pin.mesh.position).project(this.camera);
+          const show = pin.mesh.visible && g.group.visible && v.z <= 1;
+          pin.label.style.display = show ? "" : "none";
+          if (show) pin.label.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(8px, -50%)`;
+        }
+      }
       for (const s of this.structures.values()) {
         if (s.label.classList.contains("is-hidden")) continue;
         v.copy(s.anchor).project(this.camera);
@@ -411,6 +434,143 @@
         s.label.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -100%)`;
         s.label.style.opacity = behind ? 0 : "";
       }
+    }
+
+    // ---------- course tracing ----------
+
+    makePinGroup() {
+      const group = new THREE.Group();
+      group.renderOrder = 1000;
+      this.scene.add(group);
+      return { group, pins: [] };
+    }
+
+    // pins: [{ p: [x, y, z], label, kind }]; kind "foramen" pins are smaller and paler.
+    setPins(g, pins) {
+      for (const pin of g.pins) {
+        g.group.remove(pin.mesh);
+        pin.label.remove();
+      }
+      g.pins = pins.map((q) => {
+        const mesh = new THREE.Mesh(
+          new THREE.SphereGeometry(q.kind === "foramen" ? 0.11 : 0.14, 16, 12),
+          new THREE.MeshBasicMaterial({ color: q.kind === "foramen" ? 0xffe08a : 0xffc23d, depthTest: false })
+        );
+        mesh.renderOrder = 1000;
+        mesh.position.set(...q.p);
+        g.group.add(mesh);
+        const label = document.createElement("span");
+        label.className = "pin-label" + (q.kind === "foramen" ? " is-foramen" : "");
+        label.textContent = q.label;
+        this.labelLayer.appendChild(label);
+        return { mesh, label, p: mesh.position };
+      });
+      this.dirty = true;
+    }
+
+    setLandmarks(pins) {
+      this.setPins(this.landmarks, pins.map((q) => ({ ...q, kind: "foramen" })));
+    }
+
+    // Show a structure's course: the whole path as a line and every waypoint pinned.
+    showCourse(path, pins) {
+      this.stopTrace();
+      this.setPins(this.coursePins, pins);
+      this.curve = path && path.length > 1 ? new THREE.CatmullRomCurve3(path.map((q) => new THREE.Vector3(...q))) : null;
+      if (this.curve) {
+        // A thin tube along the path; its index buffer runs along the path,
+        // so drawing a prefix of it draws the path up to the tracer.
+        this.trailSegments = Math.max(60, Math.round(this.curve.getLength() * 20));
+        this.trail.geometry.dispose();
+        this.trail.geometry = new THREE.TubeGeometry(this.curve, this.trailSegments, 0.05, 6, false);
+        this.trailCount = this.trail.geometry.index.count;
+        this.trail.geometry.setDrawRange(0, this.trailCount);
+        this.trail.material.opacity = 0.55;
+        // Where along the path each pin sits, for revealing them during a trace.
+        const samples = this.curve.getSpacedPoints(200);
+        for (const pin of this.coursePins.pins) {
+          let best = 0, bd = Infinity;
+          samples.forEach((q, i) => { const d = q.distanceToSquared(pin.p); if (d < bd) { bd = d; best = i; } });
+          pin.t = best / 200;
+        }
+      }
+      this.trail.visible = !!this.curve;
+      // Foramen pins would crowd the course's own pins; hide them meanwhile.
+      this.landmarks.group.visible = !this.curve && pins.length < 2;
+      this.dirty = true;
+    }
+
+    // Move the camera so the whole course is in view.
+    frameCourse() {
+      if (!this.curve) return;
+      const box = new THREE.Box3().setFromPoints(this.curve.getSpacedPoints(50));
+      const size = box.getSize(new THREE.Vector3()).length();
+      this.flyTo(box.getCenter(new THREE.Vector3()).toArray(), Math.max(10, size * 2.4));
+    }
+
+    clearCourse() {
+      this.stopTrace();
+      this.setPins(this.coursePins, []);
+      this.curve = null;
+      this.trail.visible = false;
+      this.landmarks.group.visible = true;
+      this.dirty = true;
+    }
+
+    // Run a tracer along the course from its start, drawing the path and
+    // revealing each pin as it is reached.
+    trace(onPin) {
+      if (!this.curve) return;
+      this.stopTrace();
+      const length = this.curve.getLength();
+      const duration = Math.min(8000, Math.max(3000, length * 450));
+      const start = performance.now();
+      const reached = new Set();
+      for (const pin of this.coursePins.pins) pin.mesh.visible = false;
+      this.tracer.visible = true;
+      this.trail.material.opacity = 0.95;
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        this.tracer.position.copy(this.curve.getPointAt(t));
+        this.trail.geometry.setDrawRange(0, Math.round(t * this.trailSegments) * 36);
+        this.coursePins.pins.forEach((pin, i) => {
+          if (!reached.has(i) && pin.t <= t + 0.005) {
+            reached.add(i);
+            pin.mesh.visible = true;
+            if (onPin) onPin(i);
+          }
+        });
+        this.dirty = true;
+        if (t < 1) this.traceFrame = requestAnimationFrame(step);
+        else this.traceFrame = null;
+      };
+      this.traceFrame = requestAnimationFrame(step);
+    }
+
+    stopTrace() {
+      if (this.traceFrame) cancelAnimationFrame(this.traceFrame);
+      this.traceFrame = null;
+      this.tracer.visible = false;
+      for (const pin of this.coursePins.pins) pin.mesh.visible = true;
+      if (this.curve) {
+        this.trail.geometry.setDrawRange(0, this.trailCount);
+        this.trail.material.opacity = 0.55;
+      }
+      this.dirty = true;
+    }
+
+    // Glide the camera's target to a point and close in on it.
+    flyTo(p, radius) {
+      const from = this.target.clone(), to = new THREE.Vector3(...p);
+      const r0 = this.spherical.radius, r1 = radius || Math.min(r0, 12);
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / 600), e = t * t * (3 - 2 * t);
+        this.target.lerpVectors(from, to, e);
+        this.spherical.radius = r0 + (r1 - r0) * e;
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     }
 
     pick(clientX, clientY) {

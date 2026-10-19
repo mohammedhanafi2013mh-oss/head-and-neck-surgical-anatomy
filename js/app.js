@@ -13,6 +13,8 @@
     nerve: "#e6c21f",
     lymph: "#6fb36a",
     context: "#b9a48f",
+    foramina: "#e8c14a",
+    brain: "#c9a0b8",
     membrane: "#a79fcf",
     deep: "#7e9bb8"
   };
@@ -53,6 +55,7 @@
     }
   });
   viewer.onRefresh = () => {
+    syncLandmarks();
     if (sections.active) sections.update();
   };
   window.ANATOMY.sections = sections;
@@ -115,7 +118,9 @@
     }
     loading.hidden = true;
     state.region = regions[entry.id];
+    state.regionId = entry.id;
     state.model = models[entry.id];
+    landmarksShown = null;
     state.selected = null;
     state.step = 0;
     state.quiz = {};
@@ -129,6 +134,49 @@
     renderLayerToggles();
     renderViewButtons();
     render();
+  }
+
+  // ---------- courses and foramina ----------
+
+  // Mesh header data for the current region: traced courses and named points.
+  const header = () => window.ANATOMY.meshes[state.regionId].header;
+
+  // A structure's course: its path and the waypoints its notes describe.
+  function courseFor(s) {
+    const c = s && s.course && (header().courses || {})[s.id];
+    if (!c) return null;
+    const steps = s.course.filter((x) => c.points[x.key]).map((x) => ({ ...x, p: c.points[x.key] }));
+    return { path: c.path, steps };
+  }
+
+  const pinFor = (s) => s && s.pin && (header().points || {})[s.pin];
+  const short = (name) => name.replace(/ \(.*\)$/, "");
+
+  // Pins for every foramen while the "Foramina" layer is on.
+  let landmarksShown = null;
+  function syncLandmarks() {
+    if (!state.region) return;
+    const on = !!viewer.layerVisible.foramina;
+    if (on === landmarksShown) return;
+    landmarksShown = on;
+    viewer.setLandmarks(on ? state.region.structures.filter((s) => pinFor(s) && s.landmark !== false).map((s) => ({ p: pinFor(s), label: short(s.name) })) : []);
+  }
+
+  // Show the selected structure's course (or its pin) on the model.
+  let shownCourse = null;
+  function syncCourse() {
+    const s = state.tab === "structures" && state.selected && state.region.structures.find((x) => x.id === state.selected);
+    const course = courseFor(s);
+    if (course) {
+      const fresh = shownCourse !== s.id;
+      viewer.showCourse(course.path, course.steps.map((x) => ({ p: x.p, label: x.label })));
+      if (fresh) viewer.frameCourse();
+    }
+    else if (pinFor(s)) {
+      viewer.showCourse(null, [{ p: pinFor(s), label: short(s.name) }]);
+      viewer.flyTo(pinFor(s), 10);
+    } else viewer.clearCourse();
+    shownCourse = course ? s.id : null;
   }
 
   // ---------- viewer controls ----------
@@ -205,6 +253,7 @@
     wire(body);
     if (state.tab === "surgery") applyStep();
     else viewer.select(state.selected, false);
+    syncCourse();
   }
 
   // ---------- views ----------
@@ -252,16 +301,26 @@
       <button class="back" data-back>← All structures</button>
       <h2>${esc(s.name)}</h2>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
-      ${viewer.structures.has(s.id) ? "" : `<p class="aka">Not shown in the 3D model yet.</p>`}
+      ${viewer.structures.has(s.id) ? "" : pinFor(s) ? `<p class="aka">Shown as a pin on the 3D model.</p>` : `<p class="aka">Not shown in the 3D model yet.</p>`}
       ${s.drawn === "redrawn" ? `<p class="aka">Z-Anatomy's model places this structure inaccurately here, so its path in this region was redrawn for this app in its usual position.</p>`
         : s.drawn ? `<p class="aka">Z-Anatomy has no model of this structure. Its 3D path was drawn for this app from the surrounding anatomy.</p>` : ""}
       <p>${esc(s.summary)}</p>
+      ${courseHtml(courseFor(s))}
       ${s.relations?.length ? `<h3>Relations</h3>${list(s.relations)}` : ""}
       ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
       ${s.surgical?.length ? `<div class="callout pearl"><div class="callout-title">Surgical relevance</div>${list(s.surgical)}</div>` : ""}
       ${s.danger?.length ? `<div class="callout danger"><div class="callout-title">Danger points</div>${list(s.danger)}</div>` : ""}
       ${s.variations?.length ? `<h3>Variations</h3>${list(s.variations)}` : ""}
       ${refChips(s.refs)}`;
+  }
+
+  function courseHtml(course) {
+    if (!course) return "";
+    return `<div class="course"><div class="course-head"><h3>Course</h3><button type="button" class="trace-btn" data-trace>▶ Trace the course</button></div>
+      <ol class="course-list">${course.steps
+        .map((x, i) => `<li data-step-i="${i}"><button type="button" data-pin="${i}">${esc(x.label)}</button>${x.text ? ` <span>${esc(x.text)}</span>` : ""}</li>`)
+        .join("")}</ol>
+      <p class="muted small">Pins mark each point on the model; the line shows the path, drawn through bone so it can be followed.</p></div>`;
   }
 
   function surgery(r) {
@@ -355,6 +414,20 @@
         }
         state.tab = "structures";
         render();
+      })
+    );
+    const course = state.tab === "structures" && courseFor(state.region.structures.find((x) => x.id === state.selected));
+    const trace = $("[data-trace]", body);
+    if (trace && course) trace.addEventListener("click", () => {
+      body.querySelectorAll("[data-step-i]").forEach((li) => li.classList.remove("reached"));
+      viewer.trace((i) => {
+        const li = body.querySelector(`[data-step-i="${i}"]`);
+        if (li) li.classList.add("reached");
+      });
+    });
+    body.querySelectorAll("[data-pin]").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (course) viewer.flyTo(course.steps[Number(b.dataset.pin)].p, 9);
       })
     );
     const back = $("[data-back]", body);
