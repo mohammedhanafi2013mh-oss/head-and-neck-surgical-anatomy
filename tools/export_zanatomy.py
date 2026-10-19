@@ -740,6 +740,97 @@ REGIONS = {
                                     "points": {"origin": "start", "ptm": "@pterygomaxillary_fissure", "foramen": "end"}},
         },
     },
+    "orbit": {
+        # Right orbit, centred between the apex and the globe.
+        "centre": (-0.026, -0.055, 1.597),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "frontal": ["Frontal bone"],
+            "sphenoid": ["Sphenoid bone"],
+            "ethmoid": ["Ethmoid bone"],
+            "maxilla": ["Maxilla.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            "lacrimal_bone": ["Lacrimal bone.r", "Nasal bone.r"],
+            # ---- eye and lids ----
+            "globe": ["Sclera.r", "Cornea.r"],
+            "inner_eye": ["Iris.r", "Lens.r", "Retina.r"],
+            "tarsi": ["Superior tarsus.r", "Inferior tarsus.r"],
+            "lockwood": ["Suspensory ligament of eyeball.r"],
+            # ---- muscles ----
+            "levator": ["Levator palpebrae superioris.r"],
+            "superior_rectus": ["Superior rectus muscle.r"],
+            "inferior_rectus": ["Inferior rectus muscle.r"],
+            "medial_rectus": ["Medial rectus muscle.r"],
+            "lateral_rectus": ["Lateral rectus muscle.r"],
+            "superior_oblique": ["Superior oblique muscle.r", "Trochlea of superior oblique muscle.r"],
+            "inferior_oblique": ["Inferior oblique muscle.r"],
+            "annulus": ["Common tendinous ring.r"],
+            # ---- lacrimal apparatus ----
+            "lacrimal_gland": ["Lacrimal gland.r"],
+            "lacrimal_drainage": ["Lacrimal canaliculus.r", "Ampulla of lacrimal canaliculus.r", "Lacrimal sac.r", "Nasolacrimal duct.r"],
+            # ---- nerves ----
+            "cn2": ["Optic nerve (II).r"],
+            "cn3": ["Oculomotor nerve (III).r"],
+            "cn4": ["Trochlear nerve (IV).r"],
+            "cn6": ["Abducens nerve (VI).r"],
+            "v1": ["Ophthalmic nerve.r"],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "ophthalmic_artery": ["Ophthalmic artery.r"],
+            "ophthalmic_branches": [("Central retinal artery.r", [(0, 0)]), "Long posterior ciliary arteries.r", "Short posterior ciliary arteries.r"],
+            "lacrimal_artery": ["Lacrimal artery.r"],
+            "supraorbital_artery": ["Supra-orbital artery.r", "Supratrochlear artery.r"],
+            "ethmoidal_arteries": ["Anterior ethmoidal artery.r", "Posterior ethmoidal artery.r"],
+            "ica": ["Internal carotid artery.r"],
+            # ---- veins ----
+            "ophthalmic_veins": ["Superior ophthalmic vein.r", "Inferior ophthalmic vein.r"],
+            "cavernous_sinus": ["Cavernous sinus.r"],
+        },
+        "curve_scale": {"cn2": 3.0, "cn3": 1.6, "cn4": 1.2, "cn6": 1.4, "v1": 1.6, "v2": 1.8, "ophthalmic_artery": 1.6,
+                        "ophthalmic_branches": 0.7, "lacrimal_artery": 1.0, "supraorbital_artery": 1.0,
+                        "ethmoidal_arteries": 1.0, "ophthalmic_veins": 2.2},
+        "bones": {"frontal", "sphenoid", "ethmoid", "maxilla", "zygomatic", "lacrimal_bone"},
+        "clip": {"Frontal bone": (0, 1.645), "Maxilla.r": (1.555, 9), "Sphenoid bone": (1.565, 9),
+                 "Internal carotid artery.r": (1.585, 1.62), "Oculomotor nerve (III).r": (1.57, 9)},
+        "side": "r",
+        # Branches Z-Anatomy lacks. See drawn_nasociliary() and below.
+        "drawn": {"nasociliary": 0.0007, "lacrimal_nerve": 0.0007, "ciliary_ganglion": 0.0013,
+                  "ciliary_roots": 0.0005, "short_ciliary": 0.0004},
+        "points": {
+            "optic_canal": ("anchor", "Optic canal.j"),
+            "superior_orbital_fissure": ("closest", ("Oculomotor nerve (III).r", 0), ["Sphenoid bone"], (1.58, 1.61), -0.020),
+            "supraorbital_notch": ("anchor", "(Supra-orbital notch).j"),
+            "trochlea": ("anchor", "Trochlear fovea.j"),
+            "anterior_ethmoidal_foramen": ("spline_start", "Anterior ethmoidal artery.r", 0),
+            "posterior_ethmoidal_foramen": ("spline_end", "Posterior ethmoidal artery.r", 0),
+            "inferior_orbital_fissure": ("spline_point", "Maxillary nerve.r", 0, 7),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "cn2": {"path": [("Optic nerve (II).r", 0)],
+                    "points": {"chiasm": "start", "canal": "@optic_canal", "globe": "end"}},
+            "cn3": {"path": [("Oculomotor nerve (III).r", 0)], "zmin": 1.57,
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure",
+                               "inferior": ("spline_start", "Oculomotor nerve (III).r", 2),
+                               "ciliary": ("nearest", "ciliary_ganglion"), "superior": "end"}},
+            "cn4": {"path": [("Trochlear nerve (IV).r", 0)],
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure", "muscle": "end"}},
+            "cn6": {"path": [("Abducens nerve (VI).r", 0)],
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure", "muscle": "end"}},
+            "v1": {"path": [("Ophthalmic nerve.r", 0)],
+                   "points": {"ganglion": "start", "sof": "@superior_orbital_fissure",
+                              "notch": "@supraorbital_notch", "forehead": "end"}},
+            "nasociliary": {"path": [("nasociliary", 0)],
+                            "points": {"origin": "start", "optic": ("nearest", "Optic nerve (II).r"),
+                                       "anterior_ethmoidal": "@anterior_ethmoidal_foramen", "infratrochlear": "end"}},
+            "ophthalmic_artery": {"path": [("Ophthalmic artery.r", 0), ("Anterior ethmoidal artery.r", 0)],
+                                  "points": {"origin": "start", "canal": "@optic_canal",
+                                             "lacrimal": ("nearest_start", "Lacrimal artery.r"),
+                                             "supraorbital": ("nearest_start", "Supra-orbital artery.r"),
+                                             "ethmoidal": "@anterior_ethmoidal_foramen", "nose": "end"}},
+        },
+    },
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
@@ -1433,6 +1524,62 @@ DRAWN.update({"ppg": drawn_ppg, "ganglionic_branches": drawn_ganglionic_branches
               "greater_palatine_n": drawn_greater_palatine_n, "nasopalatine": drawn_nasopalatine,
               "psa_nerve": drawn_psa_nerve, "zygomatic_nerve": drawn_zygomatic_nerve,
               "pharyngeal_nerve": drawn_pharyngeal_nerve})
+
+# ---------- drawn nerves of the orbit ----------
+# Placed from the right ophthalmic nerve as it enters the orbit (about (-17, -26, 1598) mm),
+# the optic nerve, the ophthalmic and ethmoidal arteries, the lacrimal artery and gland,
+# the lateral rectus and the inferior division of the oculomotor nerve.
+
+CILIARY = [Vector((-0.0238, -0.0410, 1.5962)), Vector((-0.0241, -0.0421, 1.5959)), Vector((-0.0244, -0.0432, 1.5956))]
+
+
+def drawn_nasociliary(L):
+    """Nasociliary nerve: through the common tendinous ring, over the optic
+    nerve from lateral to medial with the ophthalmic artery, along the medial
+    wall to the anterior ethmoidal foramen and on as the infratrochlear nerve.
+    Further splines: posterior ethmoidal, anterior ethmoidal and two long
+    ciliary nerves."""
+    main = [Vector((-0.0172, -0.0270, 1.5985)), Vector((-0.0195, -0.0340, 1.6000)), Vector((-0.0210, -0.0400, 1.6022)),
+            Vector((-0.0185, -0.0460, 1.6018)), Vector((-0.0145, -0.0520, 1.6005)), Vector((-0.0138, -0.0600, 1.6008)),
+            Vector((-0.0140, -0.0680, 1.6020)), Vector((-0.0148, -0.0750, 1.6040))]
+    posterior_ethmoidal = [Vector((-0.0160, -0.0490, 1.6012)), Vector((-0.0125, -0.0465, 1.5985)), Vector((-0.0100, -0.0442, 1.5950))]
+    anterior_ethmoidal = [Vector((-0.0140, -0.0545, 1.6003)), Vector((-0.0118, -0.0550, 1.5995)), Vector((-0.0095, -0.0555, 1.5985))]
+    long_ciliary = [[Vector((-0.0205, -0.0425, 1.6020)), Vector((-0.0225, -0.0470, 1.5990)), Vector((-0.0245, -0.0505, 1.5965))],
+                    [Vector((-0.0200, -0.0435, 1.6020)), Vector((-0.0210, -0.0480, 1.5975)), Vector((-0.0225, -0.0512, 1.5945))]]
+    return [main, posterior_ethmoidal, anterior_ethmoidal] + long_ciliary
+
+
+def drawn_lacrimal_nerve(L):
+    """Lacrimal nerve: through the superior orbital fissure above the ring and
+    forward along the upper border of the lateral rectus to the lacrimal gland."""
+    return [Vector((-0.0185, -0.0280, 1.6005)), Vector((-0.0245, -0.0360, 1.6045)), Vector((-0.0310, -0.0440, 1.6060)),
+            Vector((-0.0360, -0.0515, 1.6065)), Vector((-0.0392, -0.0575, 1.6072)), Vector((-0.0400, -0.0620, 1.6078))]
+
+
+def drawn_ciliary_ganglion(L):
+    """Ciliary ganglion: lateral to the optic nerve, about 1 cm in front of the apex."""
+    return CILIARY
+
+
+def drawn_ciliary_roots(L):
+    """Sensory root from the nasociliary nerve and parasympathetic (motor) root
+    from the nerve to inferior oblique."""
+    return [[Vector((-0.0200, -0.0370, 1.6010)), Vector((-0.0222, -0.0395, 1.5985)), CILIARY[0]],
+            [Vector((-0.0241, -0.0423, 1.5909)), Vector((-0.0242, -0.0425, 1.5935)), CILIARY[1]]]
+
+
+def drawn_short_ciliary(L):
+    """Short ciliary nerves from the ganglion to the back of the globe around the optic nerve."""
+    g = CILIARY[2]
+    return [[g, Vector((-0.0258, -0.0470, 1.5965)), Vector((-0.0272, -0.0505, 1.5968))],
+            [g, Vector((-0.0252, -0.0475, 1.5940)), Vector((-0.0262, -0.0510, 1.5932))],
+            [g, Vector((-0.0262, -0.0465, 1.5985)), Vector((-0.0280, -0.0500, 1.5995))]]
+
+
+DRAWN.update({"nasociliary": drawn_nasociliary, "lacrimal_nerve": drawn_lacrimal_nerve,
+              "ciliary_ganglion": drawn_ciliary_ganglion, "ciliary_roots": drawn_ciliary_roots,
+              "short_ciliary": drawn_short_ciliary})
+
 
 
 

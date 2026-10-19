@@ -52,5 +52,10 @@ window.ANATOMY.catalog = [
     id: "pterygopalatine",
     title: "Pterygopalatine fossa",
     scripts: ["data/pterygopalatine.js", "data/pterygopalatine-meshes.js", "js/models/pterygopalatine-model.js"]
+  },
+  {
+    id: "orbit",
+    title: "Orbit",
+    scripts: ["data/orbit.js", "data/orbit-meshes.js", "js/models/orbit-model.js"]
   }
 ];

@@ -883,5 +883,82 @@ window.ANATOMY.figures = {
   <text x="219" y="394" class="fig-label small">↔ oral cavity (palate)</text>
   <text x="219" y="410" class="fig-label small">Greater and lesser palatine nn. and aa.</text>
   <text x="8" y="434" class="fig-label small">Schematic, right side. Posterior openings on the left, anterior, medial and lateral on the right.</text>
+</svg>`,
+
+  orbitApex: `
+<svg viewBox="0 0 560 440" role="img" aria-label="Right orbital apex seen from the front: the common tendinous ring around the optic canal and the medial part of the superior orbital fissure, with the nerves and vessels passing inside and outside it">
+  <!-- apex bone -->
+  <path d="M70 60 Q280 20 470 70 Q520 220 450 360 Q280 420 110 360 Q30 220 70 60 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- superior orbital fissure: narrow laterally (viewer's left), wide medially -->
+  <path d="M96 104 Q170 132 238 186 Q258 206 256 246 Q232 252 214 232 Q160 170 92 116 Z" fill="#3b3226" opacity=".85"/>
+  <!-- optic canal -->
+  <circle cx="306" cy="168" r="24" fill="#3b3226" opacity=".85"/>
+  <circle cx="306" cy="164" r="13" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <circle cx="296" cy="184" r="4.5" fill="var(--fig-artery)"/>
+  <!-- common tendinous ring -->
+  <ellipse cx="270" cy="210" rx="92" ry="78" fill="none" stroke="#c9b48a" stroke-width="9" opacity=".9"/>
+  <!-- rectus origins on the ring -->
+  <g fill="var(--fig-muscle)" opacity=".85" stroke="var(--fig-stroke)" stroke-width=".6">
+    <rect x="248" y="122" width="44" height="14" rx="4"/>
+    <rect x="354" y="190" width="14" height="40" rx="4"/>
+    <rect x="248" y="282" width="44" height="14" rx="4"/>
+    <rect x="172" y="196" width="14" height="40" rx="4"/>
+  </g>
+  <!-- levator and superior oblique outside the ring -->
+  <rect x="250" y="98" width="46" height="12" rx="4" fill="var(--fig-muscle)" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <rect x="342" y="112" width="34" height="12" rx="4" fill="var(--fig-muscle)" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".6" transform="rotate(25 359 118)"/>
+  <!-- outside the ring, in the lateral fissure: lacrimal, frontal, IV, superior ophthalmic vein -->
+  <circle cx="120" cy="118" r="4" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="146" cy="132" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="172" cy="148" r="3.5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="186" cy="166" r="6" fill="var(--fig-vein)"/>
+  <!-- inside the ring, in the medial fissure: III superior, nasociliary, III inferior, VI -->
+  <circle cx="232" cy="196" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="244" cy="214" r="3.5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="236" cy="234" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="218" cy="222" r="4" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <!-- inferior ophthalmic vein below the ring -->
+  <circle cx="232" cy="318" r="5" fill="var(--fig-vein)"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="6" y="24">Lacrimal n.</text>
+    <text x="6" y="38">Frontal n.</text>
+    <text x="6" y="52">Trochlear n. (IV)</text>
+    <text x="6" y="66">Sup. ophthalmic v.</text>
+    <text x="6" y="186" font-weight="600">Outside the ring</text>
+    <text x="6" y="200">(above it, in the</text>
+    <text x="6" y="214">lateral fissure)</text>
+    <text x="6" y="268">Sup. division of III</text>
+    <text x="6" y="282">Nasociliary n.</text>
+    <text x="6" y="296">Inf. division of III</text>
+    <text x="6" y="310">Abducens n. (VI)</text>
+    <text x="6" y="324" font-weight="600">Inside the ring</text>
+    <text x="6" y="400">Inf. ophthalmic v.</text>
+    <text x="350" y="160">Optic nerve (II)</text>
+    <text x="350" y="174">Ophthalmic a.</text>
+    <text x="350" y="188" font-weight="600">Optic canal</text>
+    <text x="302" y="90">Levator</text>
+    <text x="386" y="104">Sup. oblique</text>
+    <text x="244" y="133" text-anchor="end">SR</text>
+    <text x="374" y="246">MR</text>
+    <text x="300" y="312">IR</text>
+    <text x="150" y="250">LR</text>
+    <text x="330" y="270">Common tendinous ring</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" fill="none">
+    <line x1="64" y1="20" x2="118" y2="114"/>
+    <line x1="58" y1="34" x2="144" y2="128"/>
+    <line x1="96" y1="48" x2="170" y2="144"/>
+    <line x1="106" y1="62" x2="183" y2="161"/>
+    <line x1="112" y1="264" x2="229" y2="198"/>
+    <line x1="88" y1="278" x2="241" y2="215"/>
+    <line x1="110" y1="292" x2="233" y2="236"/>
+    <line x1="104" y1="306" x2="215" y2="225"/>
+    <line x1="104" y1="396" x2="228" y2="321"/>
+    <line x1="348" y1="157" x2="318" y2="162"/>
+    <line x1="348" y1="171" x2="301" y2="184"/>
+    <line x1="328" y1="266" x2="330" y2="262"/>
+  </g>
+  <text x="6" y="432" class="fig-label small">Right orbit seen from the front: lateral on the left, medial on the right. Not to scale.</text>
 </svg>`
 };

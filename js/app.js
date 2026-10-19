@@ -19,7 +19,8 @@
     brain: "#c9a0b8",
     membrane: "#a79fcf",
     deep: "#7e9bb8",
-    joint: "#9fb7c9"
+    joint: "#9fb7c9",
+    globe: "#d8d2c4"
   };
 
   const $ = (sel, el = document) => el.querySelector(sel);

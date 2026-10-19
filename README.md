@@ -14,6 +14,7 @@ Modules so far:
 - **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
 - **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
 - **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery), right side
+- **Orbit** (bony orbit, globe, extraocular muscles, orbital apex, nerves II–VI and V1, ophthalmic vessels, lacrimal apparatus), right side
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
@@ -22,6 +23,7 @@ Selected nerves and vessels can be **traced**: open one in Structures and press 
 - **Thyroid:** both recurrent laryngeal nerves.
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
+- **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -168,6 +170,23 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **Figures**: an original diagram of the seven openings and what passes through them. **Quiz**: six questions.
 - **References**: Kassam 2008 (the Vidian canal as a landmark), Snyderman 1999, Holman & Miller 1965, Rhoton, Gray's and Scott-Brown's.
 
+## What's in the orbit module
+
+- **3D model** (right side) from Z-Anatomy:
+  - Translucent orbital bones: frontal, sphenoid, ethmoid, maxilla, zygomatic, lacrimal and nasal.
+  - The globe with iris, lens and retina, the tarsal plates and Lockwood's ligament.
+  - Levator, the four recti, both obliques with the trochlea, and the common tendinous ring.
+  - The lacrimal gland and drainage system.
+  - Nerves II, III, IV, VI, V1 (frontal branch) and V2; the ophthalmic artery and its branches; the ophthalmic veins. The carotid and cavernous sinus are an optional layer.
+  - Drawn for this app (Z-Anatomy lacks them): the nasociliary nerve with its ethmoidal and long ciliary branches, the lacrimal nerve, the ciliary ganglion with its roots, and the short ciliary nerves.
+  - Z-Anatomy's "central retinal artery" object holds 82 vessel curves; only its main vessel to the globe is exported.
+  - "From above" and "Front" views.
+- **Foramina layer**: pins on the optic canal, superior and inferior orbital fissures, anterior and posterior ethmoidal foramina, supraorbital notch and trochlear fovea.
+- **Structures**: notes on every structure, including the contents of the superior orbital fissure in and outside the ring, muscle actions and testing, the 24–12–6 rule, and the ciliary ganglion pathway.
+- **Surgery**: a 9-step orbital floor fracture repair through a transconjunctival approach.
+- **Figures**: an original diagram of the orbital apex seen from the front. **Quiz**: six questions.
+- **References**: Rontal 1979, Tessier 1973, Kanski's, Rhoton, Gray's and Scott-Brown's.
+
 ## CT / MRI cross-sections
 
 The CT / MRI tab (`js/sections.js`) cuts the current region's 3D model with an axial, coronal or sagittal plane:
@@ -246,6 +265,7 @@ python tools/export_zanatomy.py Z-Anatomy/Startup.blend skull_base data/skull-ba
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend deep_neck data/deep-neck-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend infratemporal data/infratemporal-meshes.js
 python tools/export_zanatomy.py Z-Anatomy/Startup.blend pterygopalatine data/pterygopalatine-meshes.js
+python tools/export_zanatomy.py Z-Anatomy/Startup.blend orbit data/orbit-meshes.js
 ```
 
 ## Licensing and credits
@@ -259,6 +279,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, orbit, temporal bone
+- More regions: posterior triangle, nasal cavity and paranasal sinuses, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - Installable app with offline caching; later, packaging for the app stores
