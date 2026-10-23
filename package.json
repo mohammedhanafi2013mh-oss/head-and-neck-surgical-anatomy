@@ -1,0 +1,41 @@
+{
+  "name": "head-and-neck-surgical-anatomy",
+  "productName": "Head & Neck Surgical Anatomy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive 3D surgical anatomy of the head and neck.",
+  "author": "mohammedhanafi2013mh-oss",
+  "homepage": "https://github.com/mohammedhanafi2013mh-oss/head-and-neck-surgical-anatomy",
+  "main": "desktop/main.js",
+  "scripts": {
+    "build:web": "node tools/build_web.mjs",
+    "test": "node tools/build_web.mjs && node tests/usability.mjs",
+    "desktop": "node tools/build_web.mjs && electron .",
+    "dist:win": "node tools/build_web.mjs && electron-builder --win --publish never",
+    "dist:mac": "node tools/build_web.mjs && electron-builder --mac --publish never",
+    "dist:linux": "node tools/build_web.mjs && electron-builder --linux --publish never",
+    "android": "node tools/build_web.mjs && cap sync android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "7.6.9",
+    "@capacitor/core": "7.6.9",
+    "electron": "33.4.11",
+    "electron-builder": "25.1.8",
+    "playwright": "1.56.1"
+  },
+  "build": {
+    "appId": "io.github.mohammedhanafi2013mhoss.hnanatomy",
+    "productName": "Head & Neck Surgical Anatomy",
+    "artifactName": "HN-Anatomy-${version}-${os}-${arch}.${ext}",
+    "directories": { "output": "dist/desktop" },
+    "files": ["desktop/**", "dist/web/**", "package.json"],
+    "icon": "icons/icon-1024.png",
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }] },
+    "portable": { "artifactName": "HN-Anatomy-${version}-windows-portable.${ext}" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "artifactName": "HN-Anatomy-${version}-windows-setup.${ext}" },
+    "mac": { "target": [{ "target": "dmg", "arch": ["universal"] }], "category": "public.app-category.education" },
+    "linux": { "target": ["AppImage"], "category": "Education" }
+  }
+}

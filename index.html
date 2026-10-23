@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Head & Neck Surgical Anatomy</title>
-<meta name="description" content="Interactive surgical anatomy of the head and neck: submandibular, parotid, lateral neck, thyroid, larynx, carotid triangle and skull base, with CT and MRI cross-sections.">
+<meta name="description" content="Interactive 3D surgical anatomy of the head and neck: twelve regions from the submandibular triangle to the orbit and sinuses, with traced nerves and vessels, surgical walkthroughs and CT and MRI cross-sections.">
+<meta name="theme-color" content="#1f6f8b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="H&amp;N Anatomy">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,10 +23,21 @@
         <p id="region-subtitle" class="muted"></p>
       </div>
     </div>
-    <label class="region-picker">
-      <span class="visually-hidden">Region</span>
-      <select id="region-select"></select>
-    </label>
+    <div class="header-actions">
+      <button id="search-open" class="icon-btn" type="button" aria-label="Search all regions" title="Search all regions (/)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+      </button>
+      <label class="region-picker">
+        <span class="visually-hidden">Region</span>
+        <select id="region-select"></select>
+      </label>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Theme: automatic" title="Theme: automatic">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" class="fill"/></svg>
+      </button>
+      <button id="help-open" class="icon-btn" type="button" aria-label="Quick guide, install and offline use" title="Quick guide (?)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 1 1 3.6 2.4c-.7.3-1.1.9-1.1 1.6v.7"/><circle cx="12" cy="17" r=".6" class="fill"/></svg>
+      </button>
+    </div>
   </header>
 
   <main class="layout">
@@ -49,6 +67,11 @@
     </section>
 
     <section class="panel" aria-label="Details">
+    <div id="first-tip" class="first-tip" hidden>
+      <span>New here? See how to rotate, hide and trace structures.</span>
+      <button type="button" data-tip-guide>Quick guide</button>
+      <button type="button" data-tip-close aria-label="Dismiss">×</button>
+    </div>
       <nav class="tabs" role="tablist">
         <button role="tab" data-tab="overview" aria-selected="true">Overview</button>
         <button role="tab" data-tab="structures">Structures</button>
@@ -106,6 +129,44 @@
     <p id="section-selected" class="section-selected"></p>
     <p class="section-note">Simulated from the 3D model, not patient imaging. Fat and skin aren't modelled; the body outline is estimated from the structures the slice cuts. Hover over a structure to name it; click or tap to select it.</p>
   </div>
+
+  <!-- Search across every region. -->
+  <dialog id="search-dialog" class="dialog search-dialog" aria-label="Search all regions">
+    <form method="dialog" class="dialog-head">
+      <input id="search-all" type="search" placeholder="Search every region: nerve, artery, space, foramen…" autocomplete="off" aria-label="Search all regions" aria-controls="search-results">
+      <button class="dialog-close" aria-label="Close">×</button>
+    </form>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="Results"></ul>
+    <p class="muted small search-foot">↑ ↓ to move · Enter to open · Esc to close</p>
+  </dialog>
+
+  <!-- Quick guide, install and offline use. -->
+  <dialog id="help-dialog" class="dialog help-dialog" aria-labelledby="help-title">
+    <form method="dialog" class="dialog-head">
+      <h2 id="help-title">Quick guide</h2>
+      <button class="dialog-close" aria-label="Close">×</button>
+    </form>
+    <div class="help-body">
+      <ul class="help-list">
+        <li><strong>Rotate</strong> by dragging, <strong>zoom</strong> with the wheel or a pinch, and <strong>pan</strong> with shift-drag, right-drag or two fingers.</li>
+        <li><strong>Tap</strong> a structure to read about it. <strong>Double-tap</strong> it to hide it; "Show hidden" brings it back.</li>
+        <li>Turn whole <strong>layers</strong> on and off with the chips above the model, and choose how many <strong>labels</strong> to show.</li>
+        <li><strong>Trace a course</strong> at the top of Structures follows a nerve, vessel or route of spread from origin to branches.</li>
+        <li><strong>Surgery</strong> walks through an operation step by step; <strong>CT / MRI</strong> slices the model and shows real Visible Human scans.</li>
+        <li><strong>Search</strong> (<kbd>/</kbd>) finds any structure in any region. Links to a structure can be shared: the address bar always points to what you are looking at.</li>
+      </ul>
+      <h3>Install and use offline</h3>
+      <p id="install-status" class="muted small"></p>
+      <div class="help-actions">
+        <button id="install-btn" type="button" class="primary" hidden>Install app</button>
+        <button id="offline-btn" type="button" hidden>Download all regions for offline use</button>
+      </div>
+      <progress id="offline-progress" max="1" value="0" hidden></progress>
+      <p id="ios-hint" class="small" hidden>On iPhone or iPad: open this page in Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</p>
+      <p class="muted small">Android, Windows and macOS apps are on the project's GitHub Releases page.</p>
+      <p class="muted small">For education only. Check every surgical detail against current atlases and senior guidance.</p>
+    </div>
+  </dialog>
 
   <footer class="app-footer muted">
     For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.

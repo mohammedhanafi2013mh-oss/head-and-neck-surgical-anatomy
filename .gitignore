@@ -1,0 +1,9 @@
+node_modules/
+dist/
+android/
+ios/
+tests/report/
+assets/
+__pycache__/
+*.pyc
+.DS_Store

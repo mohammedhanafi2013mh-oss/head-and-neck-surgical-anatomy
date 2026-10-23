@@ -37,11 +37,41 @@ Every module has a **CT / MRI** tab that slices the 3D model at any level (see b
 
 > For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
 
-## Run it
+Also: **search** every region at once (<kbd>/</kbd> or Ctrl-K), links that open a given structure (`#parotid/facial_trunk`), a light/dark/automatic **theme**, a **quick guide** (<kbd>?</kbd>), and full **offline** use.
+
+## Install it
+
+Each push to `main` builds the apps and publishes them on the [Releases page](https://github.com/mohammedhanafi2013mh-oss/head-and-neck-surgical-anatomy/releases/latest):
+
+| Device | How |
+|---|---|
+| **Android** | Download `HN-Anatomy-…-android.apk` on the phone and open it; allow installs from the browser when asked. New versions install over the old one. |
+| **Windows** | `…-windows-setup.exe` installs it (Start menu and desktop shortcut); `…-windows-portable.exe` runs without installing. The app isn't code-signed, so SmartScreen may warn: **More info → Run anyway**. |
+| **iPhone / iPad** | Open the web app (GitHub Pages: `https://mohammedhanafi2013mh-oss.github.io/head-and-neck-surgical-anatomy/`) in Safari → **Share → Add to Home Screen**. Then open the quick guide and tap **Download all regions for offline use**. |
+| **Any browser** | The same web app installs from Chrome or Edge (install icon in the address bar, or "Install app" in the quick guide). |
+| **No install** | Unzip `…-web.zip` (or this repository) and open `index.html`. It works offline from the files, with no server. |
+
+GitHub Pages must be turned on once: **Settings → Pages → Source: GitHub Actions**. iPhone apps can only be built and signed on a Mac with an Apple developer account, so iOS uses the installable web app, which works offline like an app.
+
+## Run it from source
 
 Open `index.html` in a modern browser. It works offline: there's no build step and no server, and Three.js is bundled in `vendor/`.
 
 To try it on a phone, serve the folder (for example `python3 -m http.server`) and open it from the phone's browser on the same network.
+
+## Tests and app builds
+
+```
+npm ci                      # Node 22
+npm test                    # builds dist/web, then runs the usability tests
+npm run desktop             # runs the desktop app
+npm run dist:win            # Windows installer and portable exe (dist/desktop)
+npm run android             # copies the web app into an Android project (after: npx cap add android)
+```
+
+`tests/usability.mjs` drives the app in headless Chromium the way a user would: it opens every region, every tab, structures and shared links, traces a course, hides and restores structures, searches across regions, steps through the surgery, slices CT, answers the quiz, uses the guide, theme and keyboard, checks a phone screen, and finally downloads everything and reopens regions with the network off. It writes `tests/report/report.html` with timings and screenshots. The GitHub workflow (`.github/workflows/apps.yml`) runs it on every pull request, alongside the Android and Windows builds.
+
+The Android build is signed with `packaging/android-debug.keystore`, a public debug key, so each new APK updates the installed app. It is fine for sideloading but not for the Play Store, which needs a private release key kept in repository secrets.
 
 ## What's in the submandibular module
 
@@ -262,8 +292,15 @@ data/scans/                    CT and MRI slice sprite sheets and manifest (gene
 tools/export_vhp_scans.py      exports the Visible Human scans for the app
 tools/export_zanatomy.py       exports each region's meshes from the Z-Anatomy Blender file
 js/figures.js                  inline SVG diagrams
-js/app.js                      UI: tabs, cards, walkthrough, quiz
+js/app.js                      UI: tabs, cards, walkthrough, quiz, search, theme, guide, offline
 vendor/three.min.js            Three.js r159 (MIT)
+manifest.webmanifest, sw.js    installable web app and offline cache
+icons/                         app icons (icon.svg is the source)
+tools/build_web.mjs            copies the web app to dist/web and lists its files for offline download
+tests/usability.mjs            usability tests and report
+desktop/main.js                desktop app (Electron) around dist/web
+capacitor.config.json          Android app (Capacitor) around dist/web
+.github/workflows/apps.yml     tests, Android and Windows builds, releases, GitHub Pages
 ```
 
 ## Adding a region
@@ -306,4 +343,4 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 - More regions: posterior triangle, oral cavity and tongue, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
-- Installable app with offline caching; later, packaging for the app stores
+- App store releases (Play Store with a private signing key; iOS needs a Mac and an Apple developer account)

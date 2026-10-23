@@ -1,0 +1,6 @@
+{
+  "appId": "io.github.mohammedhanafi2013mhoss.hnanatomy",
+  "appName": "H&N Anatomy",
+  "webDir": "dist/web",
+  "android": { "backgroundColor": "#f5f3ee" }
+}

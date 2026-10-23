@@ -117,7 +117,7 @@
 
   // Bumped on every request, so a slow load that finishes after a later one is dropped.
   let loadSeq = 0;
-  async function loadRegion(id) {
+  async function loadRegion(id, structureId) {
     const seq = ++loadSeq;
     const entry = catalog.find((r) => r.id === id) || catalog[0];
     select.value = entry.id;
@@ -148,12 +148,37 @@
     state.search = "";
     if (state.tab === "surgery") state.tab = "overview";
     $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
-    history.replaceState(null, "", "#" + entry.id);
+    if (structureId && state.region.structures.some((s) => s.id === structureId)) {
+      state.selected = structureId;
+      state.tab = "structures";
+    }
     viewer.load(state.region, state.model);
     sections.rebuild(state.model, entry.id);
     sections.setActive(state.tab === "sections");
     renderLayerToggles();
     renderViewButtons();
+    render();
+    showFirstTip();
+  }
+
+  // The address bar points to the region and, in Structures, the open structure
+  // (#parotid/facial_trunk), so a link opens the same view.
+  function syncHash() {
+    const h = "#" + state.regionId + (state.tab === "structures" && state.selected ? "/" + state.selected : "");
+    if (location.hash !== h) history.replaceState(null, "", h);
+  }
+  const parseHash = () => location.hash.slice(1).split("/");
+  window.addEventListener("hashchange", () => {
+    const [rid, sid] = parseHash();
+    if (rid && rid !== state.regionId) loadRegion(rid, sid);
+    else if (sid && state.region && state.region.structures.some((s) => s.id === sid)) openStructure(sid);
+  });
+  function openStructure(id) {
+    if (state.tab === "surgery") exitWalkthrough();
+    state.selected = id;
+    state.tab = "structures";
+    state.search = "";
+    sections.setActive(false);
     render();
   }
 
@@ -285,6 +310,7 @@
     if (state.tab === "surgery") applyStep();
     else viewer.select(state.selected, false);
     syncCourse();
+    syncHash();
   }
 
   // ---------- views ----------
@@ -538,5 +564,222 @@
     renderLayerToggles();
   }
 
-  loadRegion(location.hash.slice(1));
+  // ---------- search across every region ----------
+  // The first search loads each region's notes (not its meshes) to build the index.
+  const searchDialog = $("#search-dialog");
+  const searchInput = $("#search-all");
+  const searchResults = $("#search-results");
+  let searchIndex = null, hits = [], active = 0;
+  async function buildIndex() {
+    if (searchIndex) return searchIndex;
+    searchResults.innerHTML = `<li class="muted">Loading the index…</li>`;
+    for (const entry of catalog) {
+      const src = entry.scripts[0];
+      if (!loaded.has(src)) {
+        await loadScript(src);
+        loaded.add(src);
+      }
+    }
+    searchIndex = catalog.flatMap((entry) =>
+      regions[entry.id].structures.map((s) => ({
+        region: entry.id, regionTitle: entry.title, id: s.id, name: s.name, aka: s.aka || "", layer: s.layer,
+        traced: !!s.course, text: (s.name + " " + (s.aka || "")).toLowerCase()
+      }))
+    );
+    return searchIndex;
+  }
+  function runSearch() {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!searchIndex) return;
+    if (!q) {
+      hits = [];
+      searchResults.innerHTML = `<li class="muted">Type to search ${searchIndex.length} structures in ${catalog.length} regions.</li>`;
+      return;
+    }
+    const words = q.split(/\s+/);
+    const score = (x) => (x.name.toLowerCase().startsWith(q) ? 0 : x.name.toLowerCase().includes(q) ? 1 : 2) + (x.region === state.regionId ? -0.5 : 0);
+    hits = searchIndex.filter((x) => words.every((w) => x.text.includes(w) || x.regionTitle.toLowerCase().includes(w)))
+      .sort((a, b) => score(a) - score(b) || a.name.localeCompare(b.name)).slice(0, 50);
+    active = 0;
+    searchResults.innerHTML = hits.length
+      ? hits.map((x, i) => `<li role="option" id="hit-${i}" aria-selected="${i === active}" data-hit="${i}">
+          <span class="dot" style="background:${LAYER_COLORS[x.layer] || "#999"}"></span>
+          <span class="hit-name">${esc(x.name)}${x.traced ? ` <span class="hit-tag">trace</span>` : ""}</span>
+          <span class="hit-region muted">${esc(x.regionTitle)}</span></li>`).join("")
+      : `<li class="muted">No matches.</li>`;
+    searchInput.setAttribute("aria-activedescendant", hits.length ? "hit-0" : "");
+  }
+  function moveActive(d) {
+    if (!hits.length) return;
+    active = (active + d + hits.length) % hits.length;
+    searchResults.querySelectorAll("[data-hit]").forEach((li, i) => li.setAttribute("aria-selected", String(i === active)));
+    const li = $(`#hit-${active}`, searchResults);
+    li.scrollIntoView({ block: "nearest" });
+    searchInput.setAttribute("aria-activedescendant", li.id);
+  }
+  function openHit(i) {
+    const x = hits[i];
+    if (!x) return;
+    searchDialog.close();
+    if (x.region === state.regionId) openStructure(x.id);
+    else {
+      if (state.tab === "surgery") state.tab = "overview";
+      loadRegion(x.region, x.id);
+    }
+  }
+  async function openSearch() {
+    if (searchDialog.open) return;
+    searchDialog.showModal();
+    searchInput.select();
+    await buildIndex();
+    runSearch();
+  }
+  $("#search-open").addEventListener("click", openSearch);
+  searchInput.addEventListener("input", runSearch);
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); moveActive(1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); moveActive(-1); }
+    else if (e.key === "Enter") { e.preventDefault(); openHit(active); }
+    // A search field clears itself on Esc; here Esc closes the search instead.
+    else if (e.key === "Escape") { e.preventDefault(); searchDialog.close(); }
+  });
+  searchResults.addEventListener("click", (e) => {
+    const li = e.target.closest("[data-hit]");
+    if (li) openHit(Number(li.dataset.hit));
+  });
+
+  // Keyboard: "/" or Ctrl/Cmd-K searches, "?" opens the guide (not while typing).
+  document.addEventListener("keydown", (e) => {
+    const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName);
+    if (((e.key === "/" && !typing) || (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey))) && !searchDialog.open) {
+      e.preventDefault();
+      openSearch();
+    } else if (e.key === "?" && !typing && !helpDialog.open) {
+      e.preventDefault();
+      openHelp();
+    }
+  });
+
+  // ---------- theme ----------
+  const THEMES = ["auto", "light", "dark"];
+  const themeBtn = $("#theme-toggle");
+  function applyTheme(t) {
+    if (t === "auto") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = t;
+    const label = `Theme: ${t === "auto" ? "automatic" : t}`;
+    themeBtn.setAttribute("aria-label", label);
+    themeBtn.title = label;
+    themeBtn.dataset.mode = t;
+  }
+  let theme = "auto";
+  try { theme = THEMES.includes(localStorage.getItem("theme")) ? localStorage.getItem("theme") : "auto"; } catch (e) {}
+  applyTheme(theme);
+  themeBtn.addEventListener("click", () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    try { localStorage.setItem("theme", theme); } catch (e) {}
+    applyTheme(theme);
+  });
+
+  // ---------- quick guide, install and offline ----------
+  const helpDialog = $("#help-dialog");
+  const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const isNativeShell = !!(window.Capacitor || /Electron/.test(navigator.userAgent));
+  const canCache = "serviceWorker" in navigator && "caches" in window && /^https?:$/.test(location.protocol) && !isNativeShell;
+  let installPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    $("#install-btn").hidden = false;
+  });
+  $("#install-btn").addEventListener("click", async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    $("#install-btn").hidden = true;
+  });
+
+  // Files of the whole app, listed at build time (tools/build_web.mjs); absent when run from the source folder.
+  async function precacheList() {
+    try {
+      const r = await fetch("precache.json", { cache: "no-store" });
+      return r.ok ? r.json() : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  async function offlineStatus() {
+    const status = $("#install-status");
+    if (isNativeShell || location.protocol === "file:") {
+      status.textContent = "This copy runs from files on your device, so everything already works offline.";
+      return;
+    }
+    if (!canCache) {
+      status.textContent = "This browser can't store the app for offline use.";
+      return;
+    }
+    const list = await precacheList();
+    if (!list || !navigator.serviceWorker.controller) {
+      // Not served as the installable app (or its offline worker isn't running yet).
+      status.textContent = "For offline use, install the app from its web address or from the project's Releases page.";
+      return;
+    }
+    const cache = await caches.open(list.cache);
+    const have = (await Promise.all(list.files.map((f) => cache.match(f)))).filter(Boolean).length;
+    status.textContent = have >= list.files.length
+      ? "Everything is downloaded: the app works offline."
+      : `Regions you open are kept for offline use (${have} of ${list.files.length} files so far, ${Math.round(list.bytes / 1e6)} MB in total).`;
+    $("#offline-btn").hidden = have >= list.files.length;
+  }
+  $("#offline-btn").addEventListener("click", async () => {
+    const list = await precacheList();
+    if (!list) return;
+    const btn = $("#offline-btn"), bar = $("#offline-progress");
+    btn.disabled = true;
+    bar.hidden = false;
+    bar.max = list.files.length;
+    const cache = await caches.open(list.cache);
+    let done = 0, failed = 0;
+    for (const f of list.files) {
+      try {
+        if (!(await cache.match(f))) await cache.add(f);
+      } catch (e) {
+        failed++;
+      }
+      bar.value = ++done;
+    }
+    bar.hidden = true;
+    btn.disabled = false;
+    if (failed) $("#install-status").textContent = `${failed} files couldn't be downloaded. Check the connection and try again.`;
+    else offlineStatus();
+  });
+  function openHelp() {
+    hideFirstTip(true);
+    $("#ios-hint").hidden = !(/iPhone|iPad|iPod/.test(navigator.userAgent) && !isStandalone());
+    offlineStatus();
+    helpDialog.showModal();
+  }
+  $("#help-open").addEventListener("click", openHelp);
+  // Dialogs close on a click outside their box.
+  for (const d of [searchDialog, helpDialog]) {
+    d.addEventListener("click", (e) => { if (e.target === d) d.close(); });
+  }
+
+  // A one-time, non-blocking tip pointing new users to the guide.
+  const firstTip = $("#first-tip");
+  function showFirstTip() {
+    let seen = true;
+    try { seen = !!localStorage.getItem("guideSeen"); } catch (e) {}
+    firstTip.hidden = seen;
+  }
+  function hideFirstTip(remember) {
+    firstTip.hidden = true;
+    if (remember) try { localStorage.setItem("guideSeen", "1"); } catch (e) {}
+  }
+  $("[data-tip-guide]", firstTip).addEventListener("click", openHelp);
+  $("[data-tip-close]", firstTip).addEventListener("click", () => hideFirstTip(true));
+
+  if (canCache) navigator.serviceWorker.register("sw.js").catch(() => {});
+
+  loadRegion(...parseHash());
 })();
