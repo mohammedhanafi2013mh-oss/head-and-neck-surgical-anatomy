@@ -735,6 +735,7 @@ window.ANATOMY.regions.carotid = {
 
   procedure: {
     title: "Carotid endarterectomy",
+    atRisk: [{"id": "hypoglossal", "why": "Crosses the top of the exposure: tongue weakness and deviation"}, {"id": "vagus", "why": "In the sheath behind the arteries: hoarseness (recurrent laryngeal fibres)"}, {"id": "sln", "why": "Behind the internal and external carotids: weak, tiring voice"}, {"id": "glossopharyngeal", "why": "At risk with high exposure: difficult swallowing"}, {"id": "carotid_sinus", "why": "Handling it slows the heart and drops the blood pressure"}, {"id": "ica", "why": "Clamp gently and flush before closing: plaque or air can embolise to the brain"}],
     steps: [
       {
         title: "Position and incision", incision: "carotid",

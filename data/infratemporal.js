@@ -933,6 +933,7 @@ window.ANATOMY.regions.infratemporal = {
 
   procedure: {
     title: "Lateral (preauricular–subtemporal) approach to the infratemporal fossa",
+    atRisk: [{"id": "facial_nerve", "why": "The frontal branch crosses the arch in the incision: brow droop"}, {"id": "ica", "why": "Deep and medial, behind the styloid: catastrophic bleeding or stroke"}, {"id": "maxillary_artery", "why": "Runs through the field between the pterygoids: brisk bleeding"}, {"id": "maxillary_vein", "why": "The pterygoid plexus bleeds heavily and is hard to control"}, {"id": "v3_trunk", "why": "At foramen ovale: numbness of the jaw and tongue, weak chewing"}, {"id": "lingual_nerve", "why": "On medial pterygoid: numbness and loss of taste on the tongue"}],
     steps: [
       {
         title: "Plan, position and incision", incision: "hemicoronal",

@@ -230,6 +230,9 @@
       this.structures = new Map(); // id -> { root, layer, label, name }
       this.layerVisible = {};
       this.focusIds = new Set();
+      this.dangerIds = new Set();
+      this.dangerIds = new Set(); // structures at risk in the current operation, tinted orange
+      this.hideNames = false; // quiz mode: no labels or hover names
       this.selectedId = null;
       this.labelMode = "some"; // "off" | "some" (pins and the selected structure) | "all"
       this.hidden = new Set(); // structures hidden by double-clicking them
@@ -394,6 +397,21 @@
       this.refresh();
     }
 
+    setDanger(ids) {
+      this.dangerIds = new Set(ids || []);
+      this.refresh();
+    }
+
+    // Glide to one structure, framed with some of its surroundings.
+    frameStructure(id) {
+      const s = this.structures.get(id);
+      if (!s) return;
+      const box = new THREE.Box3();
+      s.root.traverse((o) => o.isMesh && box.union(o.geometry.boundingBox));
+      const size = box.getSize(new THREE.Vector3()).length();
+      this.flyTo(box.getCenter(new THREE.Vector3()).toArray(), Math.max(9, size * 2.2));
+    }
+
     select(id, notify) {
       this.selectedId = id;
       if (id && this.hidden.delete(id)) this.onHiddenChange && this.onHiddenChange(this.hidden.size);
@@ -432,11 +450,13 @@
       const dimOthers = this.focusIds.size > 0 || this.selectedId;
       for (const [id, s] of this.structures) {
         s.root.visible = !!this.layerVisible[s.layer] && !this.hidden.has(id);
-        const highlighted = id === this.selectedId || this.focusIds.has(id);
+        const danger = this.dangerIds.has(id);
+        const highlighted = id === this.selectedId || this.focusIds.has(id) || danger;
         s.root.traverse((o) => {
           if (!o.isMesh) return;
           const m = o.material;
-          if (highlighted) m.emissive.copy(m.color).multiplyScalar(0.35);
+          if (danger && id !== this.selectedId) m.emissive.setHex(DANGER).multiplyScalar(0.55);
+          else if (highlighted) m.emissive.copy(m.color).multiplyScalar(0.35);
           else m.emissive.setHex(0x000000);
           let opacity = o.userData.baseOpacity;
           if (dimOthers && !highlighted && s.layer !== "bone") opacity = Math.min(opacity, 0.2);
@@ -447,8 +467,9 @@
           o.castShadow = opacity >= 1; // translucent and dimmed structures cast no shadow
           o.receiveShadow = true;
         });
-        s.label.classList.toggle("is-hidden", !s.root.visible || this.labelMode === "off" || (this.labelMode === "some" && !highlighted));
-        s.label.classList.toggle("is-active", highlighted);
+        s.label.classList.toggle("is-hidden", !s.root.visible || this.hideNames || this.labelMode === "off" || (this.labelMode === "some" && !highlighted));
+        s.label.classList.toggle("is-active", highlighted && !danger);
+        s.label.classList.toggle("is-danger", danger);
       }
       if (this.onRefresh) this.onRefresh();
     }
@@ -855,6 +876,10 @@
 
     hover(e) {
       if (e.pointerType !== "mouse") return;
+      if (this.hideNames) {
+        this.tooltip.style.opacity = 0;
+        return;
+      }
       const id = this.pick(e.clientX, e.clientY);
       const rect = this.container.getBoundingClientRect();
       if (id) {
@@ -868,6 +893,8 @@
       }
     }
   }
+
+  const DANGER = 0xff5a1f; // structures at risk: warning orange
 
   function clamp(v, a, b) {
     return Math.max(a, Math.min(b, v));

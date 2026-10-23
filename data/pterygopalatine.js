@@ -533,6 +533,7 @@ window.ANATOMY.regions.pterygopalatine = {
 
   procedure: {
     title: "Endoscopic transnasal approach to the pterygopalatine fossa (with sphenopalatine artery ligation)",
+    atRisk: [{"id": "maxillary_artery", "why": "Fills the front of the fossa: brisk bleeding"}, {"id": "v2", "why": "At foramen rotundum: cheek numbness"}, {"id": "vidian", "why": "Cutting it gives a dry eye"}, {"id": "greater_palatine_n", "why": "Runs down the greater palatine canal: palatal numbness"}, {"id": "ica", "why": "Behind the vidian canal at foramen lacerum: follow the canal no further than its lower half"}],
     steps: [
       {
         title: "Preparation",

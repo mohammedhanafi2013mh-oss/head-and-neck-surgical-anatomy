@@ -39,6 +39,17 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 
 The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa), the 1 cm margin round a tongue cancer and the cut along the sublingual fold for a ranula. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
 
+Each operation also lists its **structures at risk**, each with what injuring it causes (hoarseness, shoulder droop, a numb tongue…). They are tinted orange on the model throughout the walkthrough, and the tint can be switched off.
+
+In a structure's notes, the **names of other structures are links**. Tap one to see it on the model together with the open structure. "Related structures" gathers every structure the notes name and every structure whose notes name this one; › opens its notes.
+
+The **Quiz** tab has three modes:
+- **Questions**: multiple choice, with explanations.
+- **Find it on the model**: tap the named structure in 3D.
+- **Name it**: name the highlighted structure from four choices.
+
+Labels and hover names are off during the model quizzes. Structures you miss come back more often, and progress per region is saved on the device (no account).
+
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
 > For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.

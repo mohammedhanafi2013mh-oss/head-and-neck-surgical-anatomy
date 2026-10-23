@@ -598,6 +598,7 @@ window.ANATOMY.regions.face = {
 
   procedure: {
     "title": "Bedside facial nerve examination and House–Brackmann grading",
+    "atRisk": [{"id": "temporal_branch", "why": "Crosses the zygomatic arch under thin tissue: brow droop if cut in facial or temporal surgery"}, {"id": "mmn", "why": "Can loop below the mandible: lower-lip asymmetry if cut in neck surgery"}, {"id": "zygomatic_branch", "why": "Supplies orbicularis oculi: eye closure and corneal protection"}, {"id": "facial_trunk", "why": "Leaves the stylomastoid foramen: every branch is lost if the trunk is cut"}],
     "intro": "Step through the examination. Each step lights up the muscles being tested and the branch that supplies them.",
     "complicationsTitle": "Pitfalls",
     "steps": [

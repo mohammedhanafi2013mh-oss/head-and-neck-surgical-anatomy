@@ -825,6 +825,7 @@ window.ANATOMY.regions.lateral_neck = {
 
   procedure: {
     title: "Modified radical neck dissection (levels I–V)",
+    atRisk: [{"id": "accessory", "why": "Crosses level II and the posterior triangle: shoulder droop and pain"}, {"id": "hypoglossal", "why": "Above the carotid bifurcation, under the posterior belly of digastric"}, {"id": "vagus", "why": "In the carotid sheath: hoarseness and aspiration"}, {"id": "mmn", "why": "Below the mandible over the facial vessels: lower-lip weakness"}, {"id": "phrenic", "why": "On scalenus anterior under the prevertebral fascia: paralysed hemidiaphragm"}, {"id": "brachial_plexus", "why": "Between the scalenes, deep to the prevertebral fascia: arm weakness"}, {"id": "sympathetic", "why": "Behind the carotid sheath: Horner syndrome"}, {"id": "thoracic_duct", "why": "Left level IV, behind the jugular vein: chyle leak"}],
     steps: [
       {
         title: "Position and incision", incision: "utility",
