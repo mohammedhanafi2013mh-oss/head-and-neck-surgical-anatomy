@@ -5,7 +5,7 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 Modules so far:
 
 - **Submandibular region** (submandibular triangle, level IB)
-- **Oral cavity** (tongue, floor of mouth, palate, and the nerves, duct and vessels around hyoglossus), both sides
+- **Oral cavity** (tongue, floor of mouth, hard and soft palate, tonsillar pillars and tonsils, palatal muscles and auditory tubes, with the mouth open), both sides
 - **Face & facial muscles** (the muscles of facial expression, the facial nerve branches that supply them, facial vessels, Pitanguy's line and the danger zones), both sides
 - **Parotid & facial nerve** (parotid region and extracranial facial nerve)
 - **Lateral neck** (neck dissection levels I–VI)
@@ -37,7 +37,7 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
 - **Nose & sinuses:** the drainage routes of the frontal, maxillary and sphenoid sinuses, and the anterior ethmoidal artery.
 
-The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa) and the 1 cm margin round a tongue cancer. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
+The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa), the 1 cm margin round a tongue cancer and the cut along the sublingual fold for a ranula. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -113,11 +113,11 @@ The Android build is signed with `packaging/android-debug.keystore`, a public de
 
 ## What's in the oral cavity module
 
-- **3D model**: both sides. Mandible and all teeth, maxilla and palatine bones, hyoid, gingiva, tongue, genioglossus, hyoglossus, geniohyoid, mylohyoid, anterior bellies of digastric, soft palate and uvula, palatine tonsils, sublingual and submandibular glands and ducts, lingual, hypoglossal, inferior alveolar and mental nerves and the nerve to mylohyoid, submental, greater palatine and inferior alveolar arteries, lingual veins, orbicularis oris and medial pterygoid. The lingual artery is drawn for this app (Z-Anatomy has none); styloglossus and palatoglossus have notes but no model.
-- **Structures**: the layout round hyoglossus, nerve supply, the lingual nerve's loop under the duct, staging by depth of invasion (AJCC 8), elective neck dissection, margins, marginal and segmental mandibulectomy, ranula and stones. Traced courses for the lingual and hypoglossal nerves, the submandibular duct and the lingual artery.
-- **Surgery**: a 9-step transoral partial glossectomy for a lateral tongue cancer, with the 1 cm margin drawn on the tongue.
-- **Figures**: an original diagram of the open mouth with the subsites and the margin round a tumour, and the floor of mouth with the tongue raised. **Quiz**: six questions.
-- **References**: AJCC 8, D'Cruz et al. 2015, Byers et al. 1997, the RCPath dataset, Harrison 2010, Gray's, Shah and Scott-Brown's.
+- **3D model**: both sides, with the mouth open. The mandible and lower teeth turn about the condyles and glide forwards, the hyoid comes down, and the floor of mouth follows. From Z-Anatomy: the jaws and teeth, hyoid, gingiva, genioglossus, hyoglossus, geniohyoid, mylohyoid, anterior bellies of digastric, superior constrictor, palatopharyngeus, auditory (Eustachian) tubes, sublingual and submandibular glands and ducts, lingual, hypoglossal, inferior alveolar and mental nerves and the nerve to mylohyoid, submental, greater palatine and inferior alveolar arteries, lingual veins, orbicularis oris and medial pterygoid. Sculpted for this app, because Z-Anatomy lacks them or models them poorly: the tongue (median sulcus, oral and pharyngeal parts), the hard palate mucosa (incisive papilla, raphe and rugae), the soft palate and uvula, the palatoglossal and palatopharyngeal arches (tonsillar pillars), the palatine tonsils, levator and tensor veli palatini, salpingopharyngeus, styloglossus, the sublingual ducts and a ranula (its own layer). The lingual artery is drawn.
+- **Structures**: the layout round hyoglossus, nerve supply, the lingual nerve's loop under the duct, staging by depth of invasion (AJCC 8), elective neck dissection, margins, the tonsil bed and its relations, the palatal muscles and the auditory tube, ranula. Traced courses for the lingual and hypoglossal nerves, the submandibular duct and the lingual artery.
+- **Surgery**: two operations to choose between: a 9-step transoral partial glossectomy for a lateral tongue cancer, with the 1 cm margin drawn on the tongue, and an 8-step transoral excision of the sublingual gland for a ranula, with the incision along the sublingual fold and the plunging ranula shown.
+- **Figures**: original diagrams of the open mouth with the subsites and the margin round a tumour, the fauces with the pillars and their muscles, and a ranula in coronal section. **Quiz**: ten questions.
+- **References**: AJCC 8, D'Cruz et al. 2015, Byers et al. 1997, the RCPath dataset, Harrison 2010, Zhao et al. 2004, Patel et al. 2009, Gray's, Shah and Scott-Brown's.
 
 ## What's in the parotid module
 
@@ -365,6 +365,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, oral cavity and tongue, temporal bone
+- More regions: posterior triangle, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - App store releases (Play Store with a private signing key; iOS needs a Mac and an Apple developer account)

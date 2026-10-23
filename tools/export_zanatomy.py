@@ -19,6 +19,7 @@ Blender coordinates are metres, Z up, front = -Y; the patient's left is +X.
 
 import base64
 import json
+import math
 import os
 import struct
 import sys
@@ -1101,30 +1102,60 @@ REGIONS = {
     },
 
     "oral_cavity": {
-        # Oral cavity and floor of mouth, both sides; courses traced on the right.
-        "centre": (0.0, -0.050, 1.528),
+        # Oral cavity, floor of mouth, palate and fauces, both sides; courses traced on the right.
+        # The mouth is shown open; the tongue, soft palate, tonsils, pillars and palatal muscles
+        # are sculpted for this app (see "oral cavity: sculpted soft tissues and the open jaw").
+        "centre": (0.0, -0.045, 1.528),
         "landmarks": "thyroid",  # the drawn lingual artery uses the external carotid landmarks
         "sides": (-1,),
+        "build": "oral",
+        "open_jaw": {
+            # Soft tissue between the jaw and these follows the jaw in proportion to how near it is.
+            "fixed": {"A": ["Hyoid bone", "Epiglottis", "Sphenoid bone", "Temporal bone.r", "Temporal bone.l"]
+                           + BOTH("Posterior belly of digastric muscle", "Stylohyoid muscle"),
+                      "B": BOTH("Maxilla") + [n for n in TEETH if n.startswith("Upper")]},
+            "move": {"rigid": ["Mandible", "LOWER_TEETH"], "gingiva": ["Gingiva"],
+                     "B": BOTH("Orbicularis oris muscle"), "drop": ["Hyoid bone"],
+                     "A": ["Ranula (sculpted)", "Sublingual ducts (sculpted)"]
+                          + BOTH("Genioglossus muscle", "Hyoglossus muscle", "Geniohyoid muscle", "Mylohyoid muscle",
+                                 "Anterior belly of digastric muscle", "Sublingual gland", "Submandibular gland",
+                                 "Submandibular duct", "Lingual nerve", "Hypoglossal nerve (XII)", "Inferior alveolar nerve",
+                                 "Mental nerve", "Nerve to mylohyoid muscle", "Submental artery", "Inferior alveolar artery",
+                                 "Lingual vein", "Medial pterygoid muscle", "Styloglossus (sculpted)")},
+            "drawn": {"lingual_artery": "A"},
+            "tuck": BOTH("Genioglossus muscle", "Hyoglossus muscle", "Styloglossus (sculpted)"),
+        },
         "structures": {
             # ---- bone, teeth and mucosa ----
-            "mandible": ["Mandible"] + TEETH,
-            "maxilla": BOTH("Maxilla", "Palatine bone"),
+            "mandible": ["Mandible"] + [n for n in TEETH if n.startswith("Lower")],
+            "maxilla": BOTH("Maxilla", "Palatine bone") + [n for n in TEETH if n.startswith("Upper")],
             "hyoid": ["Hyoid bone"],
             "gingiva": ["Gingiva"],
+            "hard_palate": ["Palatal mucosa (sculpted)"],
             # ---- tongue and floor of mouth ----
-            "tongue": ["Tongue"],
+            "tongue": ["Tongue (sculpted)"],
             "genioglossus": BOTH("Genioglossus muscle"),
             "hyoglossus": BOTH("Hyoglossus muscle"),
+            "styloglossus": BOTH("Styloglossus (sculpted)"),
             "geniohyoid": BOTH("Geniohyoid muscle"),
             "mylohyoid": BOTH("Mylohyoid muscle"),
             "digastric_ant": BOTH("Anterior belly of digastric muscle"),
-            # ---- palate and fauces ----
-            "soft_palate": ["Soft palate", "Uvula of palate"],
-            "tonsils": BOTH("Palatine tonsil"),
-            # ---- glands ----
+            # ---- soft palate, fauces and pharynx ----
+            "soft_palate": ["Soft palate (sculpted)", "Uvula (sculpted)"],
+            "palatoglossus": BOTH("Palatoglossal arch (sculpted)"),
+            "palatopharyngeus": BOTH("Palatopharyngeal arch (sculpted)", "Palatopharyngeus muscle"),
+            "tonsils": BOTH("Palatine tonsil (sculpted)"),
+            "superior_constrictor": BOTH("Superior pharyngeal constrictor"),
+            "levator_veli": BOTH("Levator veli palatini (sculpted)"),
+            "tensor_veli": BOTH("Tensor veli palatini (sculpted)"),
+            "salpingopharyngeus": BOTH("Salpingopharyngeus (sculpted)"),
+            "auditory_tube": BOTH("Auditory tube"),
+            # ---- glands and ducts ----
             "sublingual": BOTH("Sublingual gland"),
+            "sublingual_ducts": ["Sublingual ducts (sculpted)"],
             "smg": BOTH("Submandibular gland"),
             "wharton": BOTH("Submandibular duct"),
+            "ranula": ["Ranula (sculpted)"],
             # ---- nerves ----
             "lingual_nerve": BOTH("Lingual nerve"),
             # XII from where it descends behind the mandible into the tongue.
@@ -1144,11 +1175,11 @@ REGIONS = {
         "curve_scale": {"lingual_nerve": 1.7, "hypoglossal": 1.6, "inferior_alveolar": 1.5, "nerve_mylohyoid": 1.5,
                         "submental_artery": 1.4, "palatine_artery": 1.4, "inferior_alveolar_artery": 1.3,
                         "lingual_vein": 1.2, "wharton": 1.5},
-        "bones": {"mandible", "maxilla", "hyoid"},
+        "bones": {"mandible", "maxilla", "hyoid", "hard_palate"},
         "drawn": {"lingual_artery": 0.0012},
         "courses": {
             "lingual_nerve": {"path": [("Lingual nerve.r", 0)],
-                              "points": {"itf": "start", "molar": ("closest", None, ["Mandible"], (1.525, 1.56)),
+                              "points": {"itf": "start", "molar": ("closest", None, ["Mandible"], (1.50, 1.56)),
                                          "duct": ("nearest", "Submandibular duct.r"), "tongue": "end"}},
             "hypoglossal": {"path": [("Hypoglossal nerve (XII).r", 0, 15)],
                             "points": {"angle": "start", "hyoglossus": ("spline_point", "Hypoglossal nerve (XII).r", 0, 19), "tongue": "end"}},
@@ -1306,6 +1337,22 @@ def world_verts(name):
 def curve_points(name, spline):
     o = D[name]
     return [o.matrix_world @ p.co for p in o.data.splines[spline].bezier_points]
+
+
+def spline_world(name, i):
+    o = D[name]
+    sp = o.data.splines[i]
+    pts = sp.bezier_points or sp.points
+    return [o.matrix_world @ (p.co.xyz if len(p.co) == 4 else p.co) for p in pts]
+
+
+def dense(points, step=0.0008):
+    """Resample a polyline every ~0.8 mm."""
+    out = []
+    for a, b in zip(points, points[1:]):
+        n = max(1, int((b - a).length / step))
+        out += [a.lerp(b, k / n) for k in range(n)]
+    return out + points[-1:]
 
 
 def along_z(points, z, axis):
@@ -2205,6 +2252,533 @@ def merge(faces_list):
     return verts, tris
 
 
+# ---------- oral cavity: sculpted soft tissues and the open jaw ----------
+# Z-Anatomy's tongue is a coarse blob, its soft palate lies flat against the
+# back of the pharynx and its tonsils sit at the level of the palate; it has no
+# palatoglossus, levator or tensor veli palatini, salpingopharyngeus or
+# styloglossus. These are modelled here from its landmarks (closed mouth), then
+# the jaw is opened: the mandible and lower teeth turn about the condyles and
+# glide forward, the hyoid comes down, and the soft tissues between the jaw and
+# the fixed skull and hyoid follow in proportion to how near they are to the
+# jaw. The tongue is then sculpted as it lies in the open mouth, and the
+# tonsillar pillars are added between the fixed soft palate and the tongue.
+
+def mesh_object(name, verts, faces, subsurf=0):
+    """A mesh object from world-space vertices, faces wound outwards."""
+    vol = sum(verts[f[0]].dot(verts[f[k]].cross(verts[f[k + 1]])) for f in faces for k in range(1, len(f) - 1))
+    if vol < 0:
+        faces = [list(reversed(f)) for f in faces]
+    me = bpy.data.meshes.new(name)
+    me.from_pydata([tuple(v) for v in verts], [], [list(f) for f in faces])
+    obj = bpy.data.objects.new(name, me)
+    bpy.context.scene.collection.objects.link(obj)
+    if subsurf:
+        mod = obj.modifiers.new("smooth", "SUBSURF")
+        mod.levels = mod.render_levels = subsurf
+    return obj
+
+
+def loft(rings, tip=None, end_cap=True, push=0.0):
+    """Faces joining equal-length rings, closed by a fan to a tip point at the
+    start and to the (pushed) centre of the last ring at the end."""
+    n = len(rings[0])
+    verts = [v for r in rings for v in r]
+    faces = [[i * n + j, i * n + (j + 1) % n, (i + 1) * n + (j + 1) % n, (i + 1) * n + j]
+             for i in range(len(rings) - 1) for j in range(n)]
+    if tip is not None:
+        verts.append(tip)
+        faces += [[len(verts) - 1, (j + 1) % n, j] for j in range(n)]
+    if end_cap:
+        last = rings[-1]
+        c = sum(last, Vector()) / n
+        axis = (c - sum(rings[-2], Vector()) / n).normalized()
+        verts.append(c + axis * push)
+        base = (len(rings) - 1) * n
+        faces += [[len(verts) - 1, base + j, base + (j + 1) % n] for j in range(n)]
+    return verts, faces
+
+
+def smooth_line(points, per=6):
+    """Catmull-Rom through the points."""
+    pts = [points[0]] + list(points) + [points[-1]]
+    out = []
+    for i in range(1, len(pts) - 2):
+        p0, p1, p2, p3 = pts[i - 1:i + 3]
+        for k in range(per):
+            t = k / per
+            out.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
+                              + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t))
+    return out + [points[-1]]
+
+
+def sweep(points, widths, thick, across=Vector((1, 0, 0)), n=12, per=5, caps=True):
+    """A tube along a smooth line with an elliptical section: half-widths
+    (widths) at right angles to 'across', half-thicknesses (thick) along it.
+    Widths and thicknesses are given at the control points."""
+    line = smooth_line(points, per)
+    m = len(points) - 1
+
+    def at(vals, k):
+        f = k / per
+        i = min(int(f), m - 1)
+        return vals[i] + (vals[i + 1] - vals[i]) * (f - i)
+    rings = []
+    for k, p in enumerate(line):
+        a, b = max(at(widths, k), 2e-5), max(at(thick, k), 2e-5)
+        t = (line[min(k + 1, len(line) - 1)] - line[max(k - 1, 0)]).normalized()
+        b_ax = (across - t * across.dot(t)).normalized()
+        a_ax = t.cross(b_ax).normalized()
+        rings.append([p + a_ax * (a * math.cos(2 * math.pi * j / n)) + b_ax * (b * math.sin(2 * math.pi * j / n))
+                      for j in range(n)])
+    if not caps:
+        return loft(rings, None, False)
+    tip = line[0] - (line[1] - line[0]).normalized() * min(widths[0], thick[0]) * 0.6
+    return loft(rings, tip, True, min(widths[-1], thick[-1]) * 0.6)
+
+
+def mirrored(verts, faces):
+    return [Vector((-v.x, v.y, v.z)) for v in verts], [list(reversed(f)) for f in faces]
+
+
+def both_sides(name, verts, faces, subsurf=0):
+    """Right-side geometry as '<name>.r' and its mirror image as '<name>.l'."""
+    mesh_object(name + ".r", verts, faces, subsurf)
+    mesh_object(name + ".l", *mirrored(verts, faces), subsurf)
+
+
+def eval_world(name):
+    o = D[name]
+    me = o.evaluated_get(deps).to_mesh()
+    return [o.matrix_world @ v.co for v in me.vertices]
+
+
+# Sagittal stations of the tongue as it lies in the open mouth (metres): dorsum
+# point (y, z), ventral point (y, z), half-width. The tip rests behind the
+# lower incisors, the borders below the lingual cusps of the lower teeth, the
+# body on the floor of mouth above the (lowered) hyoid, and the base turns down
+# behind the circumvallate papillae to the vallecula in front of the epiglottis.
+TONGUE_TIP = (-0.0612, 1.4990)
+TONGUE_STATIONS = [
+    ((-0.0598, 1.5018), (-0.0592, 1.4962), 0.0088),
+    ((-0.0568, 1.5052), (-0.0556, 1.4930), 0.0136),
+    ((-0.0518, 1.5105), (-0.0505, 1.4905), 0.0158),
+    ((-0.0458, 1.5160), (-0.0450, 1.4902), 0.0166),
+    ((-0.0395, 1.5205), (-0.0398, 1.4975), 0.0166),
+    ((-0.0330, 1.5232), (-0.0352, 1.4985), 0.0160),
+    ((-0.0272, 1.5200), (-0.0318, 1.4990), 0.0148),
+    ((-0.0243, 1.5120), (-0.0300, 1.4990), 0.0132),
+    ((-0.0248, 1.5040), (-0.0285, 1.4990), 0.0105),
+]
+# Half of a tongue section from the dorsal midline round to the ventral
+# midline: (fraction of half-width, fraction of half-height).
+TONGUE_RING = [(0.30, 1.0), (0.66, 0.96), (0.91, 0.80), (1.0, 0.48), (0.95, 0.12), (0.74, -0.38), (0.47, -0.80), (0.24, -0.98)]
+
+
+def build_tongue():
+    rings = []
+    for k, ((dy, dz), (vy, vz), a) in enumerate(TONGUE_STATIONS):
+        d, v = Vector((0, dy, dz)), Vector((0, vy, vz))
+        mid, up, h = (d + v) / 2, (d - v).normalized(), (d - v).length / 2
+        a, h = a * 1.08, h * 1.06  # allow for the smoothing shrinking the cage
+        groove = 0.93 if 1 <= k <= 5 else 1.0  # median sulcus of the oral tongue
+        half = [(-x, u) for x, u in TONGUE_RING]
+        prof = [(0, groove)] + half + [(0, -1.0)] + [(x, u) for x, u in reversed(TONGUE_RING)]
+        rings.append([mid + Vector((x * a, 0, 0)) + up * (u * h) for x, u in prof])
+    verts, faces = loft(rings, Vector((0, *TONGUE_TIP)), True, 0.002)
+    mesh_object("Tongue (sculpted)", verts, faces, subsurf=2)
+
+
+# Soft palate: from the back of the hard palate (and out to the pterygoid
+# hamuli) down and back to a free edge arched up at the sides; the uvula hangs
+# from the middle of the edge, about 7 mm in front of the back of the pharynx.
+VELUM_MID = [Vector((0, -0.0420, 1.5508)), Vector((0, -0.0330, 1.5482)), Vector((0, -0.0255, 1.5420)),
+             Vector((0, -0.0210, 1.5345))]
+
+
+def velum_point(t, u, side):
+    """Point on the soft palate: t along it (0 base, 1 free edge in the
+    midline), u across (-1..1), side +1 nasal surface, -1 oral, 0 middle."""
+    line = smooth_line(VELUM_MID, 8)
+    tt = t * (1 - 0.5 * u * u)  # the free edge arches up laterally
+    f = tt * (len(line) - 1)
+    i = min(int(f), len(line) - 2)
+    p = line[i].lerp(line[i + 1], f - i)
+    tan = (line[i + 1] - line[i]).normalized()
+    nrm = Vector((0, -tan.z, tan.y))  # up and back: the nasal side
+    width = 0.0172 - 0.0030 * tt
+    p = p + Vector((u * width, 0.0090 * u * u * (1 - tt), -0.0022 * u * u * tt))
+    th = (0.0040 + 0.0055 * math.sin(math.pi * 0.85 * tt)) * (1 - 0.35 * u * u)
+    return p + nrm * (side * th / 2)
+
+
+def build_palate():
+    nt, nu = 14, 16
+    grid = {s: [[velum_point(i / nt, -1 + 2 * j / nu, s) for j in range(nu + 1)] for i in range(nt + 1)]
+            for s in (1, -1)}
+    verts, faces, idx = [], [], {}
+    for s in (1, -1):
+        for i in range(nt + 1):
+            for j in range(nu + 1):
+                idx[s, i, j] = len(verts)
+                verts.append(grid[s][i][j])
+    for i in range(nt):
+        for j in range(nu):
+            for s in (1, -1):
+                q = [idx[s, i, j], idx[s, i + 1, j], idx[s, i + 1, j + 1], idx[s, i, j + 1]]
+                faces.append(q if s == 1 else q[::-1])
+    ring = [(0, j) for j in range(nu)] + [(i, nu) for i in range(nt)] + \
+           [(nt, j) for j in range(nu, 0, -1)] + [(i, 0) for i in range(nt, 0, -1)]
+    for (i0, j0), (i1, j1) in zip(ring, ring[1:] + ring[:1]):
+        faces.append([idx[1, i0, j0], idx[1, i1, j1], idx[-1, i1, j1], idx[-1, i0, j0]])
+    mesh_object("Soft palate (sculpted)", verts, faces, subsurf=1)
+    base = velum_point(1, 0, 0)
+    uv = [base + Vector((0, -0.0010, 0.0010)), base + Vector((0, 0.0012, -0.0040)),
+          base + Vector((0, 0.0024, -0.0085)), base + Vector((0, 0.0030, -0.0118))]
+    mesh_object("Uvula (sculpted)", *sweep(uv, [0.0028, 0.0024, 0.0027, 0.0021], [0.0028, 0.0024, 0.0027, 0.0021]))
+    build_palatal_mucosa()
+
+
+def build_palatal_mucosa():
+    """Mucosa of the hard palate, laid on the bone inside the upper teeth, with
+    the incisive papilla, the median raphe and the transverse palatal rugae."""
+    from mathutils.bvhtree import BVHTree
+    upper = [n for n in TEETH if n.startswith("Upper")]
+    teeth = [v for n in upper for v in eval_world(n)]
+    hw = {}
+    for k in range(-84, -36):  # lingual half-width of the upper arch, by mm of y
+        s = [abs(v.x) for v in teeth if abs(v.y - k / 1000) < 0.0015]
+        hw[k] = min(s) if s else None
+    ys = [k for k in hw if hw[k] is not None and hw[k] > 0.004]
+    y0, y1 = min(ys) / 1000 + 0.0010, -0.0405
+    def half(y):
+        k = round(y * 1000)
+        vals = [hw[j] for j in range(k - 3, k + 4) if hw.get(j)] or [0.017]
+        return max(0.0025, sum(vals) / len(vals) - 0.0012)
+    vs, fs = [], []
+    for n in ("Maxilla.r", "Maxilla.l", "Palatine bone.r", "Palatine bone.l"):
+        o = D[n]
+        me = o.evaluated_get(deps).to_mesh()
+        off = len(vs)
+        vs += [o.matrix_world @ v.co for v in me.vertices]
+        fs += [[off + i for i in p.vertices] for p in me.polygons]
+    bvh = BVHTree.FromPolygons(vs, fs)
+    ny, nx = 56, 30
+    xy, zs = [], []
+    for i in range(ny + 1):
+        y = y0 + (y1 - y0) * i / ny
+        w = half(y) * min(1.0, math.sqrt(max(0.0, (i + 0.4) / 5)))  # rounded front
+        xy.append([(-w + 2 * w * j / nx, y) for j in range(nx + 1)])
+        row = []
+        for x, _ in xy[-1]:
+            hit = bvh.ray_cast(Vector((x, y, 1.532)), Vector((0, 0, 1)), 0.04)[0]
+            row.append(hit.z if hit and hit.z < 1.556 else None)  # skip hits on the pterygoid plates
+        zs.append(row)
+    for row in zs:  # fill misses from the nearest hit in the row
+        good = [j for j, z in enumerate(row) if z is not None]
+        for j in range(len(row)):
+            if row[j] is None:
+                row[j] = row[min(good, key=lambda g: abs(g - j))] if good else 1.548
+    for size in (2, 1):  # smooth: median, then mean
+        sm = []
+        for i in range(ny + 1):
+            r = []
+            for j in range(nx + 1):
+                win = [zs[a][b] for a in range(max(0, i - size), min(ny, i + size) + 1)
+                       for b in range(max(0, j - size), min(nx, j + size) + 1)]
+                r.append(sorted(win)[len(win) // 2] if size == 2 else sum(win) / len(win))
+            sm.append(r)
+        zs = sm
+    top, bot = [], []
+    for i in range(ny + 1):
+        rt, rb = [], []
+        for j in range(nx + 1):
+            x, y = xy[i][j]
+            z = zs[i][j]
+            bump = 0.00030 * math.exp(-(x / 0.0010) ** 2) * (y < -0.046)  # median raphe
+            bump += 0.0010 * math.exp(-((x / 0.0022) ** 2 + ((y - (y0 + 0.0028)) / 0.0024) ** 2))  # papilla
+            for r in range(4):  # rugae: wavy ridges sweeping back from the raphe
+                yr = y0 + 0.0060 + 0.0042 * r + 0.0016 * (abs(x) / 0.008) ** 1.5 + 0.0006 * math.sin(abs(x) * 900)
+                fade = math.exp(-((abs(x) - 0.0060) / 0.0042) ** 2) * (abs(x) > 0.0012) * (1 - 0.18 * r)
+                bump += 0.00075 * fade * math.exp(-((y - yr) / 0.0009) ** 2)
+            rt.append(Vector((x, y, z + 0.0004)))
+            rb.append(Vector((x, y, z - 0.0009 - bump)))
+        top.append(rt)
+        bot.append(rb)
+    verts, faces, idx = [], [], {}
+    for s, g in ((1, top), (-1, bot)):
+        for i in range(ny + 1):
+            for j in range(nx + 1):
+                idx[s, i, j] = len(verts)
+                verts.append(g[i][j])
+    for i in range(ny):
+        for j in range(nx):
+            for s in (1, -1):
+                q = [idx[s, i, j], idx[s, i + 1, j], idx[s, i + 1, j + 1], idx[s, i, j + 1]]
+                faces.append(q if s == 1 else q[::-1])
+    ring = [(0, j) for j in range(nx)] + [(i, nx) for i in range(ny)] + \
+           [(ny, j) for j in range(nx, 0, -1)] + [(i, 0) for i in range(ny, 0, -1)]
+    for (i0, j0), (i1, j1) in zip(ring, ring[1:] + ring[:1]):
+        faces.append([idx[1, i0, j0], idx[1, i1, j1], idx[-1, i1, j1], idx[-1, i0, j0]])
+    mesh_object("Palatal mucosa (sculpted)", verts, faces)
+
+
+def ellipsoid(c, axes, n=24, m=14, wobble=None):
+    """Ellipsoid at c with half-axes given as three vectors."""
+    rings = []
+    for i in range(1, m):
+        th = math.pi * i / m
+        ring = []
+        for j in range(n):
+            ph = 2 * math.pi * j / n
+            d = (math.sin(th) * math.cos(ph), math.sin(th) * math.sin(ph), math.cos(th))
+            s = 1 + (wobble(th, ph) if wobble else 0)
+            ring.append(c + (axes[0] * d[0] + axes[1] * d[1] + axes[2] * d[2]) * s)
+        rings.append(ring)
+    return _close_ellipsoid(rings, c, axes)
+
+
+def _close_ellipsoid(rings, c, axes):
+    n = len(rings[0])
+    verts = [v for r in rings for v in r] + [c + axes[2], c - axes[2]]
+    top, bottom = len(verts) - 2, len(verts) - 1
+    faces = [[i * n + j, i * n + (j + 1) % n, (i + 1) * n + (j + 1) % n, (i + 1) * n + j]
+             for i in range(len(rings) - 1) for j in range(n)]
+    faces += [[top, (j + 1) % n, j] for j in range(n)]
+    last = (len(rings) - 1) * n
+    faces += [[bottom, last + j, last + (j + 1) % n] for j in range(n)]
+    return verts, faces
+
+
+def build_pharynx_muscles():
+    # Palatine tonsils, between the pillars against the superior constrictor.
+    crypts = lambda th, ph: 0.035 * math.sin(5 * th) * math.sin(4 * ph) * (math.cos(ph) > 0)
+    both_sides("Palatine tonsil (sculpted)", *ellipsoid(Vector((-0.0104, -0.0238, 1.5222)),
+               (Vector((0.0040, 0, 0)), Vector((0, 0.0056, 0.0010)), Vector((0, -0.0012, 0.0088))), wobble=crypts))
+    # Levator veli palatini: petrous apex, below the auditory tube, into the
+    # upper surface of the soft palate.
+    lev = [Vector((-0.0196, -0.0005, 1.5682)), Vector((-0.0150, -0.0115, 1.5645)), Vector((-0.0108, -0.0215, 1.5585)),
+           Vector((-0.0068, -0.0300, 1.5525))]
+    both_sides("Levator veli palatini (sculpted)", *sweep(lev, [0.0022, 0.0034, 0.0032, 0.0022], [0.0020, 0.0030, 0.0028, 0.0018]))
+    # Tensor veli palatini: scaphoid fossa and auditory tube, straight down
+    # outside the medial pterygoid plate; its tendon hooks round the hamulus
+    # into the palatine aponeurosis.
+    ten = [Vector((-0.0198, -0.0115, 1.5790)), Vector((-0.0186, -0.0195, 1.5700)), Vector((-0.0174, -0.0255, 1.5605)),
+           Vector((-0.0164, -0.0288, 1.5540))]
+    tv, tf = sweep(ten, [0.0036, 0.0030, 0.0018, 0.0007], [0.0010, 0.0010, 0.0008, 0.0006], across=Vector((1, 0.2, 0)).normalized())
+    tendon = [Vector((-0.0164, -0.0288, 1.5540)), Vector((-0.0163, -0.0298, 1.5488)), Vector((-0.0130, -0.0305, 1.5478)),
+              Vector((-0.0080, -0.0345, 1.5492)), Vector((-0.0030, -0.0372, 1.5498))]
+    dv, df = sweep(tendon, [0.0006, 0.0006, 0.0008, 0.0016, 0.0022], [0.0005, 0.0005, 0.0005, 0.0004, 0.0004],
+                   across=Vector((0, 0.3, 1)).normalized())
+    both_sides("Tensor veli palatini (sculpted)", tv + dv, tf + [[k + len(tv) for k in f] for f in df])
+    # Salpingopharyngeus: from the lower end of the tubal cartilage down the
+    # side wall of the pharynx, into palatopharyngeus.
+    sal = [Vector((-0.0102, -0.0110, 1.5745)), Vector((-0.0122, -0.0122, 1.5600)), Vector((-0.0133, -0.0135, 1.5450)),
+           Vector((-0.0138, -0.0140, 1.5320))]
+    both_sides("Salpingopharyngeus (sculpted)", *sweep(sal, [0.0012, 0.0015, 0.0013, 0.0004], [0.0009, 0.0010, 0.0008, 0.0003]))
+    # Styloglossus: styloid process forwards into the side of the tongue,
+    # interlacing with hyoglossus.
+    sty = [Vector((-0.0385, -0.0010, 1.5505)), Vector((-0.0300, -0.0140, 1.5400)), Vector((-0.0225, -0.0270, 1.5300)),
+           Vector((-0.0168, -0.0390, 1.5245)), Vector((-0.0152, -0.0520, 1.5225))]
+    both_sides("Styloglossus (sculpted)", *sweep(sty, [0.0010, 0.0016, 0.0024, 0.0026, 0.0010], [0.0010, 0.0014, 0.0016, 0.0015, 0.0008]))
+
+
+def build_sublingual():
+    """Ducts of the sublingual gland (closed mouth): 8 short ducts of Rivinus up
+    to the sublingual fold, and Bartholin's duct forward into the submandibular
+    duct near the caruncle; and a right-sided ranula with a plunging part."""
+    lines = []
+    for s in "rl":
+        gland = eval_world("Sublingual gland." + s)
+        ys = [v.y for v in gland]
+        lo, hi = min(ys), max(ys)
+        for k in range(8):
+            y = lo + (hi - lo) * (0.12 + 0.76 * k / 7)
+            band = [v for v in gland if abs(v.y - y) < 0.0016]
+            top = max(band, key=lambda v: v.z)
+            sx = 1 if top.x > 0 else -1
+            lines.append([top - Vector((0, 0, 0.0006)), top + Vector((-sx * 0.0008, 0, 0.0016)),
+                          top + Vector((-sx * 0.0014, 0, 0.0030))])
+        duct = spline_world("Submandibular duct." + s, 0)
+        if duct[0].y < duct[-1].y:
+            duct = duct[::-1]  # gland first, caruncle last
+        join = dense(duct)[-12]
+        front = min(gland, key=lambda v: v.y + abs(v.x) * 0.3)
+        lines.append([front, front.lerp(join, 0.5) + Vector((0, 0, 0.0015)), join])
+    obj = curve_object("Sublingual ducts (sculpted)", lines, 0.00035)
+    # Ranula (right): a thin-walled bluish swelling in the floor of mouth over
+    # the sublingual gland, and its plunging part behind the free edge of
+    # mylohyoid into the submandibular space.
+    c = Vector((-0.0095, -0.0625, 1.5100))  # front of the floor, beside the frenulum, under the tongue
+    rv, rf = ellipsoid(c, (Vector((0.0060, 0, 0.0006)), Vector((0, 0.0092, -0.0008)), Vector((-0.0006, 0.0008, 0.0040))))
+    neck = [c + Vector((-0.0030, 0.0070, -0.0010)), Vector((-0.0165, -0.0400, 1.5040)), Vector((-0.0195, -0.0405, 1.4985))]
+    nv, nf = sweep(neck, [0.0030, 0.0028, 0.0032], [0.0026, 0.0024, 0.0030])
+    pv, pf = ellipsoid(Vector((-0.0200, -0.0470, 1.4935)),
+                       (Vector((0.0075, 0, 0.0015)), Vector((0, 0.0120, 0.0010)), Vector((0.0010, -0.0010, 0.0080))))
+    verts, faces = rv, rf
+    for v2, f2 in ((nv, nf), (pv, pf)):
+        faces = faces + [[k + len(verts) for k in f] for f in f2]
+        verts = verts + v2
+    mesh_object("Ranula (sculpted)", verts, faces, subsurf=1)
+    return obj
+
+
+# ---------- the open jaw ----------
+
+JAW_CENTRE = Vector((0, -0.0080, 1.5720))  # axis through the condylar heads
+JAW = {"angle": math.radians(20), "slide": Vector((0, -0.0110, -0.0040))}  # turn, and glide forwards
+HYOID_DROP = Vector((0, 0, -0.0060))  # the hyoid comes down as the mouth opens
+JAW_TREES = {}
+
+
+def kd(points):
+    from mathutils.kdtree import KDTree
+    t = KDTree(len(points))
+    for k, p in enumerate(points):
+        t.insert(p, k)
+    t.balance()
+    return t
+
+
+def jaw_move(p, w):
+    if w <= 0:
+        return p.copy()
+    r = Matrix.Rotation(JAW["angle"] * w, 3, "X")
+    return JAW_CENTRE + r @ (p - JAW_CENTRE) + JAW["slide"] * w
+
+
+def occlusal_z(y):
+    return 1.5265 + 0.2386 * (y + 0.088)
+
+
+def jaw_weight(p, mode):
+    if mode == "rigid":
+        return 1.0
+    if mode == "gingiva":
+        return 1.0 if p.z < occlusal_z(p.y) else 0.0
+    dm = JAW_TREES["jaw"].find(p)[2]
+    df = JAW_TREES[mode].find(p)[2]
+    return df * df / (df * df + dm * dm + 1e-12)
+
+
+def tuck(names, into, margin=0.0045):
+    """Push vertices of muscles that end inside the tongue back under its surface."""
+    from mathutils.bvhtree import BVHTree
+    o = D[into]
+    me = o.evaluated_get(deps).to_mesh()
+    bvh = BVHTree.FromPolygons([o.matrix_world @ v.co for v in me.vertices], [list(f.vertices) for f in me.polygons])
+    up, down = Vector((0, 0, 1)), Vector((0, 0, -1))
+    for n in names:
+        obj = D[n]
+        mw, inv = obj.matrix_world, obj.matrix_world.inverted()
+        for v in obj.data.vertices:
+            p = mw @ v.co
+            hit = bvh.ray_cast(p, up, 0.05)[0]
+            if hit is None:
+                hit = bvh.ray_cast(p, down, 0.02)[0]  # poking out through the dorsum
+                if hit is None:
+                    continue
+            if hit.z - p.z < margin:
+                v.co = inv @ Vector((p.x, p.y, hit.z - margin))
+        obj.data.update()
+
+
+def pose_points(points, mode):
+    return [jaw_move(p, jaw_weight(p, mode)) for p in points]
+
+
+def pose_object(obj, mode):
+    mw, inv = obj.matrix_world, obj.matrix_world.inverted()
+    if obj.type == "MESH":
+        if obj.data.users > 1:
+            obj.data = obj.data.copy()
+        for v in obj.data.vertices:
+            p = mw @ v.co
+            v.co = inv @ (p + HYOID_DROP if mode == "drop" else jaw_move(p, jaw_weight(p, mode)))
+        obj.data.update()
+    else:
+        if obj.data.users > 1:
+            obj.data = obj.data.copy()
+        for sp in obj.data.splines:
+            for b in sp.bezier_points:
+                p = mw @ b.co
+                w = jaw_weight(p, mode)
+                b.co, b.handle_left, b.handle_right = (inv @ jaw_move(mw @ q, w) for q in (b.co, b.handle_left, b.handle_right))
+            for q in sp.points:
+                p = mw @ q.co.xyz
+                q.co = (*(inv @ jaw_move(p, jaw_weight(p, mode))), q.co.w)
+
+
+def open_jaw(spec):
+    lower = [n for n in TEETH if n.startswith("Lower")]
+    JAW_TREES["jaw"] = kd([v for n in ["Mandible"] + lower for v in eval_world(n)][::2])
+    for mode, names in spec["fixed"].items():
+        JAW_TREES[mode] = kd([v for n in names for v in eval_world(n)][::2])
+    for mode, names in spec["move"].items():
+        for name in names:
+            for n in (lower if name == "LOWER_TEETH" else [name]):
+                pose_object(D[n], mode)
+    deps.update()
+
+
+def build_pillars():
+    """Tonsillar pillars (after the jaw is open): palatoglossal arch from the
+    oral surface of the soft palate beside the uvula, out along its free edge
+    and down in front of the tonsil to the side of the tongue; palatopharyngeal
+    arch from its back edge, down behind the tonsil on the pharyngeal wall."""
+    end = Vector((-0.0163, -0.0335, 1.5160))  # side of the tongue
+    front = [velum_point(0.93, -0.22, -1), velum_point(0.86, -0.50, -1), velum_point(0.76, -0.78, -1),
+             Vector((-0.0158, -0.0305, 1.5265)), Vector((-0.0162, -0.0322, 1.5205)), end]
+    both_sides("Palatoglossal arch (sculpted)",
+               *sweep(front, [0.0016, 0.0022, 0.0026, 0.0028, 0.0026, 0.0020], [0.0012, 0.0013, 0.0014, 0.0014, 0.0013, 0.0010],
+                      across=Vector((1, -0.25, 0)).normalized()))
+    back = [velum_point(0.98, -0.20, 1), velum_point(0.92, -0.50, 1), velum_point(0.84, -0.80, 0),
+            Vector((-0.0128, -0.0168, 1.5250)), Vector((-0.0133, -0.0150, 1.5140)), Vector((-0.0136, -0.0128, 1.5040)),
+            Vector((-0.0137, -0.0112, 1.4960))]
+    both_sides("Palatopharyngeal arch (sculpted)",
+               *sweep(back, [0.0016, 0.0022, 0.0026, 0.0028, 0.0026, 0.0020, 0.0006], [0.0012, 0.0013, 0.0014, 0.0014, 0.0013, 0.0011, 0.0004],
+                      across=Vector((1, 0.35, 0)).normalized()))
+
+
+def under_tongue_tip(names, margin=0.0030):
+    """Keep muscle that Z-Anatomy runs up behind the incisors below the
+    underside of the tongue tip."""
+    ventral = [(v[0], v[1]) for _, v, _ in TONGUE_STATIONS[:3]]
+    def floor(y):
+        if y <= ventral[0][0]:
+            return ventral[0][1]
+        for (y0, z0), (y1, z1) in zip(ventral, ventral[1:]):
+            if y <= y1:
+                return z0 + (z1 - z0) * (y - y0) / (y1 - y0)
+        return ventral[-1][1]
+    for n in names:
+        obj = D[n]
+        mw, inv = obj.matrix_world, obj.matrix_world.inverted()
+        for v in obj.data.vertices:
+            p = mw @ v.co
+            # In front of the tip, stay below the floor of the mouth (about 1 cm under the tip).
+            top = floor(p.y) - margin if p.y > ventral[0][0] else ventral[0][1] - 0.0100
+            if p.y < ventral[-1][0] and p.z > top:
+                v.co = inv @ Vector((p.x, p.y, top))
+        obj.data.update()
+
+
+def build_oral():
+    build_palate()
+    build_pharynx_muscles()
+    build_sublingual()
+    deps.update()
+    open_jaw(cfg["open_jaw"])
+    build_tongue()  # sculpted in the open position
+    deps.update()
+    under_tongue_tip(BOTH("Genioglossus muscle"))
+    tuck(cfg["open_jaw"].get("tuck", []), "Tongue (sculpted)")
+    build_pillars()
+    deps.update()
+
+
+BUILDERS = {"oral": build_oral}
+
+
 # ---------- export ----------
 
 parts = []
@@ -2214,6 +2788,9 @@ def add(sid, name, verts, tris):
     parts.append((sid, name, verts, tris))
     print(f"{sid:20} {name:48} {len(verts):6} verts {len(tris):6} tris")
 
+
+if cfg.get("build"):
+    BUILDERS[cfg["build"]]()
 
 for sid, names in cfg["structures"].items():
     for entry in names:
@@ -2257,6 +2834,8 @@ if cfg.get("node_groups"):
 
 for sid, radius in cfg.get("drawn", {}).items():
     obj = curve_object(sid, DRAWN[sid](L), radius)
+    if sid in cfg.get("open_jaw", {}).get("drawn", {}):
+        pose_object(obj, cfg["open_jaw"]["drawn"][sid])
     bm = world_bmesh(obj, sid)
     if sid in cfg.get("clip", {}):
         clip(bm, *cfg["clip"][sid])
@@ -2598,22 +3177,6 @@ for sid, name, verts, tris in parts:
 
 
 # ---------- named points and courses (traced structures) ----------
-
-def spline_world(name, i):
-    o = D[name]
-    sp = o.data.splines[i]
-    pts = sp.bezier_points or sp.points
-    return [o.matrix_world @ (p.co.xyz if len(p.co) == 4 else p.co) for p in pts]
-
-
-def dense(points, step=0.0008):
-    """Resample a polyline every ~0.8 mm."""
-    out = []
-    for a, b in zip(points, points[1:]):
-        n = max(1, int((b - a).length / step))
-        out += [a.lerp(b, k / n) for k in range(n)]
-    return out + points[-1:]
-
 
 BONE_CACHE = {}
 

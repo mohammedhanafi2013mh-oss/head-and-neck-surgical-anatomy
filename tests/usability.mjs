@@ -235,6 +235,23 @@ await check("Surgery", "The incision is drawn on the model at the incision step,
   for (let i = 0; i < 2; i++) await page.click('[data-step="-1"]');
   return first[1].split(" · ")[0];
 });
+await check("Surgery", "A region with several operations offers a picker, and each draws its own incision", async () => {
+  // The oral cavity has a partial glossectomy and a ranula excision; then back to the thyroid.
+  const go = async (id) => {
+    await page.selectOption("#region-select", id);
+    await page.waitForFunction((r) => location.hash.startsWith("#" + r) && document.querySelector("#viewer-loading").hidden, id, { timeout: 60000 });
+  };
+  await go("oral_cavity");
+  await page.click('[data-tab="surgery"]');
+  const names = await page.$$eval("[data-proc]", (b) => b.map((x) => x.textContent));
+  expect(names.length >= 2, `operations: ${names}`);
+  await page.click('[data-proc="1"]');
+  for (let i = 0; i < 2; i++) await page.click('[data-step="1"]');
+  const note = await page.evaluate(() => [window.ANATOMY.viewer.incisionGroup.children.length, document.querySelector(".incision-note")?.textContent || ""]);
+  expect(note[0] > 0 && note[1], `ranula step 3: ${note}`);
+  await go("thyroid");
+  return `${names.join(" / ")}: ${note[1].split(" · ")[0]}`;
+});
 await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.click('[data-tab="sections"]');
   await page.waitForTimeout(1000);

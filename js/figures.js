@@ -64,6 +64,100 @@ window.ANATOMY.figures = {
   <text x="6" y="360" class="fig-label small">Oral cavity subsites: lip, buccal mucosa, alveolar ridges, retromolar trigone, floor of mouth,</text>
   <text x="6" y="373" class="fig-label small">hard palate and oral tongue. Not to scale.</text>
 </svg>`,
+  // The fauces seen through the open mouth: soft palate and uvula, the two
+  // pillars on each side with the tonsil between, and the muscle in each.
+  faucesPillars: `
+<svg viewBox="0 0 600 400" role="img" aria-label="The fauces through the open mouth: hard and soft palate, uvula, anterior pillars (palatoglossus), posterior pillars (palatopharyngeus), palatine tonsils between them on the superior constrictor, and the back of the tongue">
+  <!-- back wall of the oropharynx -->
+  <path d="M150 90 Q300 60 450 90 L450 300 Q300 320 150 300 Z" fill="var(--fig-muscle)" opacity=".18" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="300" y="250" class="fig-label small" text-anchor="middle">Back wall of the oropharynx</text>
+  <!-- hard palate -->
+  <path d="M70 70 Q300 -10 530 70 L520 92 Q300 26 80 92 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <text x="300" y="56" class="fig-label small" text-anchor="middle">Hard palate (rugae, raphe)</text>
+  <!-- soft palate with the arched free edge and the uvula -->
+  <path d="M80 92 Q300 26 520 92 L500 170 Q420 104 330 130 Q312 136 306 150 L294 150 Q288 136 270 130 Q180 104 100 170 Z" fill="var(--fig-muscle)" opacity=".42" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <path d="M292 146 Q286 186 300 196 Q314 186 308 146 Z" fill="var(--fig-muscle)" opacity=".7" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <text x="300" y="88" class="fig-label" text-anchor="middle">Soft palate</text>
+  <text x="318" y="190" class="fig-label small">Uvula</text>
+  <!-- posterior pillars (palatopharyngeal arches), medial and behind -->
+  <path d="M292 150 Q232 140 214 190 Q206 240 214 300" fill="none" stroke="var(--fig-muscle)" stroke-width="11" stroke-linecap="round" opacity=".75"/>
+  <path d="M308 150 Q368 140 386 190 Q394 240 386 300" fill="none" stroke="var(--fig-muscle)" stroke-width="11" stroke-linecap="round" opacity=".75"/>
+  <!-- tonsils between the pillars -->
+  <ellipse cx="182" cy="218" rx="20" ry="36" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <ellipse cx="418" cy="218" rx="20" ry="36" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <path d="M172 200 q4 6 0 12 M186 196 q4 8 0 16 M178 226 q5 6 0 12 M190 232 q3 6 0 10" fill="none" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <path d="M428 200 q-4 6 0 12 M414 196 q-4 8 0 16 M422 226 q-5 6 0 12 M410 232 q-3 6 0 10" fill="none" stroke="var(--fig-stroke)" stroke-width=".7"/>
+  <!-- anterior pillars (palatoglossal arches), in front, down to the tongue -->
+  <path d="M286 140 Q190 110 156 172 Q140 220 150 290" fill="none" stroke="var(--fig-muscle)" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+  <path d="M314 140 Q410 110 444 172 Q460 220 450 290" fill="none" stroke="var(--fig-muscle)" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+  <!-- tongue -->
+  <path d="M110 300 Q300 236 490 300 Q510 360 470 392 L130 392 Q90 360 110 300 Z" fill="var(--fig-muscle)" opacity=".5" stroke="var(--fig-stroke)"/>
+  <path d="M220 304 L300 330 L380 304" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="2 4"/>
+  <text x="300" y="352" class="fig-label small" text-anchor="middle">Circumvallate papillae (sulcus terminalis)</text>
+  <text x="300" y="376" class="fig-label" text-anchor="middle">Tongue</text>
+  <!-- labels, patient's right on the viewer's left -->
+  <text x="6" y="140" class="fig-label small">Palatoglossal arch</text>
+  <text x="6" y="152" class="fig-label small">(anterior pillar):</text>
+  <text x="6" y="164" class="fig-label small">palatoglossus</text>
+  <line x1="80" y1="166" x2="148" y2="190" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="6" y="228" class="fig-label small">Palatine tonsil, on</text>
+  <text x="6" y="240" class="fig-label small">the superior constrictor</text>
+  <line x1="120" y1="232" x2="164" y2="222" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="482" y="130" class="fig-label small">Palatopharyngeal</text>
+  <text x="482" y="142" class="fig-label small">arch (posterior</text>
+  <text x="482" y="154" class="fig-label small">pillar):</text>
+  <text x="482" y="166" class="fig-label small">palatopharyngeus</text>
+  <line x1="490" y1="170" x2="392" y2="206" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="6" y="304" class="fig-label small">Glossopharyngeal</text>
+  <text x="6" y="316" class="fig-label small">nerve: lower tonsil bed</text>
+  <line x1="96" y1="300" x2="176" y2="258" stroke="var(--fig-nerve)" stroke-width="1.6"/>
+</svg>`,
+  // Coronal section through the floor of mouth: a simple ranula above
+  // mylohyoid (patient's right, viewer's left) and the plunging route into the neck.
+  ranulaCoronal: `
+<svg viewBox="0 0 600 380" role="img" aria-label="Coronal section of the floor of mouth: tongue, mandible, mylohyoid sling, sublingual glands above mylohyoid and submandibular glands below; a simple ranula above mylohyoid on the right, and a plunging ranula passing behind mylohyoid into the neck">
+  <!-- mandible -->
+  <path d="M110 40 L96 220 Q100 260 130 270 L150 262 L156 60 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M490 40 L504 220 Q500 260 470 270 L450 262 L444 60 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <text x="70" y="34" class="fig-label small">Mandible</text>
+  <!-- tongue -->
+  <path d="M170 70 Q300 20 430 70 Q450 130 420 170 Q300 200 180 170 Q150 130 170 70 Z" fill="var(--fig-muscle)" opacity=".45" stroke="var(--fig-stroke)"/>
+  <text x="300" y="100" class="fig-label" text-anchor="middle">Tongue</text>
+  <!-- genioglossus and geniohyoid in the midline -->
+  <path d="M286 170 L278 260 L322 260 L314 170 Z" fill="var(--fig-muscle)" opacity=".3" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="300" y="232" class="fig-label small" text-anchor="middle">Genio-</text>
+  <text x="300" y="244" class="fig-label small" text-anchor="middle">glossus</text>
+  <!-- mylohyoid sling -->
+  <path d="M150 200 Q300 300 450 200" fill="none" stroke="var(--fig-muscle)" stroke-width="9" opacity=".8"/>
+  <text x="330" y="330" class="fig-label small">Mylohyoid</text>
+  <line x1="356" y1="320" x2="380" y2="246" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- sublingual glands above mylohyoid -->
+  <ellipse cx="190" cy="190" rx="26" ry="14" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <ellipse cx="410" cy="190" rx="26" ry="14" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="438" y="178" class="fig-label small">Sublingual gland</text>
+  <circle cx="236" cy="190" r="4" fill="var(--fig-duct)" stroke="var(--fig-stroke)"/>
+  <circle cx="364" cy="190" r="4" fill="var(--fig-duct)" stroke="var(--fig-stroke)"/>
+  <circle cx="248" cy="198" r="2.6" fill="var(--fig-nerve)"/>
+  <circle cx="352" cy="198" r="2.6" fill="var(--fig-nerve)"/>
+  <text x="456" y="204" class="fig-label small">Duct and lingual nerve</text>
+  <line x1="454" y1="200" x2="370" y2="194" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- submandibular glands below mylohyoid -->
+  <ellipse cx="150" cy="282" rx="40" ry="26" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <ellipse cx="450" cy="282" rx="40" ry="26" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="470" y="320" class="fig-label small">Submandibular gland</text>
+  <!-- simple ranula (right) and plunging part -->
+  <ellipse cx="210" cy="164" rx="30" ry="20" fill="#86aee6" opacity=".7" stroke="var(--fig-stroke)" stroke-width=".9"/>
+  <path d="M190 182 Q166 214 172 238 Q178 262 210 300 Q230 330 210 350 Q170 366 156 336 Q150 310 168 290" fill="#86aee6" opacity=".5" stroke="var(--fig-stroke)" stroke-width=".9" stroke-dasharray="4 3"/>
+  <text x="6" y="130" class="fig-label small strong">Simple ranula:</text>
+  <text x="6" y="142" class="fig-label small">above mylohyoid, from</text>
+  <text x="6" y="154" class="fig-label small">the sublingual gland</text>
+  <line x1="100" y1="150" x2="182" y2="162" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="6" y="330" class="fig-label small strong">Plunging ranula:</text>
+  <text x="6" y="342" class="fig-label small">behind or through</text>
+  <text x="6" y="354" class="fig-label small">mylohyoid into the neck</text>
+  <line x1="110" y1="340" x2="160" y2="330" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="300" y="370" class="fig-label small" text-anchor="middle">Coronal section, patient's right on the left. Not to scale.</text>
+</svg>`,
   // Right face from the side, face to the right: the five facial nerve branches
   // fanning from the parotid to the muscles they supply.
   facialNerveMuscles: `

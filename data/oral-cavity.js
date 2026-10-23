@@ -1,6 +1,6 @@
-// Content for the oral cavity and floor of mouth (both sides; courses traced on
-// the right). Each structure id matches a mesh id in data/oral-cavity-meshes.js,
-// except styloglossus and palatoglossus, which Z-Anatomy does not model.
+// Content for the oral cavity, floor of mouth, palate and fauces (both sides;
+// courses traced on the right). Each structure id matches a mesh id in
+// data/oral-cavity-meshes.js; the model shows the mouth open.
 // "course" lists the waypoints of a traced structure; "incision" on a surgery
 // step names an entry in "incisions" drawn on the model at that step.
 
@@ -9,10 +9,10 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.oral_cavity = {
   id: "oral_cavity",
   title: "Oral cavity",
-  subtitle: "Tongue, floor of mouth, palate and the nerves, ducts and vessels around hyoglossus, both sides (traced on the right)",
+  subtitle: "Tongue, floor of mouth, hard and soft palate, tonsillar pillars and tonsils, with the mouth open; nerves, ducts and vessels traced on the right",
 
   overview: {
-    "intro": "The oral cavity runs from the lips to the junction of the hard and soft palate above and the circumvallate papillae of the tongue below, with the anterior tonsillar pillars at the sides. Behind it is the oropharynx. Its subsites matter because they behave differently: cancers of the oral tongue and floor of mouth spread to the neck early, those of the alveolar ridge and retromolar trigone invade bone early. The floor of the mouth is a small space packed with structures that must be found and kept in surgery: the lingual nerve, the submandibular duct, the hypoglossal nerve and the lingual vessels, arranged around hyoglossus. In the model, structures are shown on both sides, and the lingual nerve, hypoglossal nerve, submandibular duct and lingual artery can be traced on the right.",
+    "intro": "The oral cavity runs from the lips to the junction of the hard and soft palate above and the circumvallate papillae of the tongue below, with the anterior tonsillar pillars at the sides. Behind it is the oropharynx. Its subsites matter because they behave differently: cancers of the oral tongue and floor of mouth spread to the neck early, those of the alveolar ridge and retromolar trigone invade bone early. The floor of the mouth is a small space packed with structures that must be found and kept in surgery: the lingual nerve, the submandibular duct, the hypoglossal nerve and the lingual vessels, arranged around hyoglossus. The model shows the mouth open, as you would see it: the tongue, the hard palate with its rugae, the soft palate and uvula, and the tonsils between the anterior and posterior pillars, with the palatal muscles and the auditory tubes above. Structures are shown on both sides, and the lingual nerve, hypoglossal nerve, submandibular duct and lingual artery can be traced on the right.",
     "boundaries": [
       {
         "label": "Front",
@@ -39,6 +39,7 @@ window.ANATOMY.regions.oral_cavity = {
       "Subsites (AJCC): mucosal lip, buccal mucosa, upper and lower alveolar ridges, retromolar trigone, floor of mouth, hard palate, oral (anterior two-thirds) tongue",
       "Floor of mouth: sublingual glands, submandibular ducts, lingual nerves, hypoglossal nerves, lingual vessels, the deep parts of the submandibular glands",
       "Muscles: intrinsic tongue muscles, genioglossus, hyoglossus, styloglossus, palatoglossus, geniohyoid, mylohyoid",
+      "Fauces (the gateway to the oropharynx): soft palate and uvula, palatoglossal and palatopharyngeal arches, palatine tonsils on the superior constrictor; levator and tensor veli palatini from the skull base and auditory tube",
       "Nerves: lingual (sensation; chorda tympani for taste), hypoglossal (motor), inferior alveolar and mental, greater palatine and nasopalatine",
       "Arteries: lingual, facial (submental, ascending palatine), greater palatine, inferior alveolar"
     ],
@@ -48,7 +49,9 @@ window.ANATOMY.regions.oral_cavity = {
       "Lateral tongue cancers can skip levels I–II and appear first in level III or IV, so the neck dissection for them usually covers levels I–III or I–IV.",
       "Aim for a 1 cm clinical margin: tissue shrinks after resection, and a clear histological margin is ≥5 mm (1–5 mm close, <1 mm involved).",
       "Around hyoglossus: the lingual nerve, submandibular duct and hypoglossal nerve are superficial (lateral); the lingual artery is deep (medial).",
-      "The lingual nerve loops under the submandibular duct from lateral to medial near the second molar; find it before cutting near the duct."
+      "The lingual nerve loops under the submandibular duct from lateral to medial near the second molar; find it before cutting near the duct.",
+      "All palatal muscles are supplied by the vagus (pharyngeal plexus) except tensor veli palatini (V3); all tongue muscles by the hypoglossal nerve except palatoglossus (vagus).",
+      "A ranula comes from the sublingual gland: excise the gland, not just the cyst."
     ],
     "refs": [
       "gray",
@@ -59,7 +62,7 @@ window.ANATOMY.regions.oral_cavity = {
     ]
   },
 
-  layers: [{"id": "muscle", "label": "Tongue & floor muscles", "defaultOn": true}, {"id": "mucosa", "label": "Gingiva & palate", "defaultOn": true}, {"id": "gland", "label": "Glands", "defaultOn": true}, {"id": "duct", "label": "Submandibular duct", "defaultOn": true}, {"id": "nerve", "label": "Nerves", "defaultOn": true}, {"id": "artery", "label": "Arteries", "defaultOn": true}, {"id": "vein", "label": "Veins", "defaultOn": false}, {"id": "bone", "label": "Jaws, teeth & hyoid", "defaultOn": true}, {"id": "context", "label": "Lips & pterygoid", "defaultOn": false}],
+  layers: [{"id": "muscle", "label": "Tongue & floor muscles", "defaultOn": true}, {"id": "pharynx", "label": "Soft palate, pillars & tonsils", "defaultOn": true}, {"id": "mucosa", "label": "Gingiva & hard palate", "defaultOn": true}, {"id": "gland", "label": "Glands", "defaultOn": true}, {"id": "duct", "label": "Salivary ducts", "defaultOn": true}, {"id": "nerve", "label": "Nerves", "defaultOn": true}, {"id": "artery", "label": "Arteries", "defaultOn": true}, {"id": "vein", "label": "Veins", "defaultOn": false}, {"id": "bone", "label": "Jaws, teeth & hyoid", "defaultOn": true}, {"id": "context", "label": "Lips & pterygoid", "defaultOn": false}, {"id": "pathology", "label": "Ranula", "defaultOn": false}],
 
   structures: [
     {
@@ -137,8 +140,8 @@ window.ANATOMY.regions.oral_cavity = {
     {
       id: "soft_palate",
       name: "Soft palate and uvula",
-      layer: "mucosa",
-      summary: "The mobile back part of the palate. It closes off the nasopharynx in swallowing and speech; its junction with the hard palate is the back of the oral cavity.",
+      layer: "pharynx",
+      summary: "The mobile back part of the palate, hanging down and back from the hard palate with the uvula in the middle of its free edge. At rest it leaves the nasopharynx open; in swallowing and speech levator veli palatini lifts it against the back wall of the pharynx. Its junction with the hard palate is the back of the oral cavity.",
       relations: [],
       supply: {"Muscles": "Levator veli palatini, palatoglossus, palatopharyngeus and musculus uvulae (vagus via the pharyngeal plexus); tensor veli palatini (V3)", "Blood": "Greater and lesser palatine, ascending palatine (facial) and ascending pharyngeal arteries"},
       surgical: ["Resecting the soft palate causes nasal regurgitation and hypernasal speech unless it is reconstructed or closed with an obturator."],
@@ -149,9 +152,9 @@ window.ANATOMY.regions.oral_cavity = {
     {
       id: "tonsils",
       name: "Palatine tonsils",
-      layer: "gland",
+      layer: "pharynx",
       summary: "In the tonsillar fossa between the palatoglossal and palatopharyngeal arches, at the boundary between the oral cavity and the oropharynx.",
-      relations: ["Bed: superior constrictor; the glossopharyngeal nerve lies in its lower part", "The internal carotid artery is about 1.5–2.5 cm behind and lateral"],
+      relations: ["Between the anterior (palatoglossal) and posterior (palatopharyngeal) pillars", "Bed: superior constrictor; the glossopharyngeal nerve lies in its lower part", "The internal carotid artery is about 1.5–2.5 cm behind and lateral"],
       supply: {},
       surgical: ["Main blood supply: tonsillar branch of the facial artery; bleeding after tonsillectomy often comes from the external palatine (paratonsillar) vein.", "The tonsils are oropharynx, not oral cavity: their cancers are staged and treated with the oropharynx, often HPV-related."],
       danger: [],
@@ -399,171 +402,463 @@ window.ANATOMY.regions.oral_cavity = {
     },
     {
       id: "styloglossus",
-      name: "Styloglossus and palatoglossus",
+      name: "Styloglossus",
       layer: "muscle",
-      summary: "Styloglossus (from the styloid process; hypoglossal) pulls the tongue up and back; palatoglossus (from the soft palate; vagus) raises the back of the tongue and forms the anterior tonsillar pillar. Not shown in the 3D model (Z-Anatomy has neither).",
+      summary: "From the tip of the styloid process and the stylomandibular ligament forwards into the side of the tongue, where it interlaces with hyoglossus. It pulls the tongue up and back.",
+      relations: ["Enters the tongue through the gap between the superior and middle constrictors, with the glossopharyngeal nerve"],
+      supply: {"Origin": "Styloid process and stylomandibular ligament", "Insertion": "Side of the tongue, with hyoglossus", "Action": "Pulls the tongue up and back", "Nerve": "Hypoglossal nerve"},
+      surgical: ["The glossopharyngeal nerve runs on styloglossus into the lower tonsil bed, where tonsillectomy can bruise it (altered taste, referred ear pain)."],
+      danger: [],
+      variations: [],
+      refs: ["gray"]
+    },
+    {
+      id: "hard_palate",
+      name: "Hard palate",
+      layer: "mucosa",
+      summary: "The bony roof of the mouth (palatine processes of the maxillae in front, horizontal plates of the palatine bones behind) under a thick mucoperiosteum. The mucosa carries the incisive papilla over the incisive foramen, a median raphe, and transverse palatal rugae in front.",
+      relations: ["Greater palatine foramen medial to the third molar: the greater palatine vessels and nerve run forwards in the mucoperiosteum about 1 cm from the gum margin", "Incisive foramen under the papilla, behind the central incisors: nasopalatine nerve and vessels"],
+      supply: {"Sensation": "Greater palatine nerve; nasopalatine nerve behind the incisors (both V2)", "Blood": "Greater palatine artery", "Lymph": "Submandibular, retropharyngeal and upper deep cervical nodes"},
+      surgical: ["Palatal flaps are raised as full-thickness mucoperiosteum based on the greater palatine artery.", "Minor salivary glands are densest at the back of the hard palate, the commonest site of minor salivary gland tumours (pleomorphic adenoma, adenoid cystic carcinoma).", "A resection that opens into the nose or sinus is closed with an obturator or a flap."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "shah"]
+    },
+    {
+      id: "palatoglossus",
+      name: "Palatoglossus (anterior pillar)",
+      layer: "pharynx",
+      summary: "Runs from the oral surface of the palatine aponeurosis down to the side of the tongue, raising the palatoglossal arch: the anterior tonsillar pillar, the boundary between the oral cavity and the oropharynx.",
+      relations: ["In front of the palatine tonsil", "Meets the tongue at the junction of its oral and pharyngeal parts, just behind the circumvallate papillae"],
+      supply: {"Origin": "Palatine aponeurosis (oral surface)", "Insertion": "Side of the tongue, with styloglossus and the transverse muscle", "Action": "Raises the back of the tongue and narrows the oropharyngeal isthmus", "Nerve": "Vagus via the pharyngeal plexus: the only tongue muscle not supplied by the hypoglossal nerve"},
+      surgical: ["Tonsillectomy starts with a mucosal cut just inside the anterior pillar, leaving the pillar muscle intact.", "Cancers where the anterior pillar meets the retromolar trigone spread to the soft palate, tongue base and pterygomandibular raphe."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "palatopharyngeus",
+      name: "Palatopharyngeus (posterior pillar)",
+      layer: "pharynx",
+      summary: "From the palatine aponeurosis down the side wall of the pharynx to the thyroid cartilage and pharyngeal wall. Its upper part raises the palatopharyngeal arch, the posterior tonsillar pillar.",
+      relations: ["Behind the palatine tonsil; salpingopharyngeus joins it from above"],
+      supply: {"Origin": "Palatine aponeurosis and posterior border of the hard palate", "Insertion": "Posterior border of the thyroid lamina and the pharyngeal wall", "Action": "Raises the pharynx and larynx in swallowing; draws the pillars together", "Nerve": "Vagus via the pharyngeal plexus"},
+      surgical: ["Suturing the pillars together, as in uvulopalatopharyngoplasty, widens and stiffens the oropharyngeal airway."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "superior_constrictor",
+      name: "Superior constrictor (tonsil bed)",
+      layer: "pharynx",
+      summary: "The upper pharyngeal constrictor, from the pterygoid hamulus, pterygomandibular raphe and mylohyoid line, curving back to the pharyngeal raphe. It forms the bed of the palatine tonsil.",
+      relations: ["The tonsil capsule is separated from it by loose areolar tissue: the plane of tonsillectomy and the site of a quinsy", "The glossopharyngeal nerve and styloglossus pass below its lower edge into the tongue", "Lateral to it: the parapharyngeal space, with the internal carotid artery 1.5–2.5 cm away"],
+      supply: {"Nerve": "Vagus via the pharyngeal plexus"},
+      surgical: ["In tonsillectomy stay on the tonsil capsule: going through the constrictor risks the glossopharyngeal nerve and parapharyngeal vessels.", "A quinsy (peritonsillar abscess) collects between the capsule and the constrictor; it is drained through the soft palate above the upper pole, keeping the cut shallow."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "levator_veli",
+      name: "Levator veli palatini",
+      layer: "pharynx",
+      summary: "From the petrous temporal bone and the cartilage of the auditory tube, down and forwards below the tube into the upper surface of the soft palate. It lifts the soft palate up and back to close off the nasopharynx.",
+      relations: ["Passes over the upper edge of the superior constrictor, below the auditory tube"],
+      supply: {"Origin": "Petrous temporal bone in front of the carotid canal, and the tubal cartilage", "Insertion": "Palatine aponeurosis, meeting its fellow in a sling", "Action": "Raises the soft palate (velopharyngeal closure)", "Nerve": "Vagus via the pharyngeal plexus"},
+      surgical: ["In a cleft palate its fibres run forwards to the back of the hard palate instead of forming a sling; repair (intravelar veloplasty) turns them back into a sling."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "tensor_veli",
+      name: "Tensor veli palatini",
+      layer: "pharynx",
+      summary: "A thin triangular muscle from the scaphoid fossa, the spine of the sphenoid and the side of the auditory tube. Its tendon turns medially round the pterygoid hamulus and spreads into the palatine aponeurosis. It tenses the soft palate and opens the auditory tube on swallowing and yawning.",
+      relations: ["Lateral to the medial pterygoid plate and the auditory tube; medial pterygoid lies outside it"],
+      supply: {"Origin": "Scaphoid fossa, spine of the sphenoid and the tubal cartilage", "Insertion": "Palatine aponeurosis, after hooking round the pterygoid hamulus", "Action": "Tenses the soft palate; opens the auditory tube", "Nerve": "Nerve to medial pterygoid (V3): the one palatal muscle not supplied by the vagus"},
+      surgical: ["Poor tensor action on the tube in cleft palate is one reason these children get glue ear.", "Fracturing the hamulus during palate surgery slackens the tensor tendon; most surgeons avoid it."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "salpingopharyngeus",
+      name: "Salpingopharyngeus",
+      layer: "pharynx",
+      summary: "From the lower end of the cartilage of the auditory tube down the side wall of the pharynx, blending with palatopharyngeus. It raises the salpingopharyngeal fold behind the tubal opening.",
       relations: [],
-      supply: {},
+      supply: {"Action": "Raises the pharynx in swallowing", "Nerve": "Vagus via the pharyngeal plexus"},
       surgical: [],
       danger: [],
       variations: [],
       refs: ["gray"]
+    },
+    {
+      id: "auditory_tube",
+      name: "Auditory (Eustachian) tube",
+      layer: "pharynx",
+      summary: "Joins the middle ear to the nasopharynx, about 36 mm long: a bony third at the middle-ear end and a cartilaginous two-thirds (shown) that opens on the side wall of the nasopharynx behind the inferior turbinate, rimmed by the torus tubarius. It runs down, forwards and medially at about 45° in adults. It is closed at rest; tensor veli palatini opens it on swallowing to equalise middle-ear pressure and let the middle ear drain.",
+      relations: ["Levator veli palatini runs below its cartilaginous part, tensor veli palatini lateral to it", "Behind the torus: the pharyngeal recess (fossa of Rosenmüller), the commonest site of nasopharyngeal carcinoma"],
+      supply: {"Nerve": "Tympanic plexus (glossopharyngeal) and the pharyngeal branch of the pterygopalatine ganglion", "Blood": "Ascending pharyngeal and middle meningeal arteries, artery of the pterygoid canal"},
+      surgical: ["A one-sided middle-ear effusion in an adult needs a look at the nasopharynx: a tumour may be blocking the tube.", "In children the tube is shorter and more horizontal, so infection spreads from the nasopharynx to the middle ear more easily."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "scottbrown"]
+    },
+    {
+      id: "sublingual_ducts",
+      name: "Sublingual ducts",
+      layer: "duct",
+      summary: "The sublingual gland drains through 8–20 small ducts (of Rivinus) opening along the sublingual fold. Some front lobules join into a larger duct (of Bartholin) that opens with, or into, the submandibular duct at the caruncle.",
+      relations: [],
+      supply: {},
+      surgical: ["Damage to these ducts or the gland lets mucus leak into the tissues, which is how a ranula forms.", "With so many ducts, a ranula comes back after drainage or removal of the cyst alone unless the gland is removed."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "harrison"]
+    },
+    {
+      id: "ranula",
+      name: "Ranula (right)",
+      layer: "pathology",
+      summary: "A mucus extravasation pseudocyst from the sublingual gland: a soft, bluish swelling in the floor of mouth to one side of the frenulum. A plunging ranula passes behind the free edge of mylohyoid, or through a gap in it, into the submandibular space and shows as a soft swelling in the neck.",
+      relations: ["Lies above mylohyoid, over the sublingual gland, lateral to the submandibular duct and lingual nerve", "Plunging part: below mylohyoid, beside the submandibular gland"],
+      supply: {"Cause": "Mucus leaking from a damaged sublingual gland or duct; the wall is granulation tissue, not epithelium", "Imaging": "Thin-walled cyst, bright on T2 MRI; a tail into the sublingual space marks a plunging ranula", "Fluid": "Thick mucus, high in amylase and protein"},
+      surgical: ["Removing the sublingual gland through the mouth and draining the cyst cures almost all ranulas, plunging ones included; marsupialisation or excision of the cyst alone often recurs (Zhao 2004).", "A neck incision is rarely needed for a plunging ranula once the gland is out."],
+      danger: [],
+      variations: [],
+      refs: ["harrison", "zhao", "patel"]
     }
   ],
 
   // Incisions drawn on the model at the surgery steps that name them (step.incision):
   // control points in app space, laid onto the outer surface along "axis" or "toward".
   incisions: [
-    {"id": "glossectomy", "name": "1 cm margin around the tumour", "note": "An ellipse along the lateral border, long axis front to back, 1 cm outside the palpable edge.", "points": [[-1.68, -0.03, -0.66], [-1.68, 0.32, -0.54], [-1.68, 0.61, -0.19], [-1.68, 0.8, 0.33], [-1.68, 0.87, 0.94], [-1.68, 0.8, 1.55], [-1.68, 0.61, 2.07], [-1.68, 0.32, 2.42], [-1.68, -0.03, 2.54], [-1.68, -0.37, 2.42], [-1.68, -0.66, 2.07], [-1.68, -0.86, 1.55], [-1.68, -0.93, 0.94], [-1.68, -0.86, 0.33], [-1.68, -0.66, -0.19], [-1.68, -0.37, -0.54]], "toward": [0.0, -0.23, 0.94], "onto": ["tongue"], "closed": true, "view": [-0.45, 1.05]}
+    {"id": "glossectomy", "name": "1 cm margin around the tumour", "note": "An ellipse along the lateral border, long axis front to back, 1 cm outside the palpable edge.", "points": [[-2.04, -2.45, 1.36], [-2.04, -2.25, 1.32], [-2.04, -2, 1.09], [-2.04, -1.74, 0.7], [-2.04, -1.52, 0.22], [-2.04, -1.35, -0.29], [-2.04, -1.28, -0.75], [-2.04, -1.3, -1.09], [-2.04, -1.42, -1.25], [-2.04, -1.62, -1.21], [-2.04, -1.87, -0.98], [-2.04, -2.13, -0.6], [-2.04, -2.35, -0.11], [-2.04, -2.52, 0.4], [-2.04, -2.59, 0.86], [-2.04, -2.57, 1.2]], "toward": [0.3, -1.94, 0.05], "onto": ["tongue"], "closed": true, "view": [-0.75, 1.3]},
+    {"id": "ranula", "name": "Along the sublingual fold", "note": "Over the gland and lateral to the submandibular duct, from the canine back to the second molar.", "points": [[-1.86, -2.06, -0.48], [-1.8, -2.09, -0.39], [-1.57, -2.26, -0.11], [-1.38, -2.48, 0.19], [-1.21, -2.67, 0.43], [-0.88, -2.9, 0.72]], "toward": [-1.3, -6.5, 0.2], "onto": ["ranula", "sublingual"], "view": [-0.5, 1.85]}
   ],
 
-  procedure: {
-    "title": "Transoral partial glossectomy for a lateral tongue cancer",
+  // Operations: a picker in the Surgery tab chooses between them.
+  procedures: [
+    {
+      "short": "Partial glossectomy",
+      "title": "Transoral partial glossectomy for a lateral tongue cancer",
+      "steps": [
+        {
+          "title": "Assess and stage",
+          "text": "Palpate the tumour to judge its depth and whether it reaches the floor of mouth or mandible. MRI (or CT) gives depth of invasion and bone involvement; image the neck. Plan an elective neck dissection when depth of invasion is over about 3–4 mm.",
+          "show": [
+            "muscle",
+            "bone",
+            "mucosa",
+            "pharynx",
+            "gland"
+          ],
+          "focus": [
+            "tongue",
+            "genioglossus",
+            "mandible"
+          ]
+        },
+        {
+          "title": "Anaesthesia and access",
+          "text": "Nasotracheal intubation keeps the mouth free. Open with a mouth gag or bite block; put a stout traction suture through the tip of the tongue and pull it out and to the opposite side.",
+          "show": [
+            "muscle",
+            "bone",
+            "mucosa",
+            "pharynx",
+            "context"
+          ],
+          "focus": [
+            "tongue",
+            "orbicularis_oris"
+          ]
+        },
+        {
+          "title": "Mark the margins",
+          "text": "Feel the edge of the tumour and mark a 1 cm clinical margin around it with diathermy dots: an ellipse along the lateral border, long axis front to back, so the defect closes along the length of the tongue.",
+          "show": [
+            "muscle",
+            "bone",
+            "mucosa",
+            "pharynx"
+          ],
+          "focus": [
+            "tongue"
+          ],
+          "incision": "glossectomy"
+        },
+        {
+          "title": "Mucosal incision",
+          "text": "Cut along the marks with needle diathermy, keeping the tongue under tension. Stay on the outside of every dot.",
+          "show": [
+            "muscle",
+            "bone",
+            "mucosa",
+            "pharynx"
+          ],
+          "focus": [
+            "tongue"
+          ],
+          "incision": "glossectomy"
+        },
+        {
+          "title": "Deep margin",
+          "text": "Go down through the intrinsic muscle into genioglossus and hyoglossus, keeping 1 cm of tissue beyond the deepest palpable tumour, with a finger under the tongue to judge depth.",
+          "show": [
+            "muscle",
+            "bone",
+            "nerve"
+          ],
+          "focus": [
+            "genioglossus",
+            "hyoglossus",
+            "tongue"
+          ]
+        },
+        {
+          "title": "Protect the floor of mouth",
+          "text": "If the resection reaches the floor of mouth, find the lingual nerve behind and follow it forward, identify the submandibular duct (stent or re-site it) and keep the hypoglossal nerve on hyoglossus.",
+          "show": [
+            "muscle",
+            "bone",
+            "nerve",
+            "gland",
+            "duct"
+          ],
+          "focus": [
+            "lingual_nerve",
+            "wharton",
+            "hypoglossal",
+            "sublingual"
+          ]
+        },
+        {
+          "title": "Haemostasis",
+          "text": "Control the deep lingual branches with bipolar diathermy or ties. A major bleed from the lingual artery can be controlled in the neck, where it lies deep to hyoglossus.",
+          "show": [
+            "muscle",
+            "bone",
+            "artery"
+          ],
+          "focus": [
+            "lingual_artery",
+            "hyoglossus"
+          ]
+        },
+        {
+          "title": "Orient and check the margins",
+          "text": "Mark the specimen for orientation and send it with a diagram. Take frozen sections from the tumour bed or from the specimen surface; aim for at least 5 mm of clear tissue on histology.",
+          "show": [
+            "muscle",
+            "bone"
+          ],
+          "focus": [
+            "tongue"
+          ]
+        },
+        {
+          "title": "Close and treat the neck",
+          "text": "Close small defects along the length of the tongue or leave them to heal by secondary intention; reconstruct larger ones with a radial forearm free flap. Do the neck dissection (levels I–III, often IV) at the same sitting when planned.",
+          "show": [
+            "muscle",
+            "bone",
+            "gland",
+            "nerve"
+          ],
+          "focus": [
+            "tongue",
+            "smg",
+            "mylohyoid"
+          ]
+        }
+      ],
+      "complications": [
+        "Bleeding from deep lingual branches, with swelling that can obstruct the airway",
+        "Lingual nerve injury: numbness and loss of taste on that side of the tongue",
+        "Hypoglossal nerve injury: tongue weakness and deviation",
+        "Submandibular duct obstruction: sialadenitis or a ranula",
+        "Close or involved margins needing re-excision or postoperative radiotherapy",
+        "Changes in speech and swallowing, worse with larger resections or tethering of the tongue"
+      ],
+      "refs": [
+        "shah",
+        "ajcc",
+        "dcruz",
+        "rcpath",
+        "scottbrown"
+      ]
+    },
+    {
+    "short": "Ranula",
+    "title": "Transoral excision of the sublingual gland for a ranula",
+    "intro": "A ranula is mucus leaking from the sublingual gland, so the cure is to remove the gland. Step through the operation; switch on the Ranula layer at any time to see the swelling.",
     "steps": [
       {
-        "title": "Assess and stage",
-        "text": "Palpate the tumour to judge its depth and whether it reaches the floor of mouth or mandible. MRI (or CT) gives depth of invasion and bone involvement; image the neck. Plan an elective neck dissection when depth of invasion is over about 3–4 mm.",
+        "title": "Simple or plunging?",
+        "text": "A simple ranula is a soft, bluish swelling in the floor of mouth to one side of the frenulum. A plunging ranula also, or only, shows as a soft painless swelling in the upper neck. MRI or ultrasound shows a thin-walled cyst with a tail into the sublingual space; the fluid is thick mucus, rich in amylase.",
         "show": [
           "muscle",
-          "bone",
+          "pharynx",
           "mucosa",
-          "gland"
-        ],
-        "focus": [
-          "tongue",
-          "genioglossus",
-          "mandible"
-        ]
-      },
-      {
-        "title": "Anaesthesia and access",
-        "text": "Nasotracheal intubation keeps the mouth free. Open with a mouth gag or bite block; put a stout traction suture through the tip of the tongue and pull it out and to the opposite side.",
-        "show": [
-          "muscle",
-          "bone",
-          "mucosa",
-          "context"
-        ],
-        "focus": [
-          "tongue",
-          "orbicularis_oris"
-        ]
-      },
-      {
-        "title": "Mark the margins",
-        "text": "Feel the edge of the tumour and mark a 1 cm clinical margin around it with diathermy dots: an ellipse along the lateral border, long axis front to back, so the defect closes along the length of the tongue.",
-        "show": [
-          "muscle",
-          "bone",
-          "mucosa"
-        ],
-        "focus": [
-          "tongue"
-        ],
-        "incision": "glossectomy"
-      },
-      {
-        "title": "Mucosal incision",
-        "text": "Cut along the marks with needle diathermy, keeping the tongue under tension. Stay on the outside of every dot.",
-        "show": [
-          "muscle",
-          "bone",
-          "mucosa"
-        ],
-        "focus": [
-          "tongue"
-        ],
-        "incision": "glossectomy"
-      },
-      {
-        "title": "Deep margin",
-        "text": "Go down through the intrinsic muscle into genioglossus and hyoglossus, keeping 1 cm of tissue beyond the deepest palpable tumour, with a finger under the tongue to judge depth.",
-        "show": [
-          "muscle",
-          "bone",
-          "nerve"
-        ],
-        "focus": [
-          "genioglossus",
-          "hyoglossus",
-          "tongue"
-        ]
-      },
-      {
-        "title": "Protect the floor of mouth",
-        "text": "If the resection reaches the floor of mouth, find the lingual nerve behind and follow it forward, identify the submandibular duct (stent or re-site it) and keep the hypoglossal nerve on hyoglossus.",
-        "show": [
-          "muscle",
-          "bone",
-          "nerve",
           "gland",
-          "duct"
+          "duct",
+          "bone",
+          "pathology"
         ],
         "focus": [
-          "lingual_nerve",
+          "ranula",
+          "sublingual",
+          "mylohyoid"
+        ]
+      },
+      {
+        "title": "Anaesthesia and exposure",
+        "text": "Nasotracheal intubation; a mouth gag holds the mouth open. A traction suture through the tip of the tongue pulls it up and to the other side. Pass a lacrimal probe into the submandibular duct at the caruncle, so the duct can be felt and kept throughout.",
+        "show": [
+          "muscle",
+          "pharynx",
+          "mucosa",
+          "gland",
+          "duct",
+          "bone",
+          "pathology"
+        ],
+        "focus": [
           "wharton",
-          "hypoglossal",
+          "tongue",
+          "ranula"
+        ]
+      },
+      {
+        "title": "Incision along the sublingual fold",
+        "text": "Cut the mucosa over the gland along the sublingual fold, lateral to the duct, from the canine back to the second molar. The thin wall of the ranula often bursts at this stage: let the mucus out; the wall is granulation tissue, not epithelium, and need not be chased.",
+        "show": [
+          "muscle",
+          "pharynx",
+          "mucosa",
+          "gland",
+          "duct",
+          "bone",
+          "pathology"
+        ],
+        "focus": [
+          "sublingual",
+          "sublingual_ducts",
+          "ranula"
+        ],
+        "incision": "ranula"
+      },
+      {
+        "title": "Free the gland on its outer side",
+        "text": "Dissect the lateral surface of the gland off the sublingual fossa of the mandible and free its upper border, keeping close to the gland.",
+        "show": [
+          "muscle",
+          "pharynx",
+          "mucosa",
+          "gland",
+          "duct",
+          "bone"
+        ],
+        "focus": [
+          "sublingual",
+          "mandible",
+          "mylohyoid"
+        ]
+      },
+      {
+        "title": "Find the duct and the lingual nerve",
+        "text": "On the deep (medial) side of the gland run the submandibular duct and the lingual nerve, which loops under the duct from lateral to medial near the second molar. Find both before dividing anything; the probe in the duct helps.",
+        "show": [
+          "muscle",
+          "gland",
+          "duct",
+          "nerve",
+          "bone"
+        ],
+        "focus": [
+          "wharton",
+          "lingual_nerve",
           "sublingual"
         ]
       },
       {
-        "title": "Haemostasis",
-        "text": "Control the deep lingual branches with bipolar diathermy or ties. A major bleed from the lingual artery can be controlled in the neck, where it lies deep to hyoglossus.",
+        "title": "Divide the vessels and remove the gland",
+        "text": "Coagulate the sublingual vessels (from the lingual artery and vein) at the back and deep side of the gland, and divide Bartholin's duct where it joins the submandibular duct. Lift the gland out whole.",
         "show": [
           "muscle",
-          "bone",
-          "artery"
-        ],
-        "focus": [
-          "lingual_artery",
-          "hyoglossus"
-        ]
-      },
-      {
-        "title": "Orient and check the margins",
-        "text": "Mark the specimen for orientation and send it with a diagram. Take frozen sections from the tumour bed or from the specimen surface; aim for at least 5 mm of clear tissue on histology.",
-        "show": [
-          "muscle",
+          "gland",
+          "duct",
+          "nerve",
+          "artery",
           "bone"
         ],
         "focus": [
-          "tongue"
+          "sublingual",
+          "sublingual_ducts",
+          "wharton",
+          "lingual_artery"
         ]
       },
       {
-        "title": "Close and treat the neck",
-        "text": "Close small defects along the length of the tongue or leave them to heal by secondary intention; reconstruct larger ones with a radial forearm free flap. Do the neck dissection (levels I–III, often IV) at the same sitting when planned.",
+        "title": "Plunging ranula: empty it from above",
+        "text": "The neck part is fed by the gland: once the gland is out, press on the neck to empty it through the gap behind or in mylohyoid into the mouth. A neck incision is rarely needed.",
         "show": [
           "muscle",
-          "bone",
+          "pharynx",
+          "mucosa",
           "gland",
+          "duct",
+          "bone",
+          "pathology",
           "nerve"
         ],
         "focus": [
-          "tongue",
-          "smg",
-          "mylohyoid"
+          "ranula",
+          "mylohyoid",
+          "smg"
+        ]
+      },
+      {
+        "title": "Check and close",
+        "text": "Milk the submandibular gland to see saliva flow from the duct, and check the lingual nerve. Stop any bleeding; close the mucosa loosely with absorbable sutures. A cut duct is repaired or opened into the floor of mouth further back.",
+        "show": [
+          "muscle",
+          "pharynx",
+          "mucosa",
+          "gland",
+          "duct",
+          "nerve",
+          "bone"
+        ],
+        "focus": [
+          "wharton",
+          "lingual_nerve"
         ]
       }
     ],
     "complications": [
-      "Bleeding from deep lingual branches, with swelling that can obstruct the airway",
-      "Lingual nerve injury: numbness and loss of taste on that side of the tongue",
-      "Hypoglossal nerve injury: tongue weakness and deviation",
-      "Submandibular duct obstruction: sialadenitis or a ranula",
-      "Close or involved margins needing re-excision or postoperative radiotherapy",
-      "Changes in speech and swallowing, worse with larger resections or tethering of the tongue"
+      "Numbness or loss of taste on that side of the tongue from lingual nerve injury, usually temporary",
+      "Injury to or narrowing of the submandibular duct: swelling of the submandibular gland with meals",
+      "Bleeding into the floor of mouth, which can push the tongue up and back and threaten the airway",
+      "Recurrence: about 1% after excision of the gland, more than half after marsupialisation or excision of the cyst alone (Zhao 2004)"
     ],
     "refs": [
-      "shah",
-      "ajcc",
-      "dcruz",
-      "rcpath",
-      "scottbrown"
+      "harrison",
+      "zhao",
+      "patel",
+      "gray"
     ]
-  },
+  }
+  ],
 
-  figures: [{"id": "fig-oral", "title": "The open mouth from the front: oral cavity subsites and the margin marked around a lateral tongue cancer", "svg": "oralCavitySubsites"}],
+  figures: [{"id": "fig-oral", "title": "The open mouth from the front: oral cavity subsites and the margin marked around a lateral tongue cancer", "svg": "oralCavitySubsites"},
+            {"id": "fig-fauces", "title": "The fauces: soft palate, uvula, tonsillar pillars and tonsils, and the muscles in each pillar", "svg": "faucesPillars"},
+            {"id": "fig-ranula", "title": "Ranula in coronal section: simple (above mylohyoid) and plunging (into the neck)", "svg": "ranulaCoronal"}],
 
   quiz: [
     {
@@ -631,6 +926,50 @@ window.ANATOMY.regions.oral_cavity = {
       ],
       "answer": 2,
       "explain": "The ranula comes from the sublingual gland; removing the gland through the mouth (and draining the cyst) prevents recurrence."
+    },
+    {
+      "q": "Which muscle lies in the anterior tonsillar pillar?",
+      "options": [
+        "Palatopharyngeus",
+        "Palatoglossus",
+        "Salpingopharyngeus",
+        "Superior constrictor"
+      ],
+      "answer": 1,
+      "explain": "The anterior pillar is the palatoglossal arch; palatopharyngeus forms the posterior pillar, and the superior constrictor is the tonsil bed."
+    },
+    {
+      "q": "Which muscle opens the auditory (Eustachian) tube on swallowing?",
+      "options": [
+        "Levator veli palatini",
+        "Tensor veli palatini",
+        "Salpingopharyngeus",
+        "Palatoglossus"
+      ],
+      "answer": 1,
+      "explain": "Tensor veli palatini, supplied by the mandibular nerve (V3), pulls the tube open; levator lifts the soft palate."
+    },
+    {
+      "q": "Which nerve can be bruised in the lower tonsil bed during tonsillectomy?",
+      "options": [
+        "Hypoglossal",
+        "Lingual",
+        "Glossopharyngeal",
+        "Vagus"
+      ],
+      "answer": 2,
+      "explain": "The glossopharyngeal nerve runs on styloglossus just outside the superior constrictor in the lower tonsil bed: injury causes altered taste and ear pain."
+    },
+    {
+      "q": "A ranula arises from:",
+      "options": [
+        "The submandibular gland",
+        "The sublingual gland",
+        "Minor salivary glands of the lip",
+        "A branchial cleft remnant"
+      ],
+      "answer": 1,
+      "explain": "It is mucus extravasated from the sublingual gland; its wall is granulation tissue, so removing the gland cures it."
     }
   ],
 
@@ -642,6 +981,8 @@ window.ANATOMY.regions.oral_cavity = {
     "rcpath": "Helliwell T, Woolgar J. Dataset for histopathology reporting of mucosal malignancies of the oral cavity. The Royal College of Pathologists; 2013.",
     "harrison": "Harrison JD. Modern management and pathophysiology of ranula: literature review. Head Neck. 2010;32(10):1310–1320.",
     "shah": "Shah JP, Patel SG, Singh B, Wong RJ. Jatin Shah's Head and Neck Surgery and Oncology. 5th ed. Elsevier; 2019. Oral cavity.",
-    "scottbrown": "Watkinson JC, Clarke RW, eds. Scott-Brown's Otorhinolaryngology Head & Neck Surgery. 8th ed. CRC Press; 2018. Oral cavity tumours."
+    "scottbrown": "Watkinson JC, Clarke RW, eds. Scott-Brown's Otorhinolaryngology Head & Neck Surgery. 8th ed. CRC Press; 2018. Oral cavity tumours; the pharynx and tonsils.",
+    "zhao": "Zhao YF, Jia Y, Chen XM, Zhang WF. Clinical review of 580 ranulas. Oral Surg Oral Med Oral Pathol Oral Radiol Endod. 2004;98(3):281–287.",
+    "patel": "Patel MR, Deal AM, Shockley WW. Oral and plunging ranulas: what is the most effective treatment? Laryngoscope. 2009;119(8):1501–1509."
   }
 };
