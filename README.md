@@ -5,6 +5,7 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 Modules so far:
 
 - **Submandibular region** (submandibular triangle, level IB)
+- **Face & facial muscles** (the muscles of facial expression, the facial nerve branches that supply them, facial vessels, Pitanguy's line and the danger zones), both sides
 - **Parotid & facial nerve** (parotid region and extracranial facial nerve)
 - **Lateral neck** (neck dissection levels I–VI)
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
@@ -20,6 +21,7 @@ Modules so far:
 Every region shows **both sides**. Regions modelled on one side are mirrored across the midline at export, so selecting a structure highlights it on both sides; courses, pins and notes describe the traced side. **Double-click** (or double-tap) a structure to hide it, and use "Show hidden" to bring hidden structures back. The 3D view has baked ambient occlusion and soft shadows for depth.
 
 Nerves and vessels of surgical importance can be **traced**: pick one from "Trace a course" at the top of the Structures tab, or open it and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches and danger points, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+- **Face:** the temporal, zygomatic, buccal, marginal mandibular and cervical branches of the facial nerve to their muscles, and the facial artery to the angular artery.
 - **Submandibular triangle:** the marginal mandibular, lingual and hypoglossal nerves, and the facial artery.
 - **Parotid:** the facial nerve, the external carotid and superficial temporal arteries, and the great auricular nerve.
 - **Lateral neck:** the accessory nerve across the posterior triangle, the internal jugular vein, vagus, phrenic and great auricular nerves, and the thoracic duct.
@@ -94,6 +96,16 @@ The Android build is signed with `packaging/android-debug.keystore`, a public de
 - **Surgery**: a 9-step modified radical neck dissection (levels I–V), from incision to closure, with complications.
 - **Figures**: an original diagram of levels I–VI in the same colours as the 3D nodes.
 - **Quiz**: six questions. **References**: Robbins 2002 and 2008, Som 1999, Crile 1906, Bocca 1967, Nahum 1961, Gray's, Scott-Brown's and Shah.
+
+## What's in the face module
+
+- **3D model**: both sides. The muscles of facial expression (frontalis, occipitalis, temporoparietalis, orbicularis oculi, corrugator, procerus, nasalis, depressor septi, orbicularis oris, levator labii superioris, zygomaticus minor and major, levator anguli oris, risorius, depressor anguli oris, depressor labii inferioris, mentalis, platysma), the epicranial aponeurosis, the facial nerve trunk and its five branches, the posterior auricular and mental nerves, the facial, labial, transverse facial and forehead arteries, the facial vein, the parotid and duct, masseter and temporalis, the skull, facial bones, mandible and teeth.
+  - Z-Anatomy has no buccinator, auricular muscles or separate levator labii superioris alaeque nasi; buccinator has notes but no model.
+  - Z-Anatomy's temporal branch stops in the temple, short of frontalis; its notes say so.
+- **Structures**: origin, insertion, action and nerve for every muscle, which surface each is supplied from, and the surgical relevance (facial palsy and eye protection, reanimation, the danger zones, lip repair, filler embolism). Traced courses for the five facial nerve branches and the facial artery.
+- **Surgery**: a 9-step bedside facial nerve examination ending in House–Brackmann grading, with pitfalls.
+- **Figures**: an original diagram of the five branches and the muscles they supply, with Pitanguy's line and the parotid duct. **Quiz**: six questions.
+- **References**: Pitanguy & Ramos 1966, Dingman & Grabb 1962, Davis et al. 1956, Freilinger et al. 1987, Mitz & Peyronie 1976, Seckel, House & Brackmann 1985, Zuker et al. 2000, Gray's and Scott-Brown's.
 
 ## What's in the parotid module
 

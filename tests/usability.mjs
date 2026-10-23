@@ -202,7 +202,7 @@ await check("Search", "'/' searches every region and opens the result", async ()
   await page.waitForSelector("[data-hit]");
   const hits = await page.$$eval("[data-hit] .hit-region", (h) => [...new Set(h.map((x) => x.textContent))]);
   expect(hits.length >= 2, `found in ${hits.join(", ")}`);
-  await shot(page, "03-search.png", "Search across all twelve regions");
+  await shot(page, "03-search.png", `Search across all ${regions.length} regions`);
   await page.keyboard.press("Enter");
   await page.waitForFunction(() => document.querySelector("#viewer-loading").hidden && /\/rln/.test(location.hash), null, { timeout: 60000 });
   const s = await state(page);

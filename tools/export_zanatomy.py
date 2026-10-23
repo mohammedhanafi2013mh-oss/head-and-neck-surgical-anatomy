@@ -32,6 +32,14 @@ BLEND, REGION, OUT = sys.argv[-3:]
 
 LOWER_TEETH = ["Lower first molar tooth.r", "Lower second molar tooth.r",
                "Lower first molar tooth.l", "Lower second molar tooth.l"]
+TEETH = [f"{jaw} {t}.{s}" for jaw in ("Upper", "Lower") for s in "rl"
+         for t in ("medial incisor", "lateral incisor", "canine", "first premolar", "second premolar",
+                   "first molar tooth", "second molar tooth")]
+
+
+def BOTH(*names):
+    """Right and left objects for each name."""
+    return [f"{n}.{s}" for n in names for s in "rl"]
 
 REGIONS = {
     "submandibular": {
@@ -1006,6 +1014,92 @@ REGIONS = {
                                 "clear": 0.0015},
         },
     },
+    "face": {
+        # Muscles of facial expression, both sides, with the facial nerve branches
+        # and facial vessels; courses traced on the right.
+        "centre": (0.0, -0.055, 1.575),
+        "structures": {
+            # ---- bone ----
+            "skull": ["Frontal bone", "Parietal bone.r", "Parietal bone.l", "Occipital bone", "Temporal bone.r", "Temporal bone.l",
+                      "Sphenoid bone"],
+            "facial_skeleton": BOTH("Maxilla", "Zygomatic bone", "Nasal bone"),
+            "mandible": ["Mandible"] + TEETH,
+            "nasal_cartilages": BOTH("Major alar cartilage"),
+            # ---- scalp and forehead ----
+            "galea": BOTH("Epicranial aponeurosis"),
+            "frontalis": BOTH("Frontalis muscle"),
+            "occipitalis": BOTH("Occipitalis muscle"),
+            "temporoparietalis": BOTH("Temporoparietalis muscle"),
+            # ---- around the eye and nose ----
+            "orbicularis_oculi": BOTH("Orbital part of orbicularis oculi", "Palpebral part of orbicularis oculi"),
+            "corrugator": BOTH("Corrugator supercilii"),
+            "procerus": BOTH("Procerus muscle"),
+            "nasalis": BOTH("Nasalis muscle"),
+            "depressor_septi": BOTH("Depressor septi nasi"),
+            # ---- around the mouth ----
+            "orbicularis_oris": BOTH("Orbicularis oris muscle"),
+            "levator_labii": BOTH("Levator labii superioris"),
+            "zygomaticus_minor": BOTH("Zygomaticus minor muscle"),
+            "zygomaticus_major": BOTH("Zygomaticus major muscle"),
+            "levator_anguli_oris": BOTH("Levator anguli oris"),
+            "risorius": BOTH("Risorius muscle"),
+            "depressor_anguli_oris": BOTH("Depressor anguli oris"),
+            "depressor_labii": BOTH("Depressor labii inferioris"),
+            "mentalis": BOTH("Mentalis muscle"),
+            "platysma": BOTH("Platysma"),
+            # ---- muscles of mastication and parotid (context) ----
+            "masseter": BOTH("Superficial part of masseter", "Deep part of masseter"),
+            "temporalis": BOTH("Temporalis muscle"),
+            "parotid": BOTH("Parotid gland", "(Accessory parotid gland)"),
+            "parotid_duct": BOTH("Parotid duct"),
+            # ---- facial nerve (spline layout as in the parotid region) ----
+            "facial_trunk": [("Facial nerve (VII).r", [(0, 12, 16)]), ("Facial nerve (VII).l", [(0, 12, 16)])],
+            "temporal_branch": [("Facial nerve (VII).r", [(8, 0)]), ("Facial nerve (VII).l", [(8, 0)])],
+            "zygomatic_branch": [("Facial nerve (VII).r", [(7, 0)]), ("Facial nerve (VII).l", [(7, 0)])],
+            "buccal_branch": [("Facial nerve (VII).r", [(3, 0), (4, 0), (5, 0), (6, 0)]),
+                              ("Facial nerve (VII).l", [(3, 0), (4, 0), (5, 0), (6, 0)])],
+            "mmn": [("Facial nerve (VII).r", [(0, 15), (1, 0)]), ("Facial nerve (VII).l", [(0, 15), (1, 0)])],
+            "cervical_branch": [("Facial nerve (VII).r", [(2, 0)]), ("Facial nerve (VII).l", [(2, 0)])],
+            "posterior_auricular_nerve": [("Facial nerve (VII).r", [(9, 0)]), ("Facial nerve (VII).l", [(9, 0)])],
+            "mental_nerve": BOTH("Mental nerve"),
+            # ---- vessels ----
+            "facial_artery": BOTH("Facial artery", "Angular artery"),
+            "labial_arteries": BOTH("Superior labial artery", "Inferior labial artery"),
+            "transverse_facial": BOTH("Transverse facial artery"),
+            "supraorbital_arteries": BOTH("Supra-orbital artery", "Supratrochlear artery", "Frontal branch of superficial temporal artery"),
+            "facial_vein": BOTH("Facial vein", "Angular vein"),
+        },
+        "curve_scale": {"temporal_branch": 1.8, "zygomatic_branch": 1.8, "buccal_branch": 1.8, "mmn": 1.8,
+                        "cervical_branch": 1.8, "posterior_auricular_nerve": 1.6, "facial_trunk": 2.0, "mental_nerve": 1.6,
+                        "facial_artery": 1.2, "labial_arteries": 1.3, "transverse_facial": 1.3, "supraorbital_arteries": 1.3,
+                        "facial_vein": 1.1, "parotid_duct": 1.4},
+        "bones": {"skull", "facial_skeleton", "mandible"},
+        # Platysma reaches the chest; keep its face and upper neck.
+        "clip": {"Platysma.r": (1.44, 9), "Platysma.l": (1.44, 9)},
+        "courses": {
+            "temporal_branch": {"path": [("Facial nerve (VII).r", 8)],
+                                # Z-Anatomy's branch stops at the temple, short of frontalis.
+                                "points": {"pes": "start", "arch": ("spline_point", "Facial nerve (VII).r", 8, 2),
+                                           "temple": "end"}},
+            "zygomatic_branch": {"path": [("Facial nerve (VII).r", 7)],
+                                 "points": {"pes": "start", "zygomaticus": ("nearest", "Zygomaticus major muscle.r"),
+                                            "orbicularis": ("nearest", "Orbital part of orbicularis oculi.r"), "end": "end"}},
+            "buccal_branch": {"path": [("Facial nerve (VII).r", 3)],
+                              "points": {"pes": "start", "duct": ("nearest", "Parotid duct.r"),
+                                         "zygomaticus": ("nearest", "Zygomaticus major muscle.r"),
+                                         "orbicularis": ("nearest", "Orbicularis oris muscle.r"), "end": "end"}},
+            "mmn": {"path": [("Facial nerve (VII).r", 0, 15)],
+                    "points": {"pes": "start", "vessels": "end"}},
+            "cervical_branch": {"path": [("Facial nerve (VII).r", 2)],
+                                "points": {"pes": "start", "platysma": "end"}},
+            "facial_artery": {"path": [("Facial artery.r", 0), ("Angular artery.r", 0)],
+                              "points": {"mandible": ("closest", None, ["Mandible"], (1.50, 1.535)),
+                                         "inferior_labial": ("nearest_start", "Inferior labial artery.r"),
+                                         "superior_labial": ("nearest_start", "Superior labial artery.r"),
+                                         "angular": "end"}},
+        },
+    },
+
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
