@@ -12,9 +12,11 @@ on:
 permissions:
   contents: read
 
+# Runs for the same branch queue rather than cancel each other, so a build in
+# progress always finishes and its downloads stay available.
 concurrency:
   group: apps-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   APP_VERSION: 1.0.${{ github.run_number }}
@@ -22,7 +24,8 @@ env:
 jobs:
   test:
     name: Usability tests and web build
-    runs-on: ubuntu-latest
+    # Playwright 1.56 supports Ubuntu up to 24.04 (ubuntu-latest is newer).
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
