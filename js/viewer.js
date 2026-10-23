@@ -285,6 +285,12 @@
       this.tracer.visible = false;
       this.scene.add(this.trail, this.tracer);
 
+      // Surgical incisions for the current walkthrough step, drawn in skin-marker
+      // purple on the outer surface of the model (see showIncisions).
+      this.incisionPins = this.makePinGroup();
+      this.incisionGroup = new THREE.Group();
+      this.scene.add(this.incisionGroup);
+
       this.raycaster = new THREE.Raycaster();
       this.pointer = new THREE.Vector2();
       this.bindControls();
@@ -312,6 +318,7 @@
       this.hidden.clear();
       this.onHiddenChange && this.onHiddenChange(0);
       this.clearCourse();
+      this.showIncisions([]);
       this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
         this.scene.remove(s.root);
@@ -485,7 +492,7 @@
     positionLabels() {
       const w = this.container.clientWidth, h = this.container.clientHeight;
       const v = new THREE.Vector3();
-      for (const g of [this.landmarks, this.coursePins]) {
+      for (const g of [this.landmarks, this.coursePins, this.incisionPins]) {
         for (const pin of g.pins) {
           v.copy(pin.mesh.position).project(this.camera);
           const show = pin.mesh.visible && g.group.visible && v.z <= 1 && this.labelMode !== "off";
@@ -522,13 +529,13 @@
       g.pins = pins.map((q) => {
         const mesh = new THREE.Mesh(
           new THREE.SphereGeometry(q.kind === "foramen" ? 0.11 : 0.14, 16, 12),
-          new THREE.MeshBasicMaterial({ color: q.kind === "foramen" ? 0xffe08a : 0xffc23d, depthTest: false })
+          new THREE.MeshBasicMaterial({ color: q.kind === "foramen" ? 0xffe08a : q.kind === "incision" ? 0x7b2fd0 : 0xffc23d, depthTest: false })
         );
         mesh.renderOrder = 1000;
         mesh.position.set(...q.p);
         g.group.add(mesh);
         const label = document.createElement("span");
-        label.className = "pin-label" + (q.kind === "foramen" ? " is-foramen" : "");
+        label.className = "pin-label" + (q.kind ? ` is-${q.kind}` : "");
         label.textContent = q.label;
         this.labelLayer.appendChild(label);
         return { mesh, label, p: mesh.position };
@@ -624,6 +631,95 @@
       if (this.curve) {
         this.trail.geometry.setDrawRange(0, this.trailCount);
         this.trail.material.opacity = 0.55;
+      }
+      this.dirty = true;
+    }
+
+    // Incisions: each has control points (app space) and a direction into the
+    // body for every point, either towards a vertical axis ({axis: [x, z]}, for
+    // the neck and face) or towards a point ({toward: [x, y, z]}, for the scalp
+    // and tongue). The line is laid on the first surface a ray from outside meets
+    // along that direction, among the structures in "onto" (default: all except
+    // fascial spaces), so it follows the outer surface of the model; there is no
+    // skin layer ("lay": false keeps the points as given, "view": [theta, phi]
+    // sets the camera). Drawn as a purple tube with its name pinned at the middle.
+    showIncisions(list) {
+      for (const m of [...this.incisionGroup.children]) {
+        this.incisionGroup.remove(m);
+        m.geometry.dispose();
+        m.material.dispose();
+      }
+      const pins = [];
+      const ray = new THREE.Raycaster();
+      const centres = [];
+      const outward = new THREE.Vector3();
+      for (const inc of list || []) {
+        const targets = [];
+        for (const [id, s] of this.structures) {
+          if (inc.onto ? !inc.onto.includes(id) : s.layer === "spaces") continue;
+          s.root.traverse((o) => o.isMesh && targets.push(o));
+        }
+        const base = new THREE.CatmullRomCurve3(inc.points.map((q) => V3(q)), !!inc.closed);
+        const n = Math.max(24, Math.round(base.getLength() * 5));
+        const samples = base.getSpacedPoints(n);
+        // Distance along each ray to the surface, smoothed (median, then mean)
+        // so a ray that slips past one muscle onto a deeper one can't make the line jump.
+        const rays = samples.map((p) => {
+          const dir = inc.toward ? V3(inc.toward).sub(p) : new THREE.Vector3(inc.axis[0] - p.x, 0, inc.axis[1] - p.z);
+          dir.normalize();
+          outward.sub(dir);
+          const start = p.clone().addScaledVector(dir, -40);
+          let t = null;
+          if (inc.lay !== false) {
+            ray.set(start, dir);
+            const hit = ray.intersectObjects(targets, false)[0];
+            if (hit) t = hit.distance;
+          }
+          return { p, dir, start, t };
+        });
+        const known = rays.map((r, i) => (r.t === null ? null : i)).filter((i) => i !== null);
+        const filled = rays.map((r, i) => {
+          if (r.t !== null || !known.length) return r.t;
+          const before = known.filter((k) => k < i).pop(), after = known.find((k) => k > i);
+          return rays[before !== undefined ? before : after].t;
+        });
+        const win = (arr, i, h) => arr.slice(Math.max(0, i - h), i + h + 1);
+        const median = filled.map((t, i) => (t === null ? null : win(filled, i, 3).sort((a, b) => a - b)[Math.min(3, Math.floor(win(filled, i, 3).length / 2))]));
+        const laid = rays.map((r, i) => {
+          if (median[i] === null) return r.p;
+          const w = win(median, i, 2);
+          const t = w.reduce((a, b) => a + b, 0) / w.length;
+          return r.start.clone().addScaledVector(r.dir, t - 0.12);
+        });
+        if (inc.closed) laid.pop();
+        const curve = new THREE.CatmullRomCurve3(laid, !!inc.closed);
+        const segs = Math.max(48, laid.length * 3);
+        const line = new THREE.Mesh(new THREE.TubeGeometry(curve, segs, 0.07, 8, !!inc.closed),
+          new THREE.MeshBasicMaterial({ color: 0x7b2fd0 }));
+        line.renderOrder = 999;
+        // A faint copy drawn through everything, so the line can be found from any side.
+        const ghost = new THREE.Mesh(line.geometry.clone(),
+          new THREE.MeshBasicMaterial({ color: 0x7b2fd0, transparent: true, opacity: 0.25, depthTest: false }));
+        ghost.renderOrder = 998;
+        this.incisionGroup.add(line, ghost);
+        const mid = curve.getPointAt(inc.closed ? 0.25 : 0.5);
+        pins.push({ p: mid.toArray(), label: inc.name, kind: "incision" });
+        centres.push(...laid);
+      }
+      this.setPins(this.incisionPins, pins);
+      if (centres.length) {
+        // Face the incision from outside and fit it in view.
+        const box = new THREE.Box3().setFromPoints(centres);
+        const c = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3()).length();
+        const view = (list.find((i) => i.view) || {}).view;
+        if (view) [this.spherical.theta, this.spherical.phi] = view;
+        else {
+          outward.normalize();
+          this.spherical.theta = Math.atan2(outward.x, outward.z);
+          this.spherical.phi = Math.min(2.6, Math.max(0.5, Math.acos(Math.max(-1, Math.min(1, outward.y)))));
+        }
+        this.flyTo(c.toArray(), Math.max(16, size * 2.2));
       }
       this.dirty = true;
     }

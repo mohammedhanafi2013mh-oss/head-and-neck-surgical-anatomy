@@ -224,6 +224,17 @@ await check("Surgery", "Walkthrough steps forward and back", async () => {
   expect(first !== second && (await page.textContent(".step-card h4")) === first, "steps did not change");
   return `"${first}" → "${second}"`;
 });
+await check("Surgery", "The incision is drawn on the model at the incision step, and cleared after", async () => {
+  // The walkthrough is on the thyroid (opened from the search): steps 1–2 draw the Kocher incision.
+  const at = () => page.evaluate(() => [window.ANATOMY.viewer.incisionGroup.children.length, document.querySelector(".incision-note")?.textContent || ""]);
+  const first = await at();
+  expect(first[0] > 0 && /incision/i.test(first[1]), `step 1: ${first}`);
+  for (let i = 0; i < 2; i++) await page.click('[data-step="1"]');
+  const later = await at();
+  expect(later[0] === 0 && !later[1], `step 3 still shows ${later}`);
+  for (let i = 0; i < 2; i++) await page.click('[data-step="-1"]');
+  return first[1].split(" · ")[0];
+});
 await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.click('[data-tab="sections"]');
   await page.waitForTimeout(1000);

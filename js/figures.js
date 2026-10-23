@@ -4,6 +4,66 @@
 window.ANATOMY = window.ANATOMY || { regions: {} };
 
 window.ANATOMY.figures = {
+  // The open mouth from the front (patient's right on the viewer's left), and
+  // the floor of mouth with the tongue raised.
+  oralCavitySubsites: `
+<svg viewBox="0 0 600 380" role="img" aria-label="Open mouth from the front showing the oral cavity subsites and a 1 cm margin marked around a cancer on the right lateral border of the tongue, and the floor of mouth with the tongue raised">
+  <text x="150" y="20" class="fig-label strong" text-anchor="middle">Mouth open</text>
+  <text x="450" y="20" class="fig-label strong" text-anchor="middle">Tongue raised</text>
+  <!-- left panel: lips -->
+  <path d="M30 120 Q150 30 270 120 Q290 200 270 280 Q150 370 30 280 Q10 200 30 120 Z" fill="var(--fig-muscle)" opacity=".25" stroke="var(--fig-stroke)"/>
+  <!-- buccal mucosa / oral cavity -->
+  <path d="M50 130 Q150 60 250 130 Q266 200 250 270 Q150 340 50 270 Q34 200 50 130 Z" fill="var(--fig-gland)" opacity=".25" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- hard palate and upper teeth -->
+  <path d="M70 120 Q150 70 230 120 L222 140 Q150 100 78 140 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="150" y="122" class="fig-label small" text-anchor="middle">Hard palate</text>
+  <!-- soft palate, uvula, pillars, tonsils -->
+  <path d="M90 150 Q150 128 210 150 L200 168 Q150 152 100 168 Z" fill="var(--fig-muscle)" opacity=".35"/>
+  <path d="M144 160 Q150 186 156 160" fill="var(--fig-muscle)" opacity=".6"/>
+  <text x="150" y="146" class="fig-label small" text-anchor="middle">Soft palate</text>
+  <ellipse cx="100" cy="192" rx="10" ry="18" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <ellipse cx="200" cy="192" rx="10" ry="18" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="212" y="182" class="fig-label small">Tonsil</text>
+  <text x="212" y="194" class="fig-label small">(oropharynx)</text>
+  <!-- tongue -->
+  <path d="M84 210 Q150 176 216 210 Q232 260 200 300 Q150 330 100 300 Q68 260 84 210 Z" fill="var(--fig-muscle)" opacity=".45" stroke="var(--fig-stroke)"/>
+  <path d="M112 218 Q150 202 188 218" fill="none" stroke="var(--fig-stroke)" stroke-dasharray="2 4"/>
+  <text x="150" y="232" class="fig-label small" text-anchor="middle">Circumvallate papillae</text>
+  <text x="150" y="268" class="fig-label" text-anchor="middle">Oral tongue</text>
+  <!-- tumour and margin on the patient's right lateral border (viewer's left) -->
+  <ellipse cx="94" cy="252" rx="8" ry="14" fill="var(--fig-artery)" opacity=".75"/>
+  <ellipse cx="96" cy="252" rx="22" ry="34" fill="none" stroke="var(--fig-incision)" stroke-width="2.5" stroke-dasharray="3 4"/>
+  <text x="8" y="330" class="fig-label small">Tumour on the right lateral border, with</text>
+  <text x="8" y="343" class="fig-label small">the 1 cm margin marked (dashed)</text>
+  <line x1="60" y1="322" x2="86" y2="284" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- retromolar trigone & buccal mucosa labels -->
+  <text x="8" y="120" class="fig-label small">Buccal mucosa</text>
+  <line x1="40" y1="124" x2="56" y2="168" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="232" y="246" class="fig-label small">Retromolar</text>
+  <text x="232" y="258" class="fig-label small">trigone</text>
+  <line x1="240" y1="238" x2="226" y2="214" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- right panel: floor of mouth -->
+  <path d="M330 110 Q450 50 570 110 Q590 200 570 280 Q450 350 330 280 Q310 200 330 110 Z" fill="var(--fig-gland)" opacity=".2" stroke="var(--fig-stroke)"/>
+  <path d="M360 110 Q450 70 540 110 Q546 150 520 170 Q450 190 380 170 Q354 150 360 110 Z" fill="var(--fig-muscle)" opacity=".45" stroke="var(--fig-stroke)"/>
+  <text x="450" y="128" class="fig-label small" text-anchor="middle">Underside of tongue</text>
+  <path d="M450 170 L450 220" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <text x="458" y="208" class="fig-label small">Frenulum</text>
+  <circle cx="440" cy="226" r="4" fill="var(--fig-duct)" stroke="var(--fig-stroke)"/>
+  <circle cx="460" cy="226" r="4" fill="var(--fig-duct)" stroke="var(--fig-stroke)"/>
+  <text x="472" y="242" class="fig-label small">Caruncles</text>
+  <text x="472" y="254" class="fig-label small">(duct openings)</text>
+  <path d="M436 230 Q400 236 360 220" fill="none" stroke="var(--fig-duct)" stroke-width="4"/>
+  <path d="M464 230 Q500 236 540 220" fill="none" stroke="var(--fig-duct)" stroke-width="4"/>
+  <path d="M430 222 Q394 214 356 206" fill="none" stroke="var(--fig-gland)" stroke-width="10" opacity=".7"/>
+  <text x="340" y="196" class="fig-label small">Sublingual fold</text>
+  <path d="M352 238 Q380 250 402 232" fill="none" stroke="var(--fig-nerve)" stroke-width="2.5"/>
+  <text x="334" y="268" class="fig-label small">Lingual nerve loops under the duct</text>
+  <path d="M340 270 Q450 300 560 270" fill="none" stroke="var(--fig-bone)" stroke-width="10" opacity=".8"/>
+  <text x="450" y="300" class="fig-label small" text-anchor="middle">Lower alveolar ridge</text>
+  <text x="450" y="318" class="fig-label" text-anchor="middle">Floor of mouth</text>
+  <text x="6" y="360" class="fig-label small">Oral cavity subsites: lip, buccal mucosa, alveolar ridges, retromolar trigone, floor of mouth,</text>
+  <text x="6" y="373" class="fig-label small">hard palate and oral tongue. Not to scale.</text>
+</svg>`,
   // Right face from the side, face to the right: the five facial nerve branches
   // fanning from the parotid to the muscles they supply.
   facialNerveMuscles: `

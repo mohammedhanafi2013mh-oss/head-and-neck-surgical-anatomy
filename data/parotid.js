@@ -651,17 +651,23 @@ window.ANATOMY.regions.parotid = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "blair", "name": "Modified Blair incision", "note": "In the preauricular crease, round the lobule and down into a neck crease about 2 cm below the angle of the mandible.", "points": [[-1.94, 4.25, -0.55], [-1.94, 3.05, -0.55], [-1.94, 1.65, -0.65], [-0.92, -0.35, -1.25], [-0.92, -1.05, -1.95], [-0.72, -1.95, -2.15], [1.51, -4.25, -0.87], [2.11, -5.05, 0.73]], "axis": [4.88, -3.14]}
+  ],
+
   procedure: {
     title: "Superficial parotidectomy",
     steps: [
       {
-        title: "Position and incision",
+        title: "Position and incision", incision: "blair",
         text: "Supine, head turned away. Leave the eye and the corner of the mouth visible under a clear drape so facial movement can be seen, and avoid long-acting muscle relaxants if the nerve will be monitored. Use a modified Blair incision (in front of the ear, round the lobule and down into a neck crease) or a facelift incision.",
         show: ["superficial", "bone", "muscle", "gland"],
         focus: ["auricle", "parotid", "platysma"]
       },
       {
-        title: "Skin flap",
+        title: "Skin flap", incision: "blair",
         text: "Raise the anterior flap superficial to the parotid fascia, as far forward as the anterior border of the gland. Going further forward risks the branches, which leave the gland anteriorly and become superficial.",
         show: ["superficial", "bone", "muscle", "gland", "nerve"],
         focus: ["parotid", "masseter", "buccal_branch", "zygomatic_branch"]

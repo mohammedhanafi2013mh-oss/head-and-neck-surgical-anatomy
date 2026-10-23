@@ -727,11 +727,17 @@ window.ANATOMY.regions.carotid = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "carotid", "name": "Incision along sternocleidomastoid", "note": "Along its anterior border, centred on the bifurcation (marked on duplex or CT); a transverse skin-crease incision is an alternative for a low bifurcation.", "points": [[-1.63, 3.11, 0.15], [-0.79, 1.11, 1.24], [-0.18, -0.89, 2.21], [-0.15, -2.89, 2.75], [0.83, -4.89, 3.35], [1.33, -6.39, 3.86]], "axis": [3.0, -1.6]}
+  ],
+
   procedure: {
     title: "Carotid endarterectomy",
     steps: [
       {
-        title: "Position and incision",
+        title: "Position and incision", incision: "carotid",
         text: "Supine, neck extended and turned slightly away. General or local anaesthesia (similar outcomes in the GALA trial; local lets the surgeon check the awake patient while clamped). Incise along the anterior border of sternocleidomastoid, centred on the bifurcation, curving the upper end back towards the mastoid.",
         show: ["superficial", "bone", "muscle", "membrane"],
         focus: ["scm", "platysma", "mandible", "triangle"]

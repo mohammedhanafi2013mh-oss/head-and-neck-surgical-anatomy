@@ -5,6 +5,7 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 Modules so far:
 
 - **Submandibular region** (submandibular triangle, level IB)
+- **Oral cavity** (tongue, floor of mouth, palate, and the nerves, duct and vessels around hyoglossus), both sides
 - **Face & facial muscles** (the muscles of facial expression, the facial nerve branches that supply them, facial vessels, Pitanguy's line and the danger zones), both sides
 - **Parotid & facial nerve** (parotid region and extracranial facial nerve)
 - **Lateral neck** (neck dissection levels I–VI)
@@ -22,6 +23,7 @@ Every region shows **both sides**. Regions modelled on one side are mirrored acr
 
 Nerves and vessels of surgical importance can be **traced**: pick one from "Trace a course" at the top of the Structures tab, or open it and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches and danger points, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Face:** the temporal, zygomatic, buccal, marginal mandibular and cervical branches of the facial nerve to their muscles, and the facial artery to the angular artery.
+- **Oral cavity:** the lingual and hypoglossal nerves, the submandibular duct and the lingual artery.
 - **Submandibular triangle:** the marginal mandibular, lingual and hypoglossal nerves, and the facial artery.
 - **Parotid:** the facial nerve, the external carotid and superficial temporal arteries, and the great auricular nerve.
 - **Lateral neck:** the accessory nerve across the posterior triangle, the internal jugular vein, vagus, phrenic and great auricular nerves, and the thoracic duct.
@@ -34,6 +36,8 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
 - **Nose & sinuses:** the drainage routes of the frontal, maxillary and sphenoid sinuses, and the anterior ethmoidal artery.
+
+The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa) and the 1 cm margin round a tongue cancer. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
 
 Every module has a **CT / MRI** tab that slices the 3D model at any level (see below).
 
@@ -106,6 +110,14 @@ The Android build is signed with `packaging/android-debug.keystore`, a public de
 - **Surgery**: a 9-step bedside facial nerve examination ending in House–Brackmann grading, with pitfalls.
 - **Figures**: an original diagram of the five branches and the muscles they supply, with Pitanguy's line and the parotid duct. **Quiz**: six questions.
 - **References**: Pitanguy & Ramos 1966, Dingman & Grabb 1962, Davis et al. 1956, Freilinger et al. 1987, Mitz & Peyronie 1976, Seckel, House & Brackmann 1985, Zuker et al. 2000, Gray's and Scott-Brown's.
+
+## What's in the oral cavity module
+
+- **3D model**: both sides. Mandible and all teeth, maxilla and palatine bones, hyoid, gingiva, tongue, genioglossus, hyoglossus, geniohyoid, mylohyoid, anterior bellies of digastric, soft palate and uvula, palatine tonsils, sublingual and submandibular glands and ducts, lingual, hypoglossal, inferior alveolar and mental nerves and the nerve to mylohyoid, submental, greater palatine and inferior alveolar arteries, lingual veins, orbicularis oris and medial pterygoid. The lingual artery is drawn for this app (Z-Anatomy has none); styloglossus and palatoglossus have notes but no model.
+- **Structures**: the layout round hyoglossus, nerve supply, the lingual nerve's loop under the duct, staging by depth of invasion (AJCC 8), elective neck dissection, margins, marginal and segmental mandibulectomy, ranula and stones. Traced courses for the lingual and hypoglossal nerves, the submandibular duct and the lingual artery.
+- **Surgery**: a 9-step transoral partial glossectomy for a lateral tongue cancer, with the 1 cm margin drawn on the tongue.
+- **Figures**: an original diagram of the open mouth with the subsites and the margin round a tumour, and the floor of mouth with the tongue raised. **Quiz**: six questions.
+- **References**: AJCC 8, D'Cruz et al. 2015, Byers et al. 1997, the RCPath dataset, Harrison 2010, Gray's, Shah and Scott-Brown's.
 
 ## What's in the parotid module
 

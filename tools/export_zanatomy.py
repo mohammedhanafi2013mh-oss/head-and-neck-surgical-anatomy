@@ -1100,6 +1100,65 @@ REGIONS = {
         },
     },
 
+    "oral_cavity": {
+        # Oral cavity and floor of mouth, both sides; courses traced on the right.
+        "centre": (0.0, -0.050, 1.528),
+        "landmarks": "thyroid",  # the drawn lingual artery uses the external carotid landmarks
+        "sides": (-1,),
+        "structures": {
+            # ---- bone, teeth and mucosa ----
+            "mandible": ["Mandible"] + TEETH,
+            "maxilla": BOTH("Maxilla", "Palatine bone"),
+            "hyoid": ["Hyoid bone"],
+            "gingiva": ["Gingiva"],
+            # ---- tongue and floor of mouth ----
+            "tongue": ["Tongue"],
+            "genioglossus": BOTH("Genioglossus muscle"),
+            "hyoglossus": BOTH("Hyoglossus muscle"),
+            "geniohyoid": BOTH("Geniohyoid muscle"),
+            "mylohyoid": BOTH("Mylohyoid muscle"),
+            "digastric_ant": BOTH("Anterior belly of digastric muscle"),
+            # ---- palate and fauces ----
+            "soft_palate": ["Soft palate", "Uvula of palate"],
+            "tonsils": BOTH("Palatine tonsil"),
+            # ---- glands ----
+            "sublingual": BOTH("Sublingual gland"),
+            "smg": BOTH("Submandibular gland"),
+            "wharton": BOTH("Submandibular duct"),
+            # ---- nerves ----
+            "lingual_nerve": BOTH("Lingual nerve"),
+            # XII from where it descends behind the mandible into the tongue.
+            "hypoglossal": [("Hypoglossal nerve (XII).r", [(0, 15), (1, 0), (2, 0)]),
+                            ("Hypoglossal nerve (XII).l", [(0, 15), (1, 0), (2, 0)])],
+            "inferior_alveolar": BOTH("Inferior alveolar nerve", "Mental nerve"),
+            "nerve_mylohyoid": BOTH("Nerve to mylohyoid muscle"),
+            # ---- vessels ----
+            "submental_artery": BOTH("Submental artery"),
+            "palatine_artery": BOTH("Greater palatine artery", "Descending palatine artery"),
+            "inferior_alveolar_artery": BOTH("Inferior alveolar artery"),
+            "lingual_vein": BOTH("Lingual vein"),
+            # ---- context ----
+            "orbicularis_oris": BOTH("Orbicularis oris muscle"),
+            "medial_pterygoid": BOTH("Medial pterygoid muscle"),
+        },
+        "curve_scale": {"lingual_nerve": 1.7, "hypoglossal": 1.6, "inferior_alveolar": 1.5, "nerve_mylohyoid": 1.5,
+                        "submental_artery": 1.4, "palatine_artery": 1.4, "inferior_alveolar_artery": 1.3,
+                        "lingual_vein": 1.2, "wharton": 1.5},
+        "bones": {"mandible", "maxilla", "hyoid"},
+        "drawn": {"lingual_artery": 0.0012},
+        "courses": {
+            "lingual_nerve": {"path": [("Lingual nerve.r", 0)],
+                              "points": {"itf": "start", "molar": ("closest", None, ["Mandible"], (1.525, 1.56)),
+                                         "duct": ("nearest", "Submandibular duct.r"), "tongue": "end"}},
+            "hypoglossal": {"path": [("Hypoglossal nerve (XII).r", 0, 15)],
+                            "points": {"angle": "start", "hyoglossus": ("spline_point", "Hypoglossal nerve (XII).r", 0, 19), "tongue": "end"}},
+            "wharton": {"path": [("Submandibular duct.r", 0)],
+                        "points": {"gland": "start", "lingual": ("nearest", "Lingual nerve.r"), "caruncle": "end"}},
+            "lingual_artery": {"path": [("lingual_artery", 0)],
+                               "points": {"origin": "start", "hyoglossus": ("spline_point", "lingual_artery", 0, 3), "tongue": "end"}},
+        },
+    },
+
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),

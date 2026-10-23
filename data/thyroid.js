@@ -725,17 +725,23 @@ window.ANATOMY.regions.thyroid = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "kocher", "name": "Kocher (collar) incision", "note": "In a natural skin crease about two finger breadths (2–3 cm) above the sternal notch, 4–6 cm long (longer for large glands).", "points": [[-3.0, -4.16, 6.45], [-2.0, -4.3, 6.45], [-1.0, -4.38, 6.45], [0.0, -4.41, 6.45], [1.0, -4.38, 6.45], [2.0, -4.3, 6.45], [3.0, -4.16, 6.45]], "axis": [0.0, -2.2]}
+  ],
+
   procedure: {
     title: "Total thyroidectomy",
     steps: [
       {
-        title: "Position and incision",
+        title: "Position and incision", incision: "kocher",
         text: "Supine with the neck extended on a shoulder roll and the head on a ring. If nerve monitoring is used, check the tube electrodes sit at the vocal folds. Make a Kocher (collar) incision in or near a skin crease about two fingers' breadth above the sternal notch, usually 4–6 cm long.",
         show: ["superficial", "bone", "muscle", "gland"],
         focus: ["platysma", "sternum", "larynx"]
       },
       {
-        title: "Subplatysmal flaps",
+        title: "Subplatysmal flaps", incision: "kocher",
         text: "Divide platysma and raise flaps deep to it, superficial to the anterior jugular veins: up to the thyroid cartilage notch and down to the sternal notch.",
         show: ["superficial", "bone", "muscle", "gland", "vein"],
         focus: ["platysma", "ajv"]

@@ -689,17 +689,23 @@ window.ANATOMY.regions.larynx = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "apron", "name": "Apron (U) incision", "note": "From high on each side down the front of sternocleidomastoid and across about two finger breadths above the sternal notch; the stoma is made in its lower flap.", "points": [[-4.44, 6.7, -1.33], [-3.6, 3.7, 0.14], [-3.15, 0.7, 1.38], [-1.98, -2.71, 2.4], [-3.0, -4.31, 5.95], [-1.2, -4.81, 5.95], [0.0, -4.91, 5.95], [1.2, -4.81, 5.95], [3.0, -4.31, 5.95], [1.98, -2.71, 2.4], [3.15, 0.7, 1.38], [3.6, 3.7, 0.14], [4.44, 6.7, -1.33]], "axis": [0.0, -2.7], "lay": false}
+  ],
+
   procedure: {
     title: "Total laryngectomy",
     steps: [
       {
-        title: "Airway and incision",
+        title: "Airway and incision", incision: "apron",
         text: "If the tumour is obstructing, the airway may need an awake tracheostomy first. Use an apron (U-shaped) incision from mastoid to mastoid region down to about two fingers above the sternal notch, or a separate stoma incision. Plan where the stoma will be.",
         show: ["bone", "membrane", "artery", "vein"],
         focus: ["thyroid_cartilage", "cricoid", "trachea"]
       },
       {
-        title: "Flaps and strap muscles",
+        title: "Flaps and strap muscles", incision: "apron",
         text: "Raise subplatysmal flaps up past the hyoid and down to the clavicles. Do the neck dissections now if indicated. Divide sternohyoid, sternothyroid and omohyoid low, keeping them on the specimen.",
         show: ["bone", "membrane", "deep", "artery", "vein"],
         focus: ["sternohyoid", "sternothyroid", "omohyoid"]
