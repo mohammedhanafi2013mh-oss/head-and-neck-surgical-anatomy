@@ -35,6 +35,7 @@ LOWER_TEETH = ["Lower first molar tooth.r", "Lower second molar tooth.r",
 
 REGIONS = {
     "submandibular": {
+        "mirror": True,  # show both sides (see "both sides" below)
         "centre_object": "Submandibular gland.r",
         # app structure id -> Blender object names
         "structures": {
@@ -81,6 +82,7 @@ REGIONS = {
     },
 
     "lateral_neck": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Near the carotid bifurcation on the left.
         "centre": (0.035, 0.010, 1.470),
         "structures": {
@@ -153,6 +155,7 @@ REGIONS = {
     },
 
     "parotid": {
+        "mirror": True,  # show both sides (see "both sides" below)
         "centre_object": "Parotid gland.r",
         "structures": {
             "mandible": ["Mandible"] + LOWER_TEETH,
@@ -349,6 +352,7 @@ REGIONS = {
                   "superior_thyroid_artery": 0.0012, "superior_laryngeal_artery": 0.0007},
     },
     "carotid": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right carotid bifurcation.
         "centre": (-0.030, -0.004, 1.505),
         "landmarks": "thyroid",
@@ -418,6 +422,7 @@ REGIONS = {
                   "superior_laryngeal_artery": 0.0007, "sln": 0.0009, "ebsln": 0.0007},
     },
     "skull_base": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Midline, at the level of the petrous temporal bones.
         "centre": (0.0, -0.005, 1.575),
         "fill_clipped": True,  # close meshes cut by "clip", so cross-sections cap them correctly
@@ -553,6 +558,7 @@ REGIONS = {
         },
     },
     "infratemporal": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right infratemporal fossa, between the ramus and the lateral pterygoid plate.
         "centre": (-0.036, -0.020, 1.570),
         "fill_clipped": True,
@@ -679,6 +685,7 @@ REGIONS = {
         },
     },
     "pterygopalatine": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right pterygopalatine fossa, between the pterygoid process and the back of the maxilla.
         "centre": (-0.016, -0.036, 1.572),
         "fill_clipped": True,
@@ -742,6 +749,7 @@ REGIONS = {
         },
     },
     "orbit": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right orbit, centred between the apex and the globe.
         "centre": (-0.026, -0.055, 1.597),
         "fill_clipped": True,
@@ -833,6 +841,7 @@ REGIONS = {
         },
     },
     "sinonasal": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right nasal cavity and paranasal sinuses (the septum and frontal and sphenoid sinuses are midline).
         "centre": (-0.012, -0.062, 1.578),
         "fill_clipped": True,
@@ -2068,6 +2077,32 @@ def build_space(sid, spec):
 for sid, spec in cfg.get("spaces", {}).items():
     build_space(sid, spec)
 
+
+# ---------- both sides ----------
+# Regions built on one side ("mirror": True) get a mirror image of every
+# one-sided part across the midline (app x -> -x, winding flipped), under the
+# same structure id, so selecting a structure highlights both sides. Parts that
+# cross the midline (mandible, septum, sphenoid) and parts whose structure is
+# already exported on the other side are left alone. Courses and pins stay on
+# the traced side.
+
+MIRROR_OF = {}  # index of a mirrored part -> index of its source part
+if cfg.get("mirror"):
+    mid = (TO_APP @ Vector((0.0, 0.0, 0.0))).x  # the body's midline (Blender x = 0) in app x
+    tol = 0.15  # cm: parts reaching this far across the midline count as midline
+    spans = [(sid, min(v.x for v in verts) - mid, max(v.x for v in verts) - mid) for sid, _, verts, _ in parts]
+    for i, (sid, name, verts, tris) in enumerate(list(parts)):
+        _, lo_x, hi_x = spans[i]
+        if lo_x < -tol and hi_x > tol:
+            continue
+        right = hi_x <= tol
+        if any(s == sid and (lx > -tol if right else hx < tol) for s, lx, hx in spans):
+            continue  # this structure already has a part on the other side
+        MIRROR_OF[len(parts)] = i
+        parts.append((sid, name + " (mirrored)", [Vector((2 * mid - v.x, v.y, v.z)) for v in verts],
+                      [[a, c, b] for a, b, c in tris]))
+    print("mirrored", len(MIRROR_OF), "parts about app x", round(mid, 3))
+
 lo = Vector((min(v[i] for p in parts for v in p[2]) for i in range(3)))
 hi = Vector((max(v[i] for p in parts for v in p[2]) for i in range(3)))
 span = hi - lo
@@ -2112,7 +2147,10 @@ def bake_ao(parts, radius=1.2, rays=14):
     r = np.sqrt(k / rays)
     local = np.stack([r * np.cos(k * golden), r * np.sin(k * golden), np.sqrt(1 - r * r)], 1)
     out = []
-    for sid, _, verts, tris in parts:
+    for idx, (sid, _, verts, tris) in enumerate(parts):
+        if idx in MIRROR_OF:
+            out.append(None)  # filled from the source part below
+            continue
         V = np.array([tuple(v) for v in verts], dtype=np.float64)
         F = np.array(tris, dtype=np.int64)
         N = np.zeros_like(V)
@@ -2140,6 +2178,8 @@ def bake_ao(parts, radius=1.2, rays=14):
             vis[i] = best
         out.append(np.clip(np.round(vis * 255), 0, 255).astype(np.uint8).tobytes())
         print(f"ao {sid:20} mean {vis.mean():.2f}")
+    for idx, src in MIRROR_OF.items():
+        out[idx] = out[src]  # same vertex order, so the mirror shares the bake
     return out
 
 

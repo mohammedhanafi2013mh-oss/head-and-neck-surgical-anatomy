@@ -10,7 +10,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.sinonasal = {
   id: "sinonasal",
   title: "Nose & paranasal sinuses",
-  subtitle: "Nasal cavity, lateral wall, ostiomeatal unit and the frontal, ethmoid, maxillary and sphenoid sinuses (right side)",
+  subtitle: "Nasal cavity, lateral wall, ostiomeatal unit and the frontal, ethmoid, maxillary and sphenoid sinuses (both sides; drainage routes traced on the right)",
 
   overview: {
     intro:

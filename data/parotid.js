@@ -7,7 +7,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.parotid = {
   id: "parotid",
   title: "Parotid & facial nerve",
-  subtitle: "Parotid region and extracranial facial nerve, right side",
+  subtitle: "Parotid region and extracranial facial nerve, both sides (described on the right)",
 
   overview: {
     intro:

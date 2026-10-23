@@ -62,6 +62,13 @@
       showSectionSelection();
     }
   });
+  // "Show hidden" appears once a structure has been hidden by double-clicking it.
+  const showHiddenBtn = $("#show-hidden");
+  viewer.onHiddenChange = (n) => {
+    showHiddenBtn.hidden = n === 0;
+    showHiddenBtn.textContent = `Show hidden (${n})`;
+  };
+  showHiddenBtn.addEventListener("click", () => viewer.showHidden());
   viewer.onRefresh = () => {
     syncLandmarks();
     if (sections.active) sections.update();

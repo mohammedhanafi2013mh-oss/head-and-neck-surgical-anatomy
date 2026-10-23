@@ -9,7 +9,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.pterygopalatine = {
   id: "pterygopalatine",
   title: "Pterygopalatine fossa",
-  subtitle: "Small space behind the maxilla: maxillary nerve, pterygopalatine ganglion and the end of the maxillary artery (right side)",
+  subtitle: "Small space behind the maxilla: maxillary nerve, pterygopalatine ganglion and the end of the maxillary artery (both sides; courses traced on the right)",
 
   overview: {
     intro:

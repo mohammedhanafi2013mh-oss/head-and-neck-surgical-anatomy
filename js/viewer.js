@@ -229,6 +229,7 @@
       this.focusIds = new Set();
       this.selectedId = null;
       this.labelMode = "some"; // "off" | "some" (pins and the selected structure) | "all"
+      this.hidden = new Set(); // structures hidden by double-clicking them
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
@@ -308,6 +309,8 @@
     }
 
     load(region, model) {
+      this.hidden.clear();
+      this.onHiddenChange && this.onHiddenChange(0);
       this.clearCourse();
       this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
@@ -383,6 +386,7 @@
 
     select(id, notify) {
       this.selectedId = id;
+      if (id && this.hidden.delete(id)) this.onHiddenChange && this.onHiddenChange(this.hidden.size);
       if (id) {
         const s = this.structures.get(id);
         if (s && !this.layerVisible[s.layer]) {
@@ -398,11 +402,26 @@
       this.dirty = true;
     }
 
+    // Hide one structure (double-click or double-tap on it); showHidden() brings them all back.
+    hide(id) {
+      if (!id) return;
+      this.hidden.add(id);
+      if (this.selectedId === id) this.select(null, true);
+      else this.refresh();
+      this.onHiddenChange && this.onHiddenChange(this.hidden.size);
+    }
+
+    showHidden() {
+      this.hidden.clear();
+      this.refresh();
+      this.onHiddenChange && this.onHiddenChange(0);
+    }
+
     refresh() {
       this.dirty = true;
       const dimOthers = this.focusIds.size > 0 || this.selectedId;
       for (const [id, s] of this.structures) {
-        s.root.visible = !!this.layerVisible[s.layer];
+        s.root.visible = !!this.layerVisible[s.layer] && !this.hidden.has(id);
         const highlighted = id === this.selectedId || this.focusIds.has(id);
         s.root.traverse((o) => {
           if (!o.isMesh) return;
@@ -653,7 +672,7 @@
       const el = this.renderer.domElement;
       el.style.touchAction = "none";
       const pointers = new Map();
-      let mode = null, last = null, downAt = null, pinchStart = 0, radiusStart = 0;
+      let mode = null, last = null, downAt = null, pinchStart = 0, radiusStart = 0, lastTap = null;
 
       el.addEventListener("pointerdown", (e) => {
         this.stopFly();
@@ -701,7 +720,16 @@
         if (downAt && pointers.size === 0) {
           const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
           if (moved < 6 && performance.now() - downAt.t < 500) {
-            this.select(this.pick(e.clientX, e.clientY), true);
+            // A second tap within 350 ms on the same spot hides the structure;
+            // a single tap selects it.
+            const now = performance.now(), id = this.pick(e.clientX, e.clientY);
+            if (lastTap && now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 20) {
+              this.hide(id || lastTap.id);
+              lastTap = null;
+            } else {
+              this.select(id, true);
+              lastTap = { x: e.clientX, y: e.clientY, t: now, id };
+            }
           }
         }
         if (pointers.size === 0) mode = null;

@@ -9,7 +9,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.infratemporal = {
   id: "infratemporal",
   title: "Infratemporal fossa",
-  subtitle: "Space deep to the ramus: pterygoid muscles, mandibular nerve, maxillary artery and pterygoid plexus (right side)",
+  subtitle: "Space deep to the ramus: pterygoid muscles, mandibular nerve, maxillary artery and pterygoid plexus (both sides; courses traced on the right)",
 
   overview: {
     intro:

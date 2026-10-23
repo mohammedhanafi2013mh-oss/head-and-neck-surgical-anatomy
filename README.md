@@ -4,18 +4,20 @@ An interactive web app for learning the surgical anatomy of the head and neck. I
 
 Modules so far:
 
-- **Submandibular region** (submandibular triangle, level IB), right side
-- **Parotid & facial nerve** (parotid region and extracranial facial nerve), right side
-- **Lateral neck** (neck dissection levels I–VI), left side
+- **Submandibular region** (submandibular triangle, level IB)
+- **Parotid & facial nerve** (parotid region and extracranial facial nerve)
+- **Lateral neck** (neck dissection levels I–VI)
 - **Thyroid & central neck** (thyroid, parathyroids, laryngeal nerves, level VI), both sides
 - **Larynx** (cartilages, folds, intrinsic muscles, nerves and spaces)
-- **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa), right side
+- **Carotid triangle** (carotid bifurcation, jugular vein, cranial nerves IX–XII and the ansa)
 - **Skull base** (cranial fossae, foramina, cranial nerves I–XII, the carotid and vertebrobasilar arteries and dural sinuses)
 - **Deep neck spaces** (the layers of deep cervical fascia and twelve spaces drawn as volumes), both sides
-- **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches), right side
-- **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery), right side
-- **Orbit** (bony orbit, globe, extraocular muscles, orbital apex, nerves II–VI and V1, ophthalmic vessels, lacrimal apparatus), right side
-- **Nose & paranasal sinuses** (lateral nasal wall, ostiomeatal unit, frontal, ethmoid, maxillary and sphenoid sinuses and their drainage), right side
+- **Infratemporal fossa** (pterygoid muscles, TMJ, the mandibular nerve and the maxillary artery and their branches)
+- **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery)
+- **Orbit** (bony orbit, globe, extraocular muscles, orbital apex, nerves II–VI and V1, ophthalmic vessels, lacrimal apparatus)
+- **Nose & paranasal sinuses** (lateral nasal wall, ostiomeatal unit, frontal, ethmoid, maxillary and sphenoid sinuses and their drainage)
+
+Every region shows **both sides**. Regions modelled on one side are mirrored across the midline at export, so selecting a structure highlights it on both sides; courses, pins and notes describe the traced side. **Double-click** (or double-tap) a structure to hide it, and use "Show hidden" to bring hidden structures back. The 3D view has baked ambient occlusion and soft shadows for depth.
 
 Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
@@ -113,9 +115,9 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 - **3D model** from Z-Anatomy:
   - Bones of both sides, with the vault removed: occipital, sphenoid, temporal, ethmoid and the orbital plates of the frontal bone. Optional layers add the facial skeleton, mandible, C1–C2 and the tentorium.
   - The brainstem, optic chiasm and tracts, and the pituitary.
-  - Right-sided nerves: cranial nerves I–XII with V1–V3, the lingual, inferior alveolar and chorda tympani nerves.
-  - Right-sided arteries: the internal carotid and vertebral arteries, the basilar artery, the posterior, middle and anterior cerebral arteries and the cerebellar arteries, and the ophthalmic, middle meningeal and maxillary arteries.
-  - Right-sided veins: the cavernous, petrosal, transverse and sigmoid sinuses and the jugular bulb.
+  - Nerves (both sides): cranial nerves I–XII with V1–V3, the lingual, inferior alveolar and chorda tympani nerves.
+  - Arteries (both sides): the internal carotid and vertebral arteries, the basilar artery, the posterior, middle and anterior cerebral arteries and the cerebellar arteries, and the ophthalmic, middle meningeal and maxillary arteries.
+  - Veins (both sides): the cavernous, petrosal, transverse and sigmoid sinuses and the jugular bulb.
   - "From above" and "From below" views; from above, anterior is at the top.
 - **Foramina layer**: pins on every foramen and canal. Where Z-Anatomy has a label anchor (foramen magnum, ovale, rotundum, spinosum, optic, hypoglossal, condylar and pterygoid canals) its point is used. The rest are found where the nerve or vessel passing through them meets the bone:
   - jugular foramen and cribriform plate: the nearest point to the bone
@@ -143,7 +145,7 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 
 ## What's in the infratemporal fossa module
 
-- **3D model** (right side) from Z-Anatomy:
+- **3D model** (both sides) from Z-Anatomy:
   - Bones: the mandible, maxilla and palatine bone, zygomatic, sphenoid, temporal and the lower parietal bone. The mandible is translucent so the fossa shows through the ramus.
   - The TMJ capsule and disc, and the sphenomandibular, stylomandibular and pterygospinous ligaments.
   - Muscles: both heads of lateral pterygoid and medial pterygoid. Masseter, temporalis and the parotid are an optional layer.
@@ -160,7 +162,7 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 
 ## What's in the pterygopalatine fossa module
 
-- **3D model** (right side) from Z-Anatomy:
+- **3D model** (both sides) from Z-Anatomy:
   - Bones: the maxilla, palatine bone, sphenoid, vomer, ethmoid and inferior concha, and zygomatic bone, translucent so the fossa shows.
   - The maxillary nerve, and the third part of the maxillary artery with the infraorbital, posterior superior alveolar, descending and greater palatine, sphenopalatine and pterygoid canal branches.
   - Optional layer: the nasal lining, pterygoid muscles, Eustachian tube and petrous carotid.
@@ -174,7 +176,7 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 
 ## What's in the orbit module
 
-- **3D model** (right side) from Z-Anatomy:
+- **3D model** (both sides) from Z-Anatomy:
   - Translucent orbital bones: frontal, sphenoid, ethmoid, maxilla, zygomatic, lacrimal and nasal.
   - The globe with iris, lens and retina, the tarsal plates and Lockwood's ligament.
   - Levator, the four recti, both obliques with the trochlea, and the common tendinous ring.
@@ -191,7 +193,7 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
 
 ## What's in the nose & paranasal sinuses module
 
-- **3D model** (right side; septum, frontal and sphenoid sinuses midline) from Z-Anatomy:
+- **3D model** (both sides) from Z-Anatomy:
   - Translucent bones: frontal, ethmoid with the conchae, inferior concha, maxilla, sphenoid, vomer, nasal, lacrimal and palatine.
   - The septal, upper and lower lateral cartilages.
   - The frontal and sphenoid sinuses and the anterior, middle and posterior ethmoid cells.

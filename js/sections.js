@@ -354,7 +354,7 @@
       this.cutCentres = new Map();
       const a = new THREE.Vector3(), b = new THREE.Vector3(), d = new THREE.Vector3(), p = new THREE.Vector3();
       for (const e of this.entries) {
-        e.visible = !!this.viewer.layerVisible[e.layer];
+        e.visible = !!this.viewer.layerVisible[e.layer] && !this.viewer.hidden.has(e.id);
         if (!e.visible) continue;
         const pos = e.source.geometry.attributes.position;
         const idx = e.source.geometry.index.array;

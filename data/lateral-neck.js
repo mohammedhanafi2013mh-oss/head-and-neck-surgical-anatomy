@@ -7,7 +7,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.lateral_neck = {
   id: "lateral_neck",
   title: "Lateral neck",
-  subtitle: "Neck dissection levels I–VI, left side",
+  subtitle: "Neck dissection levels I–VI, both sides (described on the left)",
 
   overview: {
     intro:

@@ -8,7 +8,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.skull_base = {
   id: "skull_base",
   title: "Skull base",
-  subtitle: "Cranial fossae, foramina, cranial nerves I–XII and the vessels that cross the skull base (nerves and vessels on the right)",
+  subtitle: "Cranial fossae, foramina, cranial nerves I–XII and the vessels that cross the skull base (both sides; courses traced on the right)",
 
   overview: {
     intro:

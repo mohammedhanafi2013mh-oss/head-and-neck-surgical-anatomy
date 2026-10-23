@@ -9,7 +9,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.orbit = {
   id: "orbit",
   title: "Orbit",
-  subtitle: "Bony orbit, globe, extraocular muscles, orbital apex, nerves and vessels (right side)",
+  subtitle: "Bony orbit, globe, extraocular muscles, orbital apex, nerves and vessels (both sides; courses traced on the right)",
 
   overview: {
     intro:
