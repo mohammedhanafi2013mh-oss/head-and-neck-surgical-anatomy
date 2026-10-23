@@ -26,6 +26,7 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 - **Thyroid:** both recurrent laryngeal nerves, the external branch of the superior laryngeal nerve, the superior and inferior thyroid arteries, and the middle thyroid vein.
 - **Larynx:** the superior laryngeal nerve and its external branch, and both recurrent laryngeal nerves.
 - **Carotid triangle:** the internal and external carotid arteries, the vagus, the hypoglossal loop and ansa cervicalis, the accessory and superior laryngeal nerves, and the superior thyroid artery.
+- **Deep neck spaces:** the carotid artery behind the tonsil, the internal jugular vein, the vagus, glossopharyngeal, accessory and hypoglossal nerves and the sympathetic trunk in the poststyloid compartment, and four routes of spread of infection (odontogenic, tonsillar, retropharyngeal and danger space) into the mediastinum.
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
@@ -139,8 +140,9 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
   - Whole length of the neck: retropharyngeal, danger, prevertebral, carotid and visceral.
   - The parapharyngeal space is drawn from anatomical corner points. The constrictors in the source model flare too far laterally for a measured outline.
   - The retropharyngeal and danger spaces are thin layers at the pharynx–longus interface, where the source model has the two touching.
-  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, and the retropharyngeal and level II nodes.
-- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae.
+  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, IX, XI and XII above the hyoid, a drawn sympathetic trunk, and the retropharyngeal and level II nodes.
+  - Four drawn **routes of spread** (orange): odontogenic (lower molars → submandibular → parapharyngeal), tonsillar (peritonsillar → parapharyngeal → carotid sheath → mediastinum), retropharyngeal (Rouvière node → upper mediastinum) and danger space (through the alar fascia → towards the diaphragm). They are schematic paths, not measured anatomy.
+- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae. Traced courses for the carotid, jugular, lower cranial nerves, sympathetic trunk and the four routes of spread.
 - **CT / MRI**: the spaces are labelled on the simulated slices, which is how they are usually seen in practice.
 - **Surgery**: an 8-step transcervical drainage of a parapharyngeal and submandibular abscess.
 - **Figures**: original diagrams of an axial section at the oropharynx and a midline sagittal view of how far the retropharyngeal, danger and prevertebral spaces extend. **Quiz**: six questions.

@@ -24,7 +24,8 @@
     sinus: "#7fc4f0",
     duct: "#2fb7a0",
     cartilage: "#c9d6e0",
-    mucosa: "#e0a4a0"
+    mucosa: "#e0a4a0",
+    route: "#ff6a2a"
   };
 
   const $ = (sel, el = document) => el.querySelector(sel);

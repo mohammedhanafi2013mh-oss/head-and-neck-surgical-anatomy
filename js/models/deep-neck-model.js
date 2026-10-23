@@ -47,6 +47,15 @@ window.ANATOMY.models.deep_neck = {
     carotids: { kind: "artery" },
     ijv: { kind: "vein" },
     vagus: { kind: "nerve" },
+    glossopharyngeal: { kind: "nerve" },
+    accessory: { kind: "nerve" },
+    hypoglossal: { kind: "nerve" },
+    sympathetic: { kind: "nerve", color: 0xd9b84a },
+    // Routes of spread of infection (drawn).
+    route_odontogenic: { kind: "duct", color: 0xff6a2a },
+    route_tonsillar: { kind: "duct", color: 0xff6a2a },
+    route_retropharyngeal: { kind: "duct", color: 0xff6a2a },
+    route_danger: { kind: "duct", color: 0xff6a2a },
     rp_nodes: { kind: "node" },
     nodes_ii: { kind: "node" },
     // Spaces: one colour each, translucent.
