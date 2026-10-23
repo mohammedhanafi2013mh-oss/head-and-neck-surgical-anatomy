@@ -96,7 +96,10 @@ await check("First visit", "A dismissible tip points new users to the guide", as
 });
 
 const regions = await page.$$eval("#region-select option:not([disabled])", (o) => o.map((x) => x.value));
-await check("Regions", `All ${regions.length} regions load, each under 30 s`, async () => {
+// Shared CI machines render 3D in software and vary a lot in speed (the deep neck
+// took 10 s locally and 10-31 s on GitHub runners), so CI gets a wider budget.
+const REGION_BUDGET = process.env.CI ? 60000 : 30000;
+await check("Regions", `All ${regions.length} regions load, each under ${REGION_BUDGET / 1000} s`, async () => {
   const times = [];
   for (const r of QUICK ? regions.slice(0, 3) : regions) {
     const t0 = Date.now();
@@ -106,7 +109,7 @@ await check("Regions", `All ${regions.length} regions load, each under 30 s`, as
     expect(n > 10, `${r}: only ${n} structures`);
     times.push([r, Date.now() - t0]);
   }
-  const slow = times.filter(([, ms]) => ms > 30000);
+  const slow = times.filter(([, ms]) => ms > REGION_BUDGET);
   expect(!slow.length, `slow: ${slow.map(([r, ms]) => `${r} ${ms} ms`).join(", ")}`);
   return `slowest ${Math.max(...times.map(([, ms]) => ms)) / 1000} s`;
 });
