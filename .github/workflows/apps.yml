@@ -1,0 +1,178 @@
+# Tests the web app, builds the Android and Windows apps on every pull request,
+# and on every push to main publishes a GitHub Release with the downloads and
+# deploys the installable web app (iPhone, iPad and any browser) to GitHub Pages.
+name: Test and build apps
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Runs for the same branch queue rather than cancel each other, so a build in
+# progress always finishes and its downloads stay available.
+concurrency:
+  group: apps-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  APP_VERSION: 1.0.${{ github.run_number }}
+
+jobs:
+  test:
+    name: Usability tests and web build
+    # Playwright 1.56 supports Ubuntu up to 24.04 (ubuntu-latest is newer).
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Build the web app and run the usability tests
+        run: npm test
+      - name: Upload the test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usability-report
+          path: tests/report
+      - name: Upload the web app
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app
+          path: dist/web
+          include-hidden-files: true
+
+  android:
+    name: Android app (APK)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: node tools/build_web.mjs
+      - name: Create the Android project
+        run: npx cap add android
+      - name: App icon and splash screen
+        run: |
+          mkdir -p assets
+          cp icons/icon-1024.png assets/icon-only.png
+          cp icons/icon-1024.png assets/logo.png
+          npx capacitor-assets generate --android --iconBackgroundColor '#134e63' --splashBackgroundColor '#f5f3ee'
+      - name: Version
+        run: |
+          sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"$APP_VERSION\"/" android/app/build.gradle
+          grep -E "versionCode|versionName" android/app/build.gradle
+      - run: npx cap sync android
+      - name: Build the APK
+        run: |
+          # Every build is signed with the same (public) debug key, so a new
+          # version installs over the old one.
+          mkdir -p ~/.android && cp packaging/android-debug.keystore ~/.android/debug.keystore
+          cd android && ./gradlew assembleDebug --no-daemon
+          mkdir -p ../dist/release && cp app/build/outputs/apk/debug/app-debug.apk "../dist/release/HN-Anatomy-$APP_VERSION-android.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: dist/release/*.apk
+
+  windows:
+    name: Windows app (installer and portable)
+    runs-on: windows-latest
+    timeout-minutes: 40
+    env:
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm version "$env:APP_VERSION" --no-git-tag-version --allow-same-version
+      - run: npm run dist:win
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-app
+          path: dist/desktop/*.exe
+
+  release:
+    name: Publish a GitHub Release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [test, android, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Package the web app
+        run: cd artifacts/web-app && zip -qr "../HN-Anatomy-$APP_VERSION-web.zip" .
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.APP_VERSION }}
+          name: Head & Neck Surgical Anatomy ${{ env.APP_VERSION }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          body: |
+            **Download and install**
+
+            - **Android:** download `HN-Anatomy-${{ env.APP_VERSION }}-android.apk` on the phone and open it. Allow installs from your browser or file manager when Android asks.
+            - **Windows:** `…-windows-setup.exe` installs the app; `…-windows-portable.exe` runs without installing. Windows SmartScreen may warn because the app isn't code-signed: choose **More info → Run anyway**.
+            - **iPhone and iPad:** open https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ in Safari, tap **Share → Add to Home Screen**. Open the quick guide (?) and tap "Download all regions for offline use".
+            - **Any computer:** unzip `…-web.zip` and open `index.html`.
+
+            For education only. Check every surgical detail against current atlases and senior guidance.
+          files: |
+            artifacts/android-apk/*.apk
+            artifacts/windows-app/*.exe
+            artifacts/*.zip
+
+  pages:
+    name: Deploy the web app to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    # Needs Pages turned on (Settings → Pages → Source: GitHub Actions); the release does not depend on it.
+    continue-on-error: true
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-app
+          path: web
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deploy
+        uses: actions/deploy-pages@v4

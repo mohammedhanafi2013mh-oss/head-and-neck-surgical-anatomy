@@ -285,6 +285,11 @@ window.ANATOMY.regions.thyroid = {
       name: "External branch of the superior laryngeal nerve",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "origin", label: "From the superior laryngeal nerve", text: "Down on the inferior constrictor." },
+        { key: "sta", label: "Beside the superior thyroid artery", text: "Runs with or deep to it; in Cernea type 2 it crosses within 1 cm of the upper pole." },
+        { key: "cricothyroid", label: "Enters cricothyroid", text: "Injury lowers the voice's pitch and power." }
+      ],
       summary:
         "A thin motor nerve that runs down on the inferior constrictor, close to the superior thyroid artery, to supply cricothyroid. It crosses the artery at a variable height above the upper pole.",
       relations: [
@@ -329,6 +334,10 @@ window.ANATOMY.regions.thyroid = {
       name: "Superior thyroid artery",
       layer: "artery",
       drawn: true,
+      course: [
+        { key: "origin", label: "From the external carotid", text: "Its first branch, just above the bifurcation." },
+        { key: "pole", label: "Upper pole", text: "The external branch of the superior laryngeal nerve is closest here: ligate the branches on the capsule." }
+      ],
       summary:
         "Usually the first branch of the external carotid. It runs down and forward under the strap muscles to the upper pole, where it divides into anterior and posterior branches on the capsule.",
       relations: [
@@ -350,6 +359,10 @@ window.ANATOMY.regions.thyroid = {
       name: "Inferior thyroid arteries",
       aka: "With the thyrocervical trunks",
       layer: "artery",
+      course: [
+        { key: "trunk", label: "Thyrocervical trunk", text: "From the first part of the subclavian artery." },
+        { key: "arch", label: "Arches medially behind the carotid sheath", text: "At C6, then down to the back of the lobe, crossing the recurrent laryngeal nerve. Ligate branches on the capsule, not the trunk laterally, to protect the nerve and the parathyroids." }
+      ],
       summary:
         "From the thyrocervical trunk of the subclavian artery. Each runs up along scalenus anterior, turns medially behind the carotid sheath at about C6, and reaches the back of the lower lobe.",
       relations: [
@@ -413,6 +426,10 @@ window.ANATOMY.regions.thyroid = {
       name: "Middle thyroid vein",
       layer: "vein",
       drawn: true,
+      course: [
+        { key: "gland", label: "Lateral surface of the lobe", text: "Short and wide." },
+        { key: "ijv", label: "Internal jugular vein", text: "Usually the first vessel divided when mobilising the lobe." }
+      ],
       summary: "A short, wide vein with no artery beside it, running from the side of the lobe straight to the internal jugular vein.",
       relations: ["Crosses in front of the common carotid artery"],
       supply: {},

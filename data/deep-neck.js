@@ -42,7 +42,8 @@ window.ANATOMY.regions.deep_neck = {
     { id: "muscle", label: "Muscles", defaultOn: false },
     { id: "artery", label: "Arteries", defaultOn: true },
     { id: "vein", label: "Veins", defaultOn: true },
-    { id: "nerve", label: "Vagus", defaultOn: true },
+    { id: "nerve", label: "Nerves", defaultOn: true },
+    { id: "route", label: "Routes of spread", defaultOn: true },
     { id: "lymph", label: "Lymph nodes", defaultOn: true }
   ],
 
@@ -345,9 +346,171 @@ window.ANATOMY.regions.deep_neck = {
     { id: "smg", name: "Submandibular glands", layer: "gland", summary: "Mostly in the submandibular spaces, wrapping round the back edge of mylohyoid into the sublingual space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
     { id: "sublingual", name: "Sublingual glands", layer: "gland", summary: "In the sublingual spaces.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
     { id: "thyroid", name: "Thyroid gland", layer: "gland", summary: "In the visceral space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
-    { id: "carotids", name: "Carotid arteries", layer: "artery", summary: "Common, internal and external carotids; the internal and common carotids lie in the carotid space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
-    { id: "ijv", name: "Internal jugular veins", layer: "vein", drawn: "redrawn", summary: "In the carotid spaces, lateral to the carotids.", relations: [], supply: {}, surgical: ["Thrombosis in Lemierre syndrome."], danger: [], variations: [], refs: ["gray", "lemierre"] },
-    { id: "vagus", name: "Vagus nerves", layer: "nerve", drawn: "redrawn", summary: "In the carotid spaces, behind and between artery and vein.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
+    { id: "carotids", name: "Carotid arteries", layer: "artery", course: [
+      { key: "cca", label: "Common carotid artery", text: "In the carotid space, with the internal jugular vein lateral and the vagus behind." },
+      { key: "bifurcation", label: "Bifurcation", text: "Usually at the upper border of the thyroid cartilage." },
+      { key: "tonsil", label: "Behind the tonsil", text: "The internal carotid lies about 1.5–2.5 cm posterolateral to the tonsil, closer when tortuous. Incise a quinsy superficially and medially, never deep and lateral." },
+      { key: "skull", label: "Carotid canal", text: "Passes up through the poststyloid compartment with the internal jugular vein and nerves IX–XII." }
+    ], summary: "Common, internal and external carotids; the internal and common carotids lie in the carotid space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
+    { id: "ijv", name: "Internal jugular veins", layer: "vein", drawn: "redrawn", course: [
+      { key: "top", label: "Jugular foramen", text: "In the poststyloid compartment, behind the internal carotid." },
+      { key: "nodes", label: "Jugulodigastric node", text: "Level II nodes lie along the vein." },
+      { key: "low", label: "Down the carotid sheath", text: "Septic thrombophlebitis spreading from the parapharyngeal space here is Lemierre syndrome." }
+    ], summary: "In the carotid spaces, lateral to the carotids.", relations: [], supply: {}, surgical: ["Thrombosis in Lemierre syndrome."], danger: [], variations: [], refs: ["gray", "lemierre"] },
+    { id: "vagus", name: "Vagus nerves", layer: "nerve", drawn: "redrawn", course: [
+      { key: "top", label: "Below the jugular foramen", text: "Behind the internal carotid artery." },
+      { key: "low", label: "Down the carotid sheath", text: "Posterior, between the artery and the vein." }
+    ], summary: "In the carotid spaces, behind and between artery and vein.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
+    {
+      id: "glossopharyngeal",
+      name: "Glossopharyngeal nerve",
+      aka: "Cranial nerve IX",
+      layer: "nerve",
+      summary: "Leaves the jugular foramen in front of the vagus, runs down in the poststyloid compartment and curves forward round stylopharyngeus, between the internal and external carotids, to the tongue base and tonsil bed.",
+      course: [
+        { key: "foramen", label: "Jugular foramen", text: "Through its anterior (nervous) part, in front of X and XI." },
+        { key: "stylopharyngeus", label: "Round stylopharyngeus", text: "Supplies the muscle, then passes between the internal and external carotid arteries." },
+        { key: "tongue", label: "Tongue base and tonsil bed", text: "Through the gap between the superior and middle constrictors." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Lies just deep to the tonsil bed: injury in tonsillectomy causes loss of taste on the posterior tongue and referred otalgia.", "With X, XI and XII it is at risk in poststyloid parapharyngeal tumour surgery (paraganglioma, schwannoma)."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "shah"]
+    },
+    {
+      id: "accessory",
+      name: "Accessory nerve",
+      aka: "Cranial nerve XI",
+      layer: "nerve",
+      summary: "Leaves the jugular foramen with IX and X and runs back, usually lateral to the internal jugular vein, over the transverse process of the atlas to sternocleidomastoid.",
+      course: [
+        { key: "foramen", label: "Jugular foramen", text: "Behind the vagus." },
+        { key: "atlas", label: "Over the transverse process of C1", text: "A palpable landmark for the nerve; it usually crosses lateral to the internal jugular vein here." },
+        { key: "scm", label: "Into sternocleidomastoid", text: "Through or under the muscle, then on to trapezius (see the lateral neck module)." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Can be stretched or divided in high level II dissection and transcervical approaches to the parapharyngeal space."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "shah"]
+    },
+    {
+      id: "hypoglossal",
+      name: "Hypoglossal nerve",
+      aka: "Cranial nerve XII",
+      layer: "nerve",
+      summary: "Leaves the hypoglossal canal medial to the vessels, spirals laterally behind the vagus and descends between the internal carotid and internal jugular vein. Its loop round the occipital artery is shown in the carotid triangle module.",
+      course: [
+        { key: "canal", label: "Hypoglossal canal", text: "Medial to the internal jugular vein and the internal carotid." },
+        { key: "low", label: "Between the internal carotid and the jugular", text: "Descends in the poststyloid compartment towards the angle of the mandible." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Injury causes ipsilateral tongue weakness and atrophy, with dysarthria and swallowing difficulty when combined with IX and X palsies."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "shah"]
+    },
+    {
+      id: "sympathetic",
+      name: "Cervical sympathetic trunk",
+      layer: "nerve",
+      drawn: true,
+      summary: "Runs on longus capitis and longus colli, embedded in the prevertebral fascia, behind the carotid sheath.",
+      course: [
+        { key: "top", label: "Below the skull base", text: "Its fibres leave the superior cervical ganglion along the internal carotid artery." },
+        { key: "scg", label: "Superior cervical ganglion", text: "At C2–C3, behind the internal carotid: a fusiform swelling 2–3 cm long, easily mistaken for a lymph node." },
+        { key: "mcg", label: "Middle cervical ganglion", text: "At C6, near the inferior thyroid artery (inconstant)." },
+        { key: "low", label: "To the cervicothoracic ganglion", text: "The inferior cervical ganglion fuses with T1 as the stellate ganglion at the root of the neck." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Damage gives Horner syndrome (ptosis, miosis, anhidrosis). Warn patients before excising poststyloid parapharyngeal tumours.", "First-bite syndrome (sharp parotid pain at the first bite of each meal) follows loss of the sympathetic supply to the parotid after parapharyngeal space surgery."],
+      danger: [],
+      variations: [],
+      refs: ["gray", "shah"]
+    },
+    {
+      id: "route_odontogenic",
+      name: "Odontogenic spread",
+      aka: "Lower molar to submandibular and parapharyngeal spaces",
+      layer: "route",
+      drawn: true,
+      summary: "The commonest source of deep neck infection in adults. The roots of the lower second and third molars lie below the mylohyoid line, so their abscesses break through the thin lingual cortex into the submandibular space, and from there back into the parapharyngeal space.",
+      course: [
+        { key: "molar", label: "Lower second and third molars", text: "Their root apices lie below the mylohyoid line." },
+        { key: "mylohyoid", label: "Through the lingual cortex", text: "Below the mylohyoid line, pus enters the submandibular space; above it (premolars, first molar), the sublingual space." },
+        { key: "submandibular", label: "Submandibular space", text: "Bilateral submandibular, sublingual and submental cellulitis is Ludwig's angina: the airway is at risk." },
+        { key: "pps", label: "Parapharyngeal space", text: "Along styloglossus behind mylohyoid, then on to the carotid and retropharyngeal spaces." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Secure the airway before drainage; drain the spaces involved and remove the source tooth."],
+      danger: [],
+      variations: [],
+      refs: ["vieira", "scottbrown"]
+    },
+    {
+      id: "route_tonsillar",
+      name: "Tonsillar spread",
+      aka: "Peritonsillar to parapharyngeal and carotid spaces",
+      layer: "route",
+      drawn: true,
+      summary: "A peritonsillar abscess can break through the superior constrictor into the parapharyngeal space, then reach the carotid space and track down the carotid sheath into the mediastinum.",
+      course: [
+        { key: "tonsil", label: "Peritonsillar space", text: "Quinsy: pus between the tonsil capsule and the superior constrictor." },
+        { key: "pps", label: "Through the constrictor", text: "Into the parapharyngeal space: trismus (medial pterygoid) and medial bulging of the lateral pharyngeal wall." },
+        { key: "carotid", label: "Carotid space", text: "Internal jugular thrombophlebitis (Lemierre syndrome) or erosion of the carotid, often heralded by a small 'herald' bleed." },
+        { key: "mediastinum", label: "Down the carotid sheath", text: "The 'Lincoln highway' to the superior mediastinum." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["CT with contrast for any quinsy with trismus out of proportion, neck swelling or failure to settle after drainage."],
+      danger: [],
+      variations: [],
+      refs: ["vieira", "lemierre", "grodinsky"]
+    },
+    {
+      id: "route_retropharyngeal",
+      name: "Retropharyngeal spread",
+      aka: "Rouvière node to the mediastinum",
+      layer: "route",
+      drawn: true,
+      summary: "In young children, suppurating lateral retropharyngeal (Rouvière) nodes form a retropharyngeal abscess, which can spread down in front of the alar fascia to the upper mediastinum.",
+      course: [
+        { key: "node", label: "Lateral retropharyngeal node", text: "Drains the nasopharynx, adenoids, sinuses and middle ear; suppurates mostly under the age of 5." },
+        { key: "space", label: "Retropharyngeal space", text: "Between the buccopharyngeal fascia in front and the alar fascia behind; a midline raphe keeps early collections to one side." },
+        { key: "mediastinum", label: "To the upper mediastinum", text: "The space ends where the alar fascia fuses with the visceral fascia, at about T1–T2." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Lateral neck radiograph: prevertebral soft tissue wider than about 7 mm at C2 suggests a collection.", "Small collections in children may settle on antibiotics; larger ones are drained transorally (supine, head down) or transcervically."],
+      danger: [],
+      variations: [],
+      refs: ["vieira", "grodinsky", "scottbrown"]
+    },
+    {
+      id: "route_danger",
+      name: "Danger space spread",
+      aka: "Retropharyngeal to danger space and mediastinum",
+      layer: "route",
+      drawn: true,
+      summary: "Infection breaching the alar fascia enters the danger space, which has no barrier from the skull base to the diaphragm, and can cause descending necrotising mediastinitis.",
+      course: [
+        { key: "retro", label: "Retropharyngeal space", text: "The usual source." },
+        { key: "alar", label: "Through the alar fascia", text: "Into the danger space, between the alar and prevertebral layers." },
+        { key: "mediastinum", label: "Towards the diaphragm", text: "Descending necrotising mediastinitis: CT of the chest is needed, and mediastinal drainage when the collection extends below the carina." }
+      ],
+      relations: [],
+      supply: {},
+      surgical: ["Mortality from descending necrotising mediastinitis remains high; early CT of the neck and chest and aggressive drainage improve survival."],
+      danger: [],
+      variations: [],
+      refs: ["estrera", "grodinsky", "vieira"]
+    },
     { id: "rp_nodes", name: "Retropharyngeal nodes", aka: "Lateral nodes of Rouvière", layer: "lymph", summary: "In the retropharyngeal space near the skull base, lateral to the longus capitis.", relations: [], supply: {}, surgical: ["Prominent in children; their suppuration causes retropharyngeal abscess. A route of metastasis from nasopharyngeal, oropharyngeal and hypopharyngeal cancer."], danger: [], variations: [], refs: ["gray", "vieira"] },
     { id: "nodes_ii", name: "Level II nodes", layer: "lymph", summary: "Upper deep cervical nodes along the carotid space, including the jugulodigastric node.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },
     { id: "constrictors", name: "Pharyngeal constrictors", layer: "muscle", summary: "Covered behind by the buccopharyngeal fascia; the medial wall of the parapharyngeal space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] },

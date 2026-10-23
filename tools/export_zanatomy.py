@@ -79,6 +79,19 @@ REGIONS = {
         # (spline 1). Found by checking the spline paths against the
         # mandible's lower border.
         "spline_parts": {"Facial nerve (VII).r": [(0, 18), (1, 0)]},
+        "courses": {
+            "mmn": {"path": [("Facial nerve (VII).r", 0, 18)],
+                    "points": {"parotid": "start", "vessels": "end"}},
+            "lingual_nerve": {"path": [("Lingual nerve.r", 0)],
+                              "points": {"itf": "start", "molar": ("closest", None, ["Mandible"], (1.525, 1.56)),
+                                         "duct": ("nearest", "Submandibular duct.r"), "tongue": "end"}},
+            "hypoglossal": {"path": [("Hypoglossal nerve (XII).r", 0)], "zmin": 1.50,
+                            "points": {"canal": "start", "tendon": ("nearest", "Intermediate tendon of digastric muscle.r"),
+                                       "tongue": "end"}},
+            "facial_artery": {"path": [("Facial artery.r", 0)],
+                              "points": {"origin": "start", "gland": ("nearest", "Submandibular gland.r"),
+                                         "mandible": ("closest", None, ["Mandible"], (1.535, 1.56)), "face": "end"}},
+        },
     },
 
     "lateral_neck": {
@@ -152,6 +165,28 @@ REGIONS = {
                         "Superficial lateral cervical nodes.l"],
         # Structures Z-Anatomy lacks, drawn as paths on its anatomy.
         "drawn": {"phrenic": 0.0014, "great_auricular": 0.0011, "thoracic_duct": 0.0013},
+        "courses": {
+            # Spline 0 to its branch point (14) inside sternocleidomastoid, then spline 2 to trapezius.
+            "accessory": {"path": [("Accessory nerve (XI).l", 0, 0, 14), ("Accessory nerve (XI).l", 2)], "zmin": 1.365,
+                          "points": {"foramen": ("last_in", ("Accessory nerve (XI).l", 0), ["Temporal bone.l", "Occipital bone"], 0.002),
+                                     "ijv": ("nearest", "Internal jugular vein.l"),
+                                     "scm": ("spline_point", "Accessory nerve (XI).l", 0, 14),
+                                     "erb": ("nearest", "great_auricular"),
+                                     "trapezius": ("first_in", ("Accessory nerve (XI).l", 2), ["Descending part of trapezius muscle.l"], 0.002)}},
+            "ijv": {"path": [("Internal jugular vein.l", 0)],
+                    "points": {"bulb": "start", "accessory": ("nearest", "Accessory nerve (XI).l"),
+                               "facial": ("nearest_start", "Common facial vein.l"), "omohyoid": ("nearest", "Omohyoid muscle.l"),
+                               "angle": "end"}},
+            "vagus": {"path": [("Vagus nerve (X).l", 2)], "zmin": 1.36,
+                      "points": {"foramen": "start", "sln": ("spline_start", "Vagus nerve (X).l", 1),
+                                 "sheath": ("nearest", "Left common carotid artery"), "thorax": "end"}},
+            "phrenic": {"path": [("phrenic", 0)],
+                        "points": {"origin": "start", "tca": ("nearest", "Transverse cervical artery.l"), "thorax": "end"}},
+            "thoracic_duct": {"path": [("thoracic_duct", 0)],
+                              "points": {"ascent": "start", "arch": ("spline_point", "thoracic_duct", 0, 3), "angle": "end"}},
+            "great_auricular": {"path": [("great_auricular", 0)],
+                                "points": {"erb": "start", "scm": ("spline_point", "great_auricular", 0, 2), "lobule": "end"}},
+        },
     },
 
     "parotid": {
@@ -229,6 +264,16 @@ REGIONS = {
                                         "buccal": ("spline_start", "Facial nerve (VII).r", 3),
                                         "cervical": ("spline_start", "Facial nerve (VII).r", 2),
                                         "mmn": "end"}},
+            "eca": {"path": [("External carotid artery.r", 0)],
+                    "points": {"digastric": ("nearest", "Posterior belly of digastric muscle.r"),
+                               "enters": ("first_in", ("External carotid artery.r", 0), ["Parotid gland.r"], 0.002),
+                               "facial_nerve": ("nearest", "Facial nerve (VII).r"), "division": "end"}},
+            "sta": {"path": [("Superficial temporal artery.r", 0)],
+                    "points": {"origin": "start", "transverse_facial": ("nearest_start", "Transverse facial artery.r"),
+                               "zygoma": ("closest", None, ["Zygomatic bone.r", "Temporal bone.r"], (1.578, 1.60)),
+                               "scalp": "end"}},
+            "great_auricular": {"path": [("great_auricular", 0)],
+                                "points": {"erb": "start", "scm": ("spline_point", "great_auricular", 0, 2), "lobule": "end"}},
         },
     },
 
@@ -292,6 +337,15 @@ REGIONS = {
                           "points": {"loop": "start", "ita": ("nearest", "Inferior thyroid artery.r"), "entry": "end"}},
             "rln_left": {"path": [("rln_left", 0)],
                          "points": {"loop": "start", "ita": ("nearest", "Inferior thyroid artery.l"), "entry": "end"}},
+            # Drawn paths: spline 0 is the right side, 1 the left.
+            "superior_thyroid_artery": {"path": [("superior_thyroid_artery", 0)],
+                                        "points": {"origin": "start", "pole": "end"}},
+            "ebsln": {"path": [("ebsln", 0)],
+                      "points": {"origin": "start", "sta": ("nearest", "superior_thyroid_artery"), "cricothyroid": "end"}},
+            "ita": {"path": [("Thyrocervical trunk.r", 0), ("Inferior thyroid artery.r", 0)],
+                    "points": {"trunk": "start", "arch": "end"}},
+            "middle_thyroid_vein": {"path": [("middle_thyroid_vein", 0)],
+                                    "points": {"gland": "start", "ijv": "end"}},
         },
     },
     "larynx": {
@@ -350,6 +404,16 @@ REGIONS = {
         "drawn": {"vocal_folds": 0.0017, "vestibular_folds": 0.0014,
                   "rln_right": 0.0010, "rln_left": 0.0010, "sln": 0.0009, "ebsln": 0.0007,
                   "superior_thyroid_artery": 0.0012, "superior_laryngeal_artery": 0.0007},
+        "courses": {
+            # Drawn paths: spline 0 is the right side, 1 the left.
+            "sln": {"path": [("sln", 0)],
+                    "points": {"vagus": "start", "division": ("spline_point", "sln", 0, 2), "membrane": "end"}},
+            "ebsln": {"path": [("ebsln", 0)], "points": {"origin": "start", "cricothyroid": "end"}},
+            "rln_right": {"path": [("rln_right", 0)], "zmin": 1.43,
+                          "points": {"groove": "start", "entry": "end"}},
+            "rln_left": {"path": [("rln_left", 0)], "zmin": 1.43,
+                         "points": {"groove": "start", "entry": "end"}},
+        },
     },
     "carotid": {
         "mirror": True,  # show both sides (see "both sides" below)
@@ -416,6 +480,29 @@ REGIONS = {
                     "points": {"origin": "start", "sta": ("nearest_start", "superior_thyroid_artery"),
                                "lingual": ("nearest_start", "lingual_artery"), "facial": ("nearest_start", "Facial artery.r"),
                                "occipital": ("nearest_start", "Occipital artery.r"), "parotid": "end"}},
+            "ica": {"path": [("Right common carotid artery", 0), ("Internal carotid artery.r", 0)], "zmin": 1.43, "zmax": 1.565,
+                    "points": {"cca": "start", "bifurcation": ("spline_start", "Internal carotid artery.r", 0),
+                               "sinus": ("spline_point", "Internal carotid artery.r", 0, 1),
+                               "digastric": ("nearest", "Posterior belly of digastric muscle.r"), "skull": "end"}},
+            "vagus": {"path": [("vagus", 0)],
+                      "points": {"top": "start", "sln": ("nearest_start", "sln"), "sheath": "end"}},
+            "hypoglossal": {"path": [("hypoglossal", 0)],
+                            "points": {"between": "start",
+                                       "eca": ("nearest", "External carotid artery.r"),
+                                       "ansa": ("nearest_start", "ansa_cervicalis"), "hyoglossus": "end"}},
+            "ansa_cervicalis": {"path": [("ansa_cervicalis", 0)],
+                                "points": {"root": "start", "loop": "end"}},
+            "accessory": {"path": [("Accessory nerve (XI).r", 0, 0, 14), ("Accessory nerve (XI).r", 2)], "zmin": 1.43,
+                          "points": {"foramen": ("last_in", ("Accessory nerve (XI).r", 0), ["Temporal bone.r", "Occipital bone"], 0.002),
+                                     "ijv": ("nearest", "ijv"), "posterior": "end"}},
+            "sln": {"path": [("sln", 0)],
+                    "points": {"vagus": "start", "ica": ("nearest", "Internal carotid artery.r"),
+                               "division": ("spline_point", "sln", 0, 2), "membrane": "end"}},
+            "ebsln": {"path": [("ebsln", 0)],
+                      "points": {"origin": "start", "sta": ("nearest", "superior_thyroid_artery"), "cricothyroid": "end"}},
+            "superior_thyroid_artery": {"path": [("superior_thyroid_artery", 0)],
+                                        "points": {"origin": "start", "sla": ("nearest_start", "superior_laryngeal_artery"),
+                                                   "pole": "end"}},
         },
         "drawn": {"ijv": 0.0055, "vagus": 0.0012, "hypoglossal": 0.0010, "facial_vein": 0.0022,
                   "lingual_artery": 0.0011, "ansa_cervicalis": 0.0006, "superior_thyroid_artery": 0.0012,
@@ -960,8 +1047,16 @@ REGIONS = {
                          "Internal carotid artery.r", "External carotid artery.l", "External carotid artery.r"],
             "rp_nodes": ["Retropharyngeal nodes.l", "Retropharyngeal nodes.r"],
             "nodes_ii": ["Jugulodigastric node.l", "Jugulodigastric node.r", "Lateral superior jugular node.l", "Lateral superior jugular node.r"],
+            # ---- lower cranial nerves in the poststyloid (carotid) compartment ----
+            # IX to its branch for the tongue (spline 0 to point 15, then spline 1); XI to its
+            # branch point in sternocleidomastoid; XII only above its loop, which Z-Anatomy
+            # places medial to the external carotid (the loop is redrawn in the carotid region).
+            "glossopharyngeal": [("Glossopharyngeal nerve (IX).r", [(0, 0, 16), (1, 0)]),
+                                 ("Glossopharyngeal nerve (IX).l", [(0, 0, 16), (1, 0)])],
+            "accessory": [("Accessory nerve (XI).r", [(0, 0, 15)]), ("Accessory nerve (XI).l", [(0, 0, 15)])],
+            "hypoglossal": [("Hypoglossal nerve (XII).r", [(0, 0, 15)]), ("Hypoglossal nerve (XII).l", [(0, 0, 15)])],
         },
-        "curve_scale": {"carotids": 1.0},
+        "curve_scale": {"carotids": 1.0, "glossopharyngeal": 1.6, "accessory": 1.6, "hypoglossal": 1.6},
         "bones": {"mandible", "skull_base", "hyoid", "larynx", "vertebrae"},
         "clip": {"Occipital bone": (0, 1.60), "Oesophagus": (1.40, 9), "Trachea": (1.40, 9),
                  "Left common carotid artery": (1.40, 9), "Right common carotid artery": (1.40, 9),
@@ -970,7 +1065,41 @@ REGIONS = {
                  "Sternocleidomastoid muscle.l": (1.40, 9), "Sternocleidomastoid muscle.r": (1.40, 9),
                  "Longus colli muscle.l": (1.40, 9), "Longus colli muscle.r": (1.40, 9)},
         # The internal jugular veins and vagus nerves as redrawn in the carotid region (Z-Anatomy puts them medial to the carotids).
-        "drawn": {"ijv": 0.0055, "vagus": 0.0012},
+        # The sympathetic trunks and the routes of spread of infection (right side) are drawn for this app.
+        "drawn": {"ijv": 0.0055, "vagus": 0.0012, "sympathetic": 0.0012,
+                  "route_odontogenic": 0.0011, "route_tonsillar": 0.0011,
+                  "route_retropharyngeal": 0.0011, "route_danger": 0.0011},
+        # Courses on the right side; drawn paths with both sides have the right as spline 0.
+        "courses": {
+            "carotids": {"path": [("Right common carotid artery", 0), ("Internal carotid artery.r", 0)], "zmin": 1.40, "zmax": 1.585,
+                         "points": {"cca": "start", "bifurcation": ("spline_start", "Internal carotid artery.r", 0),
+                                    "tonsil": ("nearest", "Palatine tonsil.r"), "skull": "end"}},
+            "ijv": {"path": [("ijv", 0)],
+                    "points": {"top": "start", "nodes": ("nearest", "Jugulodigastric node.r"), "low": "end"}},
+            "vagus": {"path": [("vagus", 0)], "points": {"top": "start", "low": "end"}},
+            "glossopharyngeal": {"path": [("Glossopharyngeal nerve (IX).r", 0, 0, 15), ("Glossopharyngeal nerve (IX).r", 1)],
+                                 "points": {"foramen": ("last_in", ("Glossopharyngeal nerve (IX).r", 0), ["Temporal bone.r", "Occipital bone"], 0.002),
+                                            "stylopharyngeus": ("nearest", "Stylopharyngeus muscle.r"), "tongue": "end"}},
+            "accessory": {"path": [("Accessory nerve (XI).r", 0, 0, 14)],
+                          "points": {"foramen": ("last_in", ("Accessory nerve (XI).r", 0), ["Temporal bone.r", "Occipital bone"], 0.002),
+                                     "atlas": ("nearest", "Atlas (C1)"), "scm": "end"}},
+            "hypoglossal": {"path": [("Hypoglossal nerve (XII).r", 0, 0, 14)],
+                            "points": {"canal": ("last_in", ("Hypoglossal nerve (XII).r", 0), ["Occipital bone"], 0.002), "low": "end"}},
+            "sympathetic": {"path": [("sympathetic", 0)],
+                            "points": {"top": "start", "scg": ("spline_point", "sympathetic", 0, 1),
+                                       "mcg": ("spline_point", "sympathetic", 0, 9), "low": "end"}},
+            "route_odontogenic": {"path": [("route_odontogenic", 0)],
+                                  "points": {"molar": "start", "mylohyoid": ("spline_point", "route_odontogenic", 0, 1),
+                                             "submandibular": ("spline_point", "route_odontogenic", 0, 2), "pps": "end"}},
+            "route_tonsillar": {"path": [("route_tonsillar", 0)],
+                                "points": {"tonsil": "start", "pps": ("spline_point", "route_tonsillar", 0, 1),
+                                           "carotid": ("spline_point", "route_tonsillar", 0, 3), "mediastinum": "end"}},
+            "route_retropharyngeal": {"path": [("route_retropharyngeal", 0)],
+                                      "points": {"node": "start", "space": ("spline_point", "route_retropharyngeal", 0, 1),
+                                                 "mediastinum": "end"}},
+            "route_danger": {"path": [("route_danger", 0)],
+                             "points": {"retro": "start", "alar": ("spline_point", "route_danger", 0, 1), "mediastinum": "end"}},
+        },
         # Fascial spaces (both sides unless noted). See build_space().
         "spaces": {
             "s_parapharyngeal": {"type": "pps"},
@@ -1692,6 +1821,110 @@ def drawn_sphenoid_drainage(L):
             Vector((-0.0042, -0.0430, 1.5925)), Vector((-0.0045, -0.0465, 1.5880))]
 
 
+# ---------- drawn paths for the deep neck: sympathetic trunks and routes of spread ----------
+
+DN_CACHE = {}
+
+
+def dn_verts(*names):
+    out = []
+    for n in names:
+        if n not in DN_CACHE:
+            o = D[n]
+            me = o.evaluated_get(deps).to_mesh()
+            DN_CACHE[n] = [o.matrix_world @ v.co for v in me.vertices]
+        out += DN_CACHE[n]
+    return out
+
+
+def dn_slab(verts, z, half=0.0025):
+    return [v for v in verts if abs(v.z - z) < half]
+
+
+def drawn_sympathetic(L):
+    """On the front of longus capitis and colli, behind the carotid sheath, from
+    the superior cervical ganglion (C2-C3) down to the root of the neck."""
+    out = []
+    for sx in (-1, 1):
+        s = "r" if sx < 0 else "l"
+        lon = dn_verts("Longus capitis muscle." + s, "Longus colli muscle." + s)
+        pts = []
+        for k in range(15):
+            z = 1.569 - 0.012 * k
+            sl = dn_slab(lon, z)
+            front = min(v.y for v in sl)
+            strip = [v for v in sl if v.y < front + 0.003]
+            x_in, x_out = min(abs(v.x) for v in strip), max(abs(v.x) for v in strip)
+            pts.append(Vector((sx * (x_in + 0.7 * (x_out - x_in)), front - 0.0012, z)))
+        out.append(pts)
+    return out
+
+
+def rp_mid(z):
+    """Front-to-back position of the retropharyngeal/danger interface at height z (as in rp_rings)."""
+    phar = dn_verts("Superior pharyngeal constrictor.l", "Superior pharyngeal constrictor.r",
+                    "Middle pharyngeal constrictor.l", "Middle pharyngeal constrictor.r",
+                    "Inferior pharyngeal constrictor.l", "Inferior pharyngeal constrictor.r",
+                    "Nasopharynx", "Oropharynx", "Laryngopharynx", "Oesophagus")
+    lon = dn_verts("Longus colli muscle.l", "Longus colli muscle.r", "Longus capitis muscle.l", "Longus capitis muscle.r")
+    P = [v for v in dn_slab(phar, z) if abs(v.x) < 0.012]
+    return (max(v.y for v in P) + min(v.y for v in dn_slab(lon, z))) / 2
+
+
+def carotid_sheath(z):
+    """Between the right carotid artery and the (redrawn) internal jugular vein at height z."""
+    ijv = [Vector(p) for p in CAROTID_IJV]
+    art = curve_points("Right common carotid artery", 0) + curve_points("Internal carotid artery.r", 0)[1:7]
+    a = Vector((along_z(art, z, 0), along_z(art, z, 1), z))
+    v = Vector((along_z(ijv, z, 0), along_z(ijv, z, 1), z))
+    return (a + v) / 2 + Vector((0, 0.003, 0))  # the vagus lies behind, between them
+
+
+def drawn_route_odontogenic(L):
+    """From the roots of the lower second molar, which lie below the mylohyoid line,
+    through the lingual cortex into the submandibular space, then back along the
+    gland and styloglossus into the parapharyngeal space."""
+    tooth = dn_verts("Lower second molar tooth.r")
+    apex = min(tooth, key=lambda v: v.z)
+    jaw = [v for v in dn_verts("Mandible") if abs(v.y - apex.y) < 0.003 and abs(v.z - apex.z) < 0.003 and v.x < 0]
+    inner = max(v.x for v in jaw)  # lingual (medial) surface on the right
+    gland = dn_verts("Submandibular gland.r")
+    g = sum(gland, Vector()) / len(gland)
+    return [apex + Vector((0.001, 0, 0.002)), Vector((inner + 0.0025, apex.y, apex.z - 0.002)),
+            g + Vector((0.002, 0.007, -0.005)), Vector((-0.024, -0.020, 1.514)), Vector((-0.0235, -0.014, 1.526)),
+            Vector((-0.0225, -0.017, 1.540))]
+
+
+def drawn_route_tonsillar(L):
+    """From the tonsil through the superior constrictor into the parapharyngeal
+    space, back into the carotid space and down the carotid sheath."""
+    tonsil = dn_verts("Palatine tonsil.r")
+    t = sum(tonsil, Vector()) / len(tonsil)
+    pts = [t, Vector((-0.026, -0.014, 1.548)), Vector((-0.032, -0.006, 1.537))]
+    pts += [carotid_sheath(z) for z in (1.522, 1.500, 1.478, 1.456, 1.434, 1.412)]
+    return pts
+
+
+def drawn_route_retropharyngeal(L):
+    """From a suppurating lateral retropharyngeal (Rouvière) node into the
+    retropharyngeal space and down, in front of the alar fascia, to the
+    superior mediastinum."""
+    node = dn_verts("Retropharyngeal nodes.r")
+    n = sum(node, Vector()) / len(node)
+    return [n] + [Vector((-0.005, rp_mid(z) - 0.0016, z)) for z in (1.535, 1.515, 1.49, 1.465, 1.44, 1.415, 1.402)]
+
+
+def drawn_route_danger(L):
+    """Through the alar fascia from the retropharyngeal space into the danger
+    space, which runs on to the diaphragm."""
+    return [Vector((0.004, rp_mid(1.562) - 0.0016, 1.562))] + \
+        [Vector((0.004, rp_mid(z) + 0.0015, z)) for z in (1.550, 1.525, 1.50, 1.475, 1.45, 1.425, 1.402)]
+
+
+DRAWN.update({"sympathetic": drawn_sympathetic, "route_odontogenic": drawn_route_odontogenic,
+              "route_tonsillar": drawn_route_tonsillar, "route_retropharyngeal": drawn_route_retropharyngeal,
+              "route_danger": drawn_route_danger})
+
 DRAWN.update({"frontal_drainage": drawn_frontal_drainage, "maxillary_drainage": drawn_maxillary_drainage,
               "sphenoid_drainage": drawn_sphenoid_drainage})
 
@@ -2310,12 +2543,15 @@ for sid, c in cfg.get("courses", {}).items():
     path = []
     for piece in c["path"]:
         name, i = piece[:2]
-        pts = spline_world(name, i)[piece[2] if len(piece) > 2 else 0:]
+        # Optional first and last (inclusive) point indices take part of a spline.
+        pts = spline_world(name, i)[piece[2] if len(piece) > 2 else 0:piece[3] + 1 if len(piece) > 3 else None]
         if path and (pts[0] - path[-1]).length > (pts[-1] - path[-1]).length:
             pts = pts[::-1]  # join each piece end to end
         path += pts[1:] if path and (pts[0] - path[-1]).length < 1e-4 else pts
     if "zmin" in c:
         path = [p for p in path if p.z >= c["zmin"]]
+    if "zmax" in c:
+        path = [p for p in path if p.z <= c["zmax"]]
     courses[sid] = {"path": [app_point(p) for p in path],
                     "points": {k: app_point(course_point(v, path)) for k, v in c["points"].items()}}
     print("course", sid, len(path), "points", list(courses[sid]["points"]))

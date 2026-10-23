@@ -19,11 +19,15 @@ Modules so far:
 
 Every region shows **both sides**. Regions modelled on one side are mirrored across the midline at export, so selecting a structure highlights it on both sides; courses, pins and notes describe the traced side. **Double-click** (or double-tap) a structure to hide it, and use "Show hidden" to bring hidden structures back. The 3D view has baked ambient occlusion and soft shadows for depth.
 
-Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+Nerves and vessels of surgical importance can be **traced**: pick one from "Trace a course" at the top of the Structures tab, or open it and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches and danger points, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+- **Submandibular triangle:** the marginal mandibular, lingual and hypoglossal nerves, and the facial artery.
+- **Parotid:** the facial nerve, the external carotid and superficial temporal arteries, and the great auricular nerve.
+- **Lateral neck:** the accessory nerve across the posterior triangle, the internal jugular vein, vagus, phrenic and great auricular nerves, and the thoracic duct.
+- **Thyroid:** both recurrent laryngeal nerves, the external branch of the superior laryngeal nerve, the superior and inferior thyroid arteries, and the middle thyroid vein.
+- **Larynx:** the superior laryngeal nerve and its external branch, and both recurrent laryngeal nerves.
+- **Carotid triangle:** the internal and external carotid arteries, the vagus, the hypoglossal loop and ansa cervicalis, the accessory and superior laryngeal nerves, and the superior thyroid artery.
+- **Deep neck spaces:** the carotid artery behind the tonsil, the internal jugular vein, the vagus, glossopharyngeal, accessory and hypoglossal nerves and the sympathetic trunk in the poststyloid compartment, and four routes of spread of infection (odontogenic, tonsillar, retropharyngeal and danger space) into the mediastinum.
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
-- **Parotid:** the facial nerve.
-- **Carotid triangle:** the external carotid and its branches.
-- **Thyroid:** both recurrent laryngeal nerves.
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
@@ -33,11 +37,41 @@ Every module has a **CT / MRI** tab that slices the 3D model at any level (see b
 
 > For education only. Check every surgical detail against current atlases and senior guidance before using it in clinical practice.
 
-## Run it
+Also: **search** every region at once (<kbd>/</kbd> or Ctrl-K), links that open a given structure (`#parotid/facial_trunk`), a light/dark/automatic **theme**, a **quick guide** (<kbd>?</kbd>), and full **offline** use.
+
+## Install it
+
+Each push to `main` builds the apps and publishes them on the [Releases page](https://github.com/mohammedhanafi2013mh-oss/head-and-neck-surgical-anatomy/releases/latest):
+
+| Device | How |
+|---|---|
+| **Android** | Download `HN-Anatomy-…-android.apk` on the phone and open it; allow installs from the browser when asked. New versions install over the old one. |
+| **Windows** | `…-windows-setup.exe` installs it (Start menu and desktop shortcut); `…-windows-portable.exe` runs without installing. The app isn't code-signed, so SmartScreen may warn: **More info → Run anyway**. |
+| **iPhone / iPad** | Open the web app (GitHub Pages: `https://mohammedhanafi2013mh-oss.github.io/head-and-neck-surgical-anatomy/`) in Safari → **Share → Add to Home Screen**. Then open the quick guide and tap **Download all regions for offline use**. |
+| **Any browser** | The same web app installs from Chrome or Edge (install icon in the address bar, or "Install app" in the quick guide). |
+| **No install** | Unzip `…-web.zip` (or this repository) and open `index.html`. It works offline from the files, with no server. |
+
+GitHub Pages must be turned on once: **Settings → Pages → Source: GitHub Actions**. iPhone apps can only be built and signed on a Mac with an Apple developer account, so iOS uses the installable web app, which works offline like an app.
+
+## Run it from source
 
 Open `index.html` in a modern browser. It works offline: there's no build step and no server, and Three.js is bundled in `vendor/`.
 
 To try it on a phone, serve the folder (for example `python3 -m http.server`) and open it from the phone's browser on the same network.
+
+## Tests and app builds
+
+```
+npm ci                      # Node 22
+npm test                    # builds dist/web, then runs the usability tests
+npm run desktop             # runs the desktop app
+npm run dist:win            # Windows installer and portable exe (dist/desktop)
+npm run android             # copies the web app into an Android project (after: npx cap add android)
+```
+
+`tests/usability.mjs` drives the app in headless Chromium the way a user would: it opens every region, every tab, structures and shared links, traces a course, hides and restores structures, searches across regions, steps through the surgery, slices CT, answers the quiz, uses the guide, theme and keyboard, checks a phone screen, and finally downloads everything and reopens regions with the network off. It writes `tests/report/report.html` with timings and screenshots. The GitHub workflow (`.github/workflows/apps.yml`) runs it on every pull request, alongside the Android and Windows builds.
+
+The Android build is signed with `packaging/android-debug.keystore`, a public debug key, so each new APK updates the installed app. It is fine for sideloading but not for the Play Store, which needs a private release key kept in repository secrets.
 
 ## What's in the submandibular module
 
@@ -136,8 +170,9 @@ To try it on a phone, serve the folder (for example `python3 -m http.server`) an
   - Whole length of the neck: retropharyngeal, danger, prevertebral, carotid and visceral.
   - The parapharyngeal space is drawn from anatomical corner points. The constrictors in the source model flare too far laterally for a measured outline.
   - The retropharyngeal and danger spaces are thin layers at the pharynx–longus interface, where the source model has the two touching.
-  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, and the retropharyngeal and level II nodes.
-- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae.
+  - Around them: the skull base, mandible, hyoid, larynx, C1–C7, the investing fascia (optional layer), the muscles that bound the spaces, the pharynx, glands, carotids, the redrawn internal jugular vein and vagus, IX, XI and XII above the hyoid, a drawn sympathetic trunk, and the retropharyngeal and level II nodes.
+  - Four drawn **routes of spread** (orange): odontogenic (lower molars → submandibular → parapharyngeal), tonsillar (peritonsillar → parapharyngeal → carotid sheath → mediastinum), retropharyngeal (Rouvière node → upper mediastinum) and danger space (through the alar fascia → towards the diaphragm). They are schematic paths, not measured anatomy.
+- **Structures**: notes on every space and fascial layer (boundaries, contents, how infection spreads and how it is drained), and on the investing, buccopharyngeal, alar, prevertebral and buccal fasciae. Traced courses for the carotid, jugular, lower cranial nerves, sympathetic trunk and the four routes of spread.
 - **CT / MRI**: the spaces are labelled on the simulated slices, which is how they are usually seen in practice.
 - **Surgery**: an 8-step transcervical drainage of a parapharyngeal and submandibular abscess.
 - **Figures**: original diagrams of an axial section at the oropharynx and a midline sagittal view of how far the retropharyngeal, danger and prevertebral spaces extend. **Quiz**: six questions.
@@ -257,8 +292,15 @@ data/scans/                    CT and MRI slice sprite sheets and manifest (gene
 tools/export_vhp_scans.py      exports the Visible Human scans for the app
 tools/export_zanatomy.py       exports each region's meshes from the Z-Anatomy Blender file
 js/figures.js                  inline SVG diagrams
-js/app.js                      UI: tabs, cards, walkthrough, quiz
+js/app.js                      UI: tabs, cards, walkthrough, quiz, search, theme, guide, offline
 vendor/three.min.js            Three.js r159 (MIT)
+manifest.webmanifest, sw.js    installable web app and offline cache
+icons/                         app icons (icon.svg is the source)
+tools/build_web.mjs            copies the web app to dist/web and lists its files for offline download
+tests/usability.mjs            usability tests and report
+desktop/main.js                desktop app (Electron) around dist/web
+capacitor.config.json          Android app (Capacitor) around dist/web
+.github/workflows/apps.yml     tests, Android and Windows builds, releases, GitHub Pages
 ```
 
 ## Adding a region
@@ -301,4 +343,4 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 - More regions: posterior triangle, oral cavity and tongue, temporal bone
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
-- Installable app with offline caching; later, packaging for the app stores
+- App store releases (Play Store with a private signing key; iOS needs a Mac and an Apple developer account)

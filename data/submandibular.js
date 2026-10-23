@@ -111,6 +111,10 @@ window.ANATOMY.regions.submandibular = {
       name: "Marginal mandibular nerve",
       aka: "Marginal mandibular branch of the facial nerve (CN VII)",
       layer: "nerve",
+      course: [
+        { key: "parotid", label: "Leaves the lower parotid", text: "Behind and below the angle of the mandible, deep to platysma." },
+        { key: "vessels", label: "Crosses the facial vessels", text: "Superficial to the facial vein and artery at the antegonial notch, then up to the lower-lip depressors. Raise the fascia low (Hayes Martin) to protect it." }
+      ],
       summary:
         "Leaves the lower pole of the parotid gland near the angle of the mandible and runs forward deep to platysma, superficial to the facial vessels. It supplies depressor anguli oris, depressor labii inferioris and mentalis.",
       relations: [
@@ -142,6 +146,12 @@ window.ANATOMY.regions.submandibular = {
       name: "Lingual nerve",
       aka: "Branch of the mandibular division of the trigeminal nerve (CN V3)",
       layer: "nerve",
+      course: [
+        { key: "itf", label: "Enters from the infratemporal fossa", text: "Between the medial pterygoid and the ramus." },
+        { key: "molar", label: "Beside the third molar", text: "Just under the mucosa on the lingual side of the mandible." },
+        { key: "duct", label: "Loops under the duct", text: "Passes lateral to, then below and medial to, the submandibular duct; the ganglion hangs from it here. Divide the ganglion branches, not the nerve." },
+        { key: "tongue", label: "To the tongue", text: "General sensation to the anterior two-thirds, with chorda tympani taste fibres." }
+      ],
       summary:
         "Carries general sensation from the anterior two-thirds of the tongue and the floor of the mouth. It also carries chorda tympani fibres: taste from the anterior two-thirds of the tongue and preganglionic secretomotor fibres to the submandibular ganglion.",
       relations: [
@@ -192,6 +202,11 @@ window.ANATOMY.regions.submandibular = {
       name: "Hypoglossal nerve",
       aka: "Cranial nerve XII",
       layer: "nerve",
+      course: [
+        { key: "canal", label: "From the skull base", text: "Through the hypoglossal canal." },
+        { key: "tendon", label: "Below the digastric tendon", text: "On hyoglossus, deep to the gland, below the duct and lingual nerve, with the ranine veins." },
+        { key: "tongue", label: "Into the tongue", text: "Supplies all its muscles except palatoglossus." }
+      ],
       summary:
         "Motor nerve to all intrinsic muscles of the tongue and all extrinsic muscles except palatoglossus. In the submandibular triangle it runs forward on the lateral surface of hyoglossus.",
       relations: [
@@ -239,6 +254,12 @@ window.ANATOMY.regions.submandibular = {
       id: "facial_artery",
       name: "Facial artery",
       layer: "artery",
+      course: [
+        { key: "origin", label: "From the external carotid", text: "Just above the lingual artery, deep to the posterior belly of digastric." },
+        { key: "gland", label: "Grooves the back of the gland", text: "Ligate it here, and again at the mandible, in gland excision." },
+        { key: "mandible", label: "Over the lower border of the mandible", text: "At the front of masseter, with the vein behind it; the marginal mandibular nerve crosses superficially." },
+        { key: "face", label: "Into the face", text: "Tortuous, toward the angle of the mouth." }
+      ],
       summary:
         "Arises from the external carotid artery just above the greater horn of the hyoid, often in a common trunk with the lingual artery (linguofacial trunk). It passes deep to the posterior belly of digastric and stylohyoid, grooves the posterior and upper part of the gland, then hooks round the lower border of the mandible at the anterior border of masseter onto the face.",
       relations: [
