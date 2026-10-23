@@ -6,7 +6,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.carotid = {
   id: "carotid",
   title: "Carotid triangle",
-  subtitle: "Carotid bifurcation, jugular vein and the nerves around them, right side",
+  subtitle: "Carotid bifurcation, jugular vein and the nerves around them, both sides (courses traced on the right)",
 
   overview: {
     intro:

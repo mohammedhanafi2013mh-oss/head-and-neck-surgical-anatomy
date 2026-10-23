@@ -7,7 +7,7 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.regions.submandibular = {
   id: "submandibular",
   title: "Submandibular region",
-  subtitle: "Submandibular (digastric) triangle, level IB",
+  subtitle: "Submandibular (digastric) triangle, level IB, both sides",
 
   overview: {
     intro:

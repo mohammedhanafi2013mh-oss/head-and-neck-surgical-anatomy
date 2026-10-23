@@ -19,6 +19,7 @@ Blender coordinates are metres, Z up, front = -Y; the patient's left is +X.
 
 import base64
 import json
+import os
 import struct
 import sys
 from collections import defaultdict
@@ -34,6 +35,7 @@ LOWER_TEETH = ["Lower first molar tooth.r", "Lower second molar tooth.r",
 
 REGIONS = {
     "submandibular": {
+        "mirror": True,  # show both sides (see "both sides" below)
         "centre_object": "Submandibular gland.r",
         # app structure id -> Blender object names
         "structures": {
@@ -80,6 +82,7 @@ REGIONS = {
     },
 
     "lateral_neck": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Near the carotid bifurcation on the left.
         "centre": (0.035, 0.010, 1.470),
         "structures": {
@@ -152,6 +155,7 @@ REGIONS = {
     },
 
     "parotid": {
+        "mirror": True,  # show both sides (see "both sides" below)
         "centre_object": "Parotid gland.r",
         "structures": {
             "mandible": ["Mandible"] + LOWER_TEETH,
@@ -348,6 +352,7 @@ REGIONS = {
                   "superior_thyroid_artery": 0.0012, "superior_laryngeal_artery": 0.0007},
     },
     "carotid": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right carotid bifurcation.
         "centre": (-0.030, -0.004, 1.505),
         "landmarks": "thyroid",
@@ -417,6 +422,7 @@ REGIONS = {
                   "superior_laryngeal_artery": 0.0007, "sln": 0.0009, "ebsln": 0.0007},
     },
     "skull_base": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Midline, at the level of the petrous temporal bones.
         "centre": (0.0, -0.005, 1.575),
         "fill_clipped": True,  # close meshes cut by "clip", so cross-sections cap them correctly
@@ -552,6 +558,7 @@ REGIONS = {
         },
     },
     "infratemporal": {
+        "mirror": True,  # show both sides (see "both sides" below)
         # Right infratemporal fossa, between the ramus and the lateral pterygoid plate.
         "centre": (-0.036, -0.020, 1.570),
         "fill_clipped": True,
@@ -675,6 +682,241 @@ REGIONS = {
             "s_itf": {"type": "hull", "objects": ["Medial pterygoid muscle.r", "Inferior head of lateral pterygoid muscle.r",
                                                    "Superior head of lateral pterygoid muscle.r", "Sphenomandibular ligament.r"],
                       "inflate": 0.0015},
+        },
+    },
+    "pterygopalatine": {
+        "mirror": True,  # show both sides (see "both sides" below)
+        # Right pterygopalatine fossa, between the pterygoid process and the back of the maxilla.
+        "centre": (-0.016, -0.036, 1.572),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "maxilla": ["Maxilla.r", "Upper first molar tooth.r", "Upper second molar tooth.r"],
+            "palatine": ["Palatine bone.r"],
+            "sphenoid": ["Sphenoid bone"],
+            "vomer": ["Vomer"],
+            "ethmoid_conchae": ["Ethmoid bone", "Inferior nasal concha bone.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            # ---- soft tissue ----
+            "nasal_mucosa": ["Mucosa of nasal cavity"],
+            "auditory_tube": ["Auditory tube.r"],
+            "pterygoids": ["Medial pterygoid muscle.r", "Inferior head of lateral pterygoid muscle.r",
+                           "Superior head of lateral pterygoid muscle.r"],
+            # ---- nerves ----
+            "trigeminal": [("Trigeminal nerve (V).r", [(1, 0)])],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "maxillary_artery": ["Maxillary artery.r"],
+            "infraorbital_artery": ["Infra-orbital artery.r"],
+            "psa": ["Posterior superior alveolar artery.r"],
+            "descending_palatine": ["Descending palatine artery.r", "Greater palatine artery.r"],
+            "sphenopalatine": ["Posterior lateral nasal branches of sphenopalatine artery..r",
+                               "Posterior septal branches of sphenopalatine artery.r"],
+            "pterygoid_canal_artery": ["Artery of pterygoid canal.r"],
+            "ica": ["Internal carotid artery.r"],
+        },
+        "curve_scale": {"trigeminal": 2.4, "v2": 2.2, "maxillary_artery": 2.0, "infraorbital_artery": 1.3, "psa": 1.2,
+                        "descending_palatine": 1.3, "sphenopalatine": 1.1, "pterygoid_canal_artery": 1.1},
+        "bones": {"maxilla", "palatine", "sphenoid", "vomer", "ethmoid_conchae", "zygomatic"},
+        "clip": {"Sphenoid bone": (1.53, 1.61), "Internal carotid artery.r": (1.56, 1.60),
+                 "Maxilla.r": (1.53, 9), "Medial pterygoid muscle.r": (1.545, 9)},
+        "side": "r",
+        # Nerves Z-Anatomy lacks. See drawn_ppg() and below.
+        "drawn": {"ppg": 0.0018, "ganglionic_branches": 0.0006, "vidian": 0.0008, "greater_palatine_n": 0.0008,
+                  "nasopalatine": 0.0007, "psa_nerve": 0.0007, "zygomatic_nerve": 0.0007, "pharyngeal_nerve": 0.0006},
+        "points": {
+            "foramen_rotundum": ("anchor", "Foramen rotundum.j"),
+            "pterygoid_canal": ("anchor", "Pterygoid canal.j"),
+            "pterygomaxillary_fissure": ("spline_end", "Maxillary artery.r", 0),
+            "sphenopalatine_foramen": ("spline_start", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "greater_palatine_foramen": ("spline_start", "Descending palatine artery.r", 0),
+            "incisive_canal": ("spline_end", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "inferior_orbital_fissure": ("spline_point", "Maxillary nerve.r", 0, 7),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "v2": {"path": [("Maxillary nerve.r", 0)],
+                   "points": {"ganglion": "start", "rotundum": "@foramen_rotundum", "ppg": ("nearest", "ppg"),
+                              "iof": "@inferior_orbital_fissure", "foramen": "@infraorbital_foramen", "face": "end"}},
+            "vidian": {"path": [("vidian", 0)],
+                       "points": {"lacerum": "start", "canal": "@pterygoid_canal", "ganglion": "end"}},
+            "greater_palatine_n": {"path": [("greater_palatine_n", 0)],
+                                   "points": {"ganglion": "start", "foramen": "@greater_palatine_foramen", "palate": "end"}},
+            "nasopalatine": {"path": [("nasopalatine", 0)],
+                             "points": {"ganglion": "start", "spf": "@sphenopalatine_foramen", "incisive": "end"}},
+            "infraorbital_artery": {"path": [("Maxillary artery.r", 0), ("Infra-orbital artery.r", 0)],
+                                    "points": {"origin": "start", "ptm": "@pterygomaxillary_fissure", "foramen": "end"}},
+        },
+    },
+    "orbit": {
+        "mirror": True,  # show both sides (see "both sides" below)
+        # Right orbit, centred between the apex and the globe.
+        "centre": (-0.026, -0.055, 1.597),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "frontal": ["Frontal bone"],
+            "sphenoid": ["Sphenoid bone"],
+            "ethmoid": ["Ethmoid bone"],
+            "maxilla": ["Maxilla.r"],
+            "zygomatic": ["Zygomatic bone.r"],
+            "lacrimal_bone": ["Lacrimal bone.r", "Nasal bone.r"],
+            # ---- eye and lids ----
+            "globe": ["Sclera.r", "Cornea.r"],
+            "inner_eye": ["Iris.r", "Lens.r", "Retina.r"],
+            "tarsi": ["Superior tarsus.r", "Inferior tarsus.r"],
+            "lockwood": ["Suspensory ligament of eyeball.r"],
+            # ---- muscles ----
+            "levator": ["Levator palpebrae superioris.r"],
+            "superior_rectus": ["Superior rectus muscle.r"],
+            "inferior_rectus": ["Inferior rectus muscle.r"],
+            "medial_rectus": ["Medial rectus muscle.r"],
+            "lateral_rectus": ["Lateral rectus muscle.r"],
+            "superior_oblique": ["Superior oblique muscle.r", "Trochlea of superior oblique muscle.r"],
+            "inferior_oblique": ["Inferior oblique muscle.r"],
+            "annulus": ["Common tendinous ring.r"],
+            # ---- lacrimal apparatus ----
+            "lacrimal_gland": ["Lacrimal gland.r"],
+            "lacrimal_drainage": ["Lacrimal canaliculus.r", "Ampulla of lacrimal canaliculus.r", "Lacrimal sac.r", "Nasolacrimal duct.r"],
+            # ---- nerves ----
+            "cn2": ["Optic nerve (II).r"],
+            "cn3": ["Oculomotor nerve (III).r"],
+            "cn4": ["Trochlear nerve (IV).r"],
+            "cn6": ["Abducens nerve (VI).r"],
+            "v1": ["Ophthalmic nerve.r"],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "ophthalmic_artery": ["Ophthalmic artery.r"],
+            "ophthalmic_branches": [("Central retinal artery.r", [(0, 0)]), "Long posterior ciliary arteries.r", "Short posterior ciliary arteries.r"],
+            "lacrimal_artery": ["Lacrimal artery.r"],
+            "supraorbital_artery": ["Supra-orbital artery.r", "Supratrochlear artery.r"],
+            "ethmoidal_arteries": ["Anterior ethmoidal artery.r", "Posterior ethmoidal artery.r"],
+            "ica": ["Internal carotid artery.r"],
+            # ---- veins ----
+            "ophthalmic_veins": ["Superior ophthalmic vein.r", "Inferior ophthalmic vein.r"],
+            "cavernous_sinus": ["Cavernous sinus.r"],
+        },
+        "curve_scale": {"cn2": 3.0, "cn3": 1.6, "cn4": 1.2, "cn6": 1.4, "v1": 1.6, "v2": 1.8, "ophthalmic_artery": 1.6,
+                        "ophthalmic_branches": 0.7, "lacrimal_artery": 1.0, "supraorbital_artery": 1.0,
+                        "ethmoidal_arteries": 1.0, "ophthalmic_veins": 2.2},
+        "bones": {"frontal", "sphenoid", "ethmoid", "maxilla", "zygomatic", "lacrimal_bone"},
+        "clip": {"Frontal bone": (0, 1.645), "Maxilla.r": (1.555, 9), "Sphenoid bone": (1.565, 9),
+                 "Internal carotid artery.r": (1.585, 1.62), "Oculomotor nerve (III).r": (1.57, 9)},
+        "side": "r",
+        # Branches Z-Anatomy lacks. See drawn_nasociliary() and below.
+        "drawn": {"nasociliary": 0.0007, "lacrimal_nerve": 0.0007, "ciliary_ganglion": 0.0013,
+                  "ciliary_roots": 0.0005, "short_ciliary": 0.0004},
+        "points": {
+            "optic_canal": ("anchor", "Optic canal.j"),
+            "superior_orbital_fissure": ("closest", ("Oculomotor nerve (III).r", 0), ["Sphenoid bone"], (1.58, 1.61), -0.020),
+            "supraorbital_notch": ("anchor", "(Supra-orbital notch).j"),
+            "trochlea": ("anchor", "Trochlear fovea.j"),
+            "anterior_ethmoidal_foramen": ("spline_start", "Anterior ethmoidal artery.r", 0),
+            "posterior_ethmoidal_foramen": ("spline_end", "Posterior ethmoidal artery.r", 0),
+            "inferior_orbital_fissure": ("spline_point", "Maxillary nerve.r", 0, 7),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "cn2": {"path": [("Optic nerve (II).r", 0)],
+                    "points": {"chiasm": "start", "canal": "@optic_canal", "globe": "end"}},
+            "cn3": {"path": [("Oculomotor nerve (III).r", 0)], "zmin": 1.57,
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure",
+                               "inferior": ("spline_start", "Oculomotor nerve (III).r", 2),
+                               "ciliary": ("nearest", "ciliary_ganglion"), "superior": "end"}},
+            "cn4": {"path": [("Trochlear nerve (IV).r", 0)],
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure", "muscle": "end"}},
+            "cn6": {"path": [("Abducens nerve (VI).r", 0)],
+                    "points": {"origin": "start", "sof": "@superior_orbital_fissure", "muscle": "end"}},
+            "v1": {"path": [("Ophthalmic nerve.r", 0)],
+                   "points": {"ganglion": "start", "sof": "@superior_orbital_fissure",
+                              "notch": "@supraorbital_notch", "forehead": "end"}},
+            "nasociliary": {"path": [("nasociliary", 0)],
+                            "points": {"origin": "start", "optic": ("nearest", "Optic nerve (II).r"),
+                                       "anterior_ethmoidal": "@anterior_ethmoidal_foramen", "infratrochlear": "end"}},
+            "ophthalmic_artery": {"path": [("Ophthalmic artery.r", 0), ("Anterior ethmoidal artery.r", 0)],
+                                  "points": {"origin": "start", "canal": "@optic_canal",
+                                             "lacrimal": ("nearest_start", "Lacrimal artery.r"),
+                                             "supraorbital": ("nearest_start", "Supra-orbital artery.r"),
+                                             "ethmoidal": "@anterior_ethmoidal_foramen", "nose": "end"}},
+        },
+    },
+    "sinonasal": {
+        "mirror": True,  # show both sides (see "both sides" below)
+        # Right nasal cavity and paranasal sinuses (the septum and frontal and sphenoid sinuses are midline).
+        "centre": (-0.012, -0.062, 1.578),
+        "fill_clipped": True,
+        "structures": {
+            # ---- bone ----
+            "frontal": ["Frontal bone"],
+            "ethmoid": ["Ethmoid bone"],
+            "inferior_concha": ["Inferior nasal concha bone.r"],
+            "maxilla": ["Maxilla.r"],
+            "sphenoid": ["Sphenoid bone"],
+            "vomer": ["Vomer"],
+            "nasal_bones": ["Nasal bone.r", "Lacrimal bone.r"],
+            "palatine": ["Palatine bone.r"],
+            # ---- cartilage ----
+            "septal_cartilage": ["Nasal septal cartilage"],
+            "upper_lateral": ["Lateral process of nasal septal cartilage.r"],
+            "alar": ["Major alar cartilage.r"],
+            # ---- sinuses (air spaces) ----
+            "frontal_sinus": ["Sinus of frontal bone"],
+            "sphenoid_sinus": ["Sinus of sphenoid bone"],
+            "anterior_ethmoid": ["Anterior cells of ethmoid bone.r"],
+            "middle_ethmoid": ["Middle cells of ethmoid bone.r"],
+            "posterior_ethmoid": ["Posterior cells of ethmoid bone.r"],
+            # ---- soft tissue ----
+            "nasal_mucosa": ["Mucosa of nasal cavity"],
+            "nasopharynx": ["Nasopharynx"],
+            "nasolacrimal": ["Lacrimal sac.r", "Nasolacrimal duct.r"],
+            "orbit_contents": ["Sclera.r", "Medial rectus muscle.r"],
+            "pituitary": ["Adenohypophysis", "Neurohypophysis"],
+            # ---- nerves ----
+            "cn1": ["Olfactory nerve (I).r"],
+            "cn2": ["Optic nerve (II).r"],
+            "v2": ["Maxillary nerve.r"],
+            # ---- arteries ----
+            "ethmoidal_arteries": ["Anterior ethmoidal artery.r", "Posterior ethmoidal artery.r",
+                                   "Anterior septal branches of anterior ethmoidal artery.r",
+                                   "Septal branches of posterior ethmoidal artery.r"],
+            "sphenopalatine": ["Posterior lateral nasal branches of sphenopalatine artery..r",
+                               "Posterior septal branches of sphenopalatine artery.r"],
+            "greater_palatine": ["Greater palatine artery.r", "Descending palatine artery.r"],
+            "ica": ["Internal carotid artery.r"],
+        },
+        "curve_scale": {"cn1": 1.2, "cn2": 3.0, "v2": 1.8, "ethmoidal_arteries": 1.0, "sphenopalatine": 1.1,
+                        "greater_palatine": 1.1},
+        "bones": {"frontal", "ethmoid", "inferior_concha", "maxilla", "sphenoid", "vomer", "nasal_bones", "palatine"},
+        "clip": {"Frontal bone": (0, 1.645), "Sphenoid bone": (1.545, 1.62), "Internal carotid artery.r": (1.575, 1.61),
+                 "Optic nerve (II).r": (0, 9), "Nasopharynx": (1.55, 9)},
+        "side": "r",
+        # Mucociliary drainage routes from each sinus to its opening (drawn).
+        "drawn": {"frontal_drainage": 0.0006, "maxillary_drainage": 0.0006, "sphenoid_drainage": 0.0006},
+        "points": {
+            "frontal_recess": ("at", (-0.0090, -0.0760, 1.6000)),
+            "maxillary_ostium": ("at", (-0.0145, -0.0570, 1.5750)),
+            "sphenoid_ostium": ("at", (-0.0040, -0.0395, 1.5950)),
+            "nasolacrimal_opening": ("at", (-0.0095, -0.0631, 1.5547)),
+            "sphenopalatine_foramen": ("spline_start", "Posterior septal branches of sphenopalatine artery.r", 0),
+            "anterior_ethmoidal_foramen": ("spline_start", "Anterior ethmoidal artery.r", 0),
+            "cribriform_plate": ("closest", ("Olfactory nerve (I).r", 1), ["Ethmoid bone"], (1.59, 1.62)),
+            "infraorbital_foramen": ("spline_start", "Maxillary nerve.r", 1),
+        },
+        "courses": {
+            "frontal_drainage": {"path": [("frontal_drainage", 0)],
+                                 "points": {"sinus": "start", "recess": "@frontal_recess", "meatus": "end"}},
+            "maxillary_drainage": {"path": [("maxillary_drainage", 0)],
+                                   "points": {"sinus": "start", "ostium": "@maxillary_ostium", "meatus": "end"}},
+            "sphenoid_drainage": {"path": [("sphenoid_drainage", 0)],
+                                  "points": {"sinus": "start", "ostium": "@sphenoid_ostium", "recess": "end"}},
+            "ethmoidal_arteries": {"path": [("Anterior ethmoidal artery.r", 0)],
+                                   "points": {"foramen": "start", "nose": "end"}},
+        },
+        "spaces": {
+            # Z-Anatomy's maxilla is solid: the sinus is its body's interior, 1.5 mm in from the surface.
+            "maxillary_sinus": {"type": "interior", "object": "Maxilla.r", "exclude": ["Mucosa of nasal cavity"],
+                                "box": ((-0.044, -0.010), (-0.085, -0.042)), "levels": (1.546, 1.580, 0.002),
+                                "clear": 0.0015},
         },
     },
     "deep_neck": {
@@ -1296,6 +1538,166 @@ DRAWN.update({"auriculotemporal": drawn_auriculotemporal, "masseteric_nerve": dr
               "deep_temporal_nerves": drawn_deep_temporal_nerves, "nerve_medial_pterygoid": drawn_nerve_medial_pterygoid,
               "otic_ganglion": drawn_otic_ganglion})
 
+# ---------- drawn nerves of the pterygopalatine fossa ----------
+# Placed from the right maxillary nerve (foramen rotundum at about (-16.7, -25.5, 1591.5) mm),
+# the anterior opening of the pterygoid canal (-14.6, -21.2, 1582.4), the descending
+# palatine and greater palatine arteries and the posterior septal artery. Nerves that
+# run in bony canals (Vidian, palatine, pharyngeal) are left in them; the others are
+# pushed clear of the bone with push_clear().
+
+PPF_BONES = ["Maxilla.r", "Palatine bone.r", "Sphenoid bone", "Vomer", "Zygomatic bone.r"]
+PPG = [Vector((-0.0164, -0.0262, 1.5806)), Vector((-0.0165, -0.0275, 1.5800)), Vector((-0.0166, -0.0288, 1.5793))]
+
+
+def drawn_ppg(L):
+    """The pterygopalatine ganglion, hanging below V2 in front of the pterygoid canal."""
+    return PPG
+
+
+def drawn_ganglionic_branches(L):
+    """Two short roots from V2 down to the ganglion (mostly sensory fibres passing through)."""
+    return [[Vector((-0.0181, -0.0262, 1.5882)), Vector((-0.0172, -0.0264, 1.5845)), PPG[0]],
+            [Vector((-0.0186, -0.0290, 1.5868)), Vector((-0.0176, -0.0291, 1.5830)), PPG[2]]]
+
+
+def drawn_vidian(L):
+    """Nerve of the pterygoid canal: greater and deep petrosal nerves joined at
+    foramen lacerum, forward through the canal to the ganglion."""
+    return [Vector((-0.0158, -0.0040, 1.5760)), Vector((-0.0153, -0.0120, 1.5790)), Vector((-0.0146, -0.0212, 1.5824)),
+            Vector((-0.0156, -0.0245, 1.5815)), PPG[0]]
+
+
+def drawn_greater_palatine_n(L):
+    """Greater palatine nerve down the greater palatine canal to the hard palate,
+    and the lesser palatine nerve to the soft palate (second spline)."""
+    canal = [PPG[2], Vector((-0.0166, -0.0350, 1.5730)), Vector((-0.0164, -0.0410, 1.5665)),
+             Vector((-0.0161, -0.0435, 1.5600)), Vector((-0.0152, -0.0456, 1.5550))]
+    palate = [Vector((-0.0150, -0.0510, 1.5500)), Vector((-0.0138, -0.0580, 1.5482)), Vector((-0.0118, -0.0640, 1.5476)),
+              Vector((-0.0083, -0.0705, 1.5468)), Vector((-0.0048, -0.0750, 1.5452))]
+    lesser = [Vector((-0.0161, -0.0435, 1.5600)), Vector((-0.0150, -0.0425, 1.5530)), Vector((-0.0128, -0.0400, 1.5495)),
+              Vector((-0.0105, -0.0380, 1.5480))]
+    return [canal + palate, lesser]
+
+
+def drawn_nasopalatine(L):
+    """Through the sphenopalatine foramen, across the roof of the nose to the
+    septum, then down and forward on the septum to the incisive canal."""
+    pts = [PPG[1], Vector((-0.0125, -0.0330, 1.5760)), Vector((-0.0095, -0.0385, 1.5725)), Vector((-0.0050, -0.0420, 1.5710)),
+           Vector((-0.0035, -0.0480, 1.5650)), Vector((-0.0037, -0.0610, 1.5615)), Vector((-0.0037, -0.0705, 1.5600)),
+           Vector((-0.0032, -0.0770, 1.5560)), Vector((-0.0025, -0.0790, 1.5450))]
+    return push_clear(pts, [None, None, None, P_OUT, P_OUT, P_OUT, P_OUT, P_OUT, None], gap=0.0008, bones=["Vomer"])
+
+
+def drawn_psa_nerve(L):
+    """Posterior superior alveolar nerves: from V2 out through the pterygomaxillary
+    fissure and down onto the maxillary tuberosity."""
+    pts = [Vector((-0.0200, -0.0360, 1.5832)), Vector((-0.0255, -0.0400, 1.5770)), Vector((-0.0290, -0.0430, 1.5680)),
+           Vector((-0.0285, -0.0450, 1.5600))]
+    return push_clear(pts, [None, P_BACK, P_OUT, P_OUT], bones=PPF_BONES)
+
+
+def drawn_zygomatic_nerve(L):
+    """From V2 through the inferior orbital fissure onto the lateral wall of the orbit."""
+    pts = [Vector((-0.0215, -0.0425, 1.5795)), Vector((-0.0262, -0.0465, 1.5800)), Vector((-0.0315, -0.0520, 1.5810)),
+           Vector((-0.0355, -0.0580, 1.5830))]
+    return push_clear(pts, [None, P_IN, P_IN, P_IN], bones=["Zygomatic bone.r", "Maxilla.r"])
+
+
+def drawn_pharyngeal_nerve(L):
+    """From the ganglion back through the palatovaginal canal to the roof of the nasopharynx."""
+    return [PPG[0], Vector((-0.0125, -0.0235, 1.5770)), Vector((-0.0085, -0.0200, 1.5730)), Vector((-0.0055, -0.0160, 1.5700))]
+
+
+DRAWN.update({"ppg": drawn_ppg, "ganglionic_branches": drawn_ganglionic_branches, "vidian": drawn_vidian,
+              "greater_palatine_n": drawn_greater_palatine_n, "nasopalatine": drawn_nasopalatine,
+              "psa_nerve": drawn_psa_nerve, "zygomatic_nerve": drawn_zygomatic_nerve,
+              "pharyngeal_nerve": drawn_pharyngeal_nerve})
+
+# ---------- drawn nerves of the orbit ----------
+# Placed from the right ophthalmic nerve as it enters the orbit (about (-17, -26, 1598) mm),
+# the optic nerve, the ophthalmic and ethmoidal arteries, the lacrimal artery and gland,
+# the lateral rectus and the inferior division of the oculomotor nerve.
+
+CILIARY = [Vector((-0.0238, -0.0410, 1.5962)), Vector((-0.0241, -0.0421, 1.5959)), Vector((-0.0244, -0.0432, 1.5956))]
+
+
+def drawn_nasociliary(L):
+    """Nasociliary nerve: through the common tendinous ring, over the optic
+    nerve from lateral to medial with the ophthalmic artery, along the medial
+    wall to the anterior ethmoidal foramen and on as the infratrochlear nerve.
+    Further splines: posterior ethmoidal, anterior ethmoidal and two long
+    ciliary nerves."""
+    main = [Vector((-0.0172, -0.0270, 1.5985)), Vector((-0.0195, -0.0340, 1.6000)), Vector((-0.0210, -0.0400, 1.6022)),
+            Vector((-0.0185, -0.0460, 1.6018)), Vector((-0.0145, -0.0520, 1.6005)), Vector((-0.0138, -0.0600, 1.6008)),
+            Vector((-0.0140, -0.0680, 1.6020)), Vector((-0.0148, -0.0750, 1.6040))]
+    posterior_ethmoidal = [Vector((-0.0160, -0.0490, 1.6012)), Vector((-0.0125, -0.0465, 1.5985)), Vector((-0.0100, -0.0442, 1.5950))]
+    anterior_ethmoidal = [Vector((-0.0140, -0.0545, 1.6003)), Vector((-0.0118, -0.0550, 1.5995)), Vector((-0.0095, -0.0555, 1.5985))]
+    long_ciliary = [[Vector((-0.0205, -0.0425, 1.6020)), Vector((-0.0225, -0.0470, 1.5990)), Vector((-0.0245, -0.0505, 1.5965))],
+                    [Vector((-0.0200, -0.0435, 1.6020)), Vector((-0.0210, -0.0480, 1.5975)), Vector((-0.0225, -0.0512, 1.5945))]]
+    return [main, posterior_ethmoidal, anterior_ethmoidal] + long_ciliary
+
+
+def drawn_lacrimal_nerve(L):
+    """Lacrimal nerve: through the superior orbital fissure above the ring and
+    forward along the upper border of the lateral rectus to the lacrimal gland."""
+    return [Vector((-0.0185, -0.0280, 1.6005)), Vector((-0.0245, -0.0360, 1.6045)), Vector((-0.0310, -0.0440, 1.6060)),
+            Vector((-0.0360, -0.0515, 1.6065)), Vector((-0.0392, -0.0575, 1.6072)), Vector((-0.0400, -0.0620, 1.6078))]
+
+
+def drawn_ciliary_ganglion(L):
+    """Ciliary ganglion: lateral to the optic nerve, about 1 cm in front of the apex."""
+    return CILIARY
+
+
+def drawn_ciliary_roots(L):
+    """Sensory root from the nasociliary nerve and parasympathetic (motor) root
+    from the nerve to inferior oblique."""
+    return [[Vector((-0.0200, -0.0370, 1.6010)), Vector((-0.0222, -0.0395, 1.5985)), CILIARY[0]],
+            [Vector((-0.0241, -0.0423, 1.5909)), Vector((-0.0242, -0.0425, 1.5935)), CILIARY[1]]]
+
+
+def drawn_short_ciliary(L):
+    """Short ciliary nerves from the ganglion to the back of the globe around the optic nerve."""
+    g = CILIARY[2]
+    return [[g, Vector((-0.0258, -0.0470, 1.5965)), Vector((-0.0272, -0.0505, 1.5968))],
+            [g, Vector((-0.0252, -0.0475, 1.5940)), Vector((-0.0262, -0.0510, 1.5932))],
+            [g, Vector((-0.0262, -0.0465, 1.5985)), Vector((-0.0280, -0.0500, 1.5995))]]
+
+
+DRAWN.update({"nasociliary": drawn_nasociliary, "lacrimal_nerve": drawn_lacrimal_nerve,
+              "ciliary_ganglion": drawn_ciliary_ganglion, "ciliary_roots": drawn_ciliary_roots,
+              "short_ciliary": drawn_short_ciliary})
+
+# ---------- drawn drainage routes of the paranasal sinuses ----------
+# Schematic mucociliary routes, placed from the Z-Anatomy sinus volumes, the ethmoid
+# (middle turbinate at about z 1.570-1.578), the maxillary sinus built from the maxilla
+# and the sphenoid sinus's front wall (y -39.7 mm).
+
+def drawn_frontal_drainage(L):
+    """Frontal sinus → frontal recess → anterior middle meatus."""
+    return [Vector((-0.0120, -0.0800, 1.6120)), Vector((-0.0095, -0.0775, 1.6040)), Vector((-0.0090, -0.0760, 1.6000)),
+            Vector((-0.0095, -0.0730, 1.5930)), Vector((-0.0110, -0.0670, 1.5840)), Vector((-0.0118, -0.0610, 1.5770))]
+
+
+def drawn_maxillary_drainage(L):
+    """Mucus swept up the walls to the natural ostium high on the medial wall,
+    through the ethmoid infundibulum and hiatus semilunaris to the middle meatus."""
+    return [Vector((-0.0270, -0.0640, 1.5560)), Vector((-0.0230, -0.0610, 1.5660)), Vector((-0.0185, -0.0585, 1.5730)),
+            Vector((-0.0145, -0.0570, 1.5750)), Vector((-0.0125, -0.0600, 1.5770)), Vector((-0.0118, -0.0640, 1.5745))]
+
+
+def drawn_sphenoid_drainage(L):
+    """Sphenoid sinus → ostium on its front wall → sphenoethmoidal recess."""
+    return [Vector((-0.0070, -0.0300, 1.5920)), Vector((-0.0050, -0.0360, 1.5945)), Vector((-0.0040, -0.0395, 1.5950)),
+            Vector((-0.0042, -0.0430, 1.5925)), Vector((-0.0045, -0.0465, 1.5880))]
+
+
+DRAWN.update({"frontal_drainage": drawn_frontal_drainage, "maxillary_drainage": drawn_maxillary_drainage,
+              "sphenoid_drainage": drawn_sphenoid_drainage})
+
+
+
+
 
 def curve_object(name, points, radius):
     """A tube along one polyline, or several (a list of polylines)."""
@@ -1641,6 +2043,22 @@ def build_space(sid, spec):
         pieces.append(loft(rings))
         if spec.get("mirror"):
             pieces.append(loft([[(-x, y, z) for x, y, z in ring[::-1]] for ring in rings]))
+    elif spec["type"] == "interior":
+        # Air space inside a solid bone model: each level's interior points (with clearance), hulled and lofted.
+        t, (xr, yr), rings = bone_bvh(spec["object"]), spec["box"], []
+        excl = [bone_bvh(n) for n in spec.get("exclude", [])]
+        for z in frange(*spec["levels"]):
+            pts = []
+            for i in range(int((xr[1] - xr[0]) / 0.001) + 1):
+                for j in range(int((yr[1] - yr[0]) / 0.001) + 1):
+                    p = Vector((xr[0] + i * 0.001, yr[0] + j * 0.001, z))
+                    if inside_bone(p, t) and t.find_nearest(p)[3] >= spec["clear"] and not any(inside_bone(p, e) for e in excl):
+                        pts.append(p)
+            if len(pts) >= 6:
+                poly = hull2d([(p.x, p.y) for p in pts])
+                if len(poly) >= 3:
+                    rings.append([(x, y, z) for x, y in resample(poly, 28, 0.0)])
+        pieces.append(loft(rings))
     elif spec["type"] == "pps":
         pieces += [loft(pps_rings(-1)), loft(pps_rings(1))]
     elif spec["type"] == "rp":
@@ -1659,9 +2077,113 @@ def build_space(sid, spec):
 for sid, spec in cfg.get("spaces", {}).items():
     build_space(sid, spec)
 
+
+# ---------- both sides ----------
+# Regions built on one side ("mirror": True) get a mirror image of every
+# one-sided part across the midline (app x -> -x, winding flipped), under the
+# same structure id, so selecting a structure highlights both sides. Parts that
+# cross the midline (mandible, septum, sphenoid) and parts whose structure is
+# already exported on the other side are left alone. Courses and pins stay on
+# the traced side.
+
+MIRROR_OF = {}  # index of a mirrored part -> index of its source part
+if cfg.get("mirror"):
+    mid = (TO_APP @ Vector((0.0, 0.0, 0.0))).x  # the body's midline (Blender x = 0) in app x
+    tol = 0.15  # cm: parts reaching this far across the midline count as midline
+    spans = [(sid, min(v.x for v in verts) - mid, max(v.x for v in verts) - mid) for sid, _, verts, _ in parts]
+    for i, (sid, name, verts, tris) in enumerate(list(parts)):
+        _, lo_x, hi_x = spans[i]
+        if lo_x < -tol and hi_x > tol:
+            continue
+        right = hi_x <= tol
+        if any(s == sid and (lx > -tol if right else hx < tol) for s, lx, hx in spans):
+            continue  # this structure already has a part on the other side
+        MIRROR_OF[len(parts)] = i
+        parts.append((sid, name + " (mirrored)", [Vector((2 * mid - v.x, v.y, v.z)) for v in verts],
+                      [[a, c, b] for a, b, c in tris]))
+    print("mirrored", len(MIRROR_OF), "parts about app x", round(mid, 3))
+
 lo = Vector((min(v[i] for p in parts for v in p[2]) for i in range(3)))
 hi = Vector((max(v[i] for p in parts for v in p[2]) for i in range(3)))
 span = hi - lo
+
+# ---------- baked ambient occlusion ----------
+# Per-vertex visibility (0 = fully enclosed, 255 = open sky), from rays cast over
+# the hemisphere around each vertex against every opaque mesh of the region.
+# The app darkens the surface colour by it, so folds, crevices and places where
+# structures touch read as depth. Translucent shells (fascial spaces and the
+# region's "ao_ignore" list) don't occlude. Both sides of each surface are
+# tried and the more open one kept, so meshes with inverted winding still work.
+
+def translucent_ids():
+    """Structures the region's model draws see-through (opacity < 0.6), read
+    from js/models/<region>-model.js; they cast no occlusion."""
+    import re
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "js", "models",
+                        REGION.replace("_", "-") + "-model.js")
+    if not os.path.exists(path):
+        return set()
+    text = open(path).read()
+    found = {m.group(1) for m in re.finditer(r"(\w+): \{[^}]*opacity: ([0-9.]+)", text) if float(m.group(2)) < 0.6}
+    print("ao ignores", sorted(found))
+    return found
+
+
+def bake_ao(parts, radius=1.2, rays=14):
+    import numpy as np
+    from mathutils.bvhtree import BVHTree
+    skip = set(cfg.get("spaces", {})) | translucent_ids()
+    allv, allf = [], []
+    for sid, _, verts, tris in parts:
+        if sid in skip:
+            continue
+        base = len(allv)
+        allv += [tuple(v) for v in verts]
+        allf += [(a + base, b + base, c + base) for a, b, c in tris]
+    tree = BVHTree.FromPolygons(allv, allf)
+    # Stratified cosine-weighted directions in a local frame (z = normal).
+    golden = np.pi * (3 - np.sqrt(5))
+    k = np.arange(rays) + 0.5
+    r = np.sqrt(k / rays)
+    local = np.stack([r * np.cos(k * golden), r * np.sin(k * golden), np.sqrt(1 - r * r)], 1)
+    out = []
+    for idx, (sid, _, verts, tris) in enumerate(parts):
+        if idx in MIRROR_OF:
+            out.append(None)  # filled from the source part below
+            continue
+        V = np.array([tuple(v) for v in verts], dtype=np.float64)
+        F = np.array(tris, dtype=np.int64)
+        N = np.zeros_like(V)
+        fn = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]])
+        for j in range(3):
+            np.add.at(N, F[:, j], fn)
+        N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+        vis = np.empty(len(V))
+        for i, (p, n) in enumerate(zip(V, N)):
+            t = np.array([0.0, 1.0, 0.0]) if abs(n[0]) > 0.9 else np.array([1.0, 0.0, 0.0])
+            t = np.cross(n, t)
+            t /= np.linalg.norm(t)
+            b = np.cross(n, t)
+            best = 0.0
+            for side in (1.0, -1.0):
+                dirs = local[:, :1] * t + local[:, 1:2] * b + local[:, 2:] * (n * side)
+                origin = Vector(p + n * side * 0.004)
+                open_ = 0.0
+                for d in dirs:
+                    hit = tree.ray_cast(origin, Vector(d), radius)
+                    open_ += 1.0 if hit[0] is None else hit[3] / radius
+                best = max(best, open_ / rays)
+                if best > 0.97:
+                    break
+            vis[i] = best
+        out.append(np.clip(np.round(vis * 255), 0, 255).astype(np.uint8).tobytes())
+        print(f"ao {sid:20} mean {vis.mean():.2f}")
+    for idx, src in MIRROR_OF.items():
+        out[idx] = out[src]  # same vertex order, so the mirror shares the bake
+    return out
+
+
+AO = bake_ao(parts) if not os.environ.get("NO_AO") else None
 
 blob = bytearray()
 meshes = []
@@ -1681,6 +2203,11 @@ for sid, name, verts, tris in parts:
         blob += struct.pack(fmt, *t)
     while len(blob) % 4:
         blob += b"\0"
+    if AO:
+        entry["ao"] = len(blob)
+        blob += AO[len(meshes)]
+        while len(blob) % 4:
+            blob += b"\0"
     meshes.append(entry)
 
 
@@ -1734,6 +2261,8 @@ def course_point(spec, path):
     if isinstance(spec, str) and spec.startswith("@"):
         return POINTS[spec[1:]]
     kind = spec[0]
+    if kind == "at":
+        return Vector(spec[1])
     if kind == "anchor":
         o = D[spec[1]]
         me = o.evaluated_get(deps).to_mesh()
@@ -1776,7 +2305,7 @@ def app_point(p):
 
 courses = {}
 for key, spec in cfg.get("points", {}).items():
-    POINTS[key] = course_point(spec, None) if spec[0] == "anchor" else course_point(spec, [])
+    POINTS[key] = course_point(spec, None) if spec[0] in ("anchor", "at") else course_point(spec, [])
 for sid, c in cfg.get("courses", {}).items():
     path = []
     for piece in c["path"]:

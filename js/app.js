@@ -19,7 +19,12 @@
     brain: "#c9a0b8",
     membrane: "#a79fcf",
     deep: "#7e9bb8",
-    joint: "#9fb7c9"
+    joint: "#9fb7c9",
+    globe: "#d8d2c4",
+    sinus: "#7fc4f0",
+    duct: "#2fb7a0",
+    cartilage: "#c9d6e0",
+    mucosa: "#e0a4a0"
   };
 
   const $ = (sel, el = document) => el.querySelector(sel);
@@ -57,6 +62,13 @@
       showSectionSelection();
     }
   });
+  // "Show hidden" appears once a structure has been hidden by double-clicking it.
+  const showHiddenBtn = $("#show-hidden");
+  viewer.onHiddenChange = (n) => {
+    showHiddenBtn.hidden = n === 0;
+    showHiddenBtn.textContent = `Show hidden (${n})`;
+  };
+  showHiddenBtn.addEventListener("click", () => viewer.showHidden());
   viewer.onRefresh = () => {
     syncLandmarks();
     if (sections.active) sections.update();

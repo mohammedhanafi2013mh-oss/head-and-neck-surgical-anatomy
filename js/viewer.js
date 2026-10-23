@@ -21,6 +21,9 @@
     space: { color: 0x7fb8e6, roughness: 0.85, clearcoat: 0 }
   };
 
+  // How much baked ambient occlusion darkens the most enclosed surfaces (0–1).
+  const AO_STRENGTH = 0.75;
+
   const helpers = {
     V3,
 
@@ -93,7 +96,20 @@
         geo.computeVertexNormals();
         geo.computeBoundingBox();
         const style = look[m.id] || { kind: "muscle" };
-        const mesh = new THREE.Mesh(geo, helpers.tissue(style.kind, style));
+        const material = helpers.tissue(style.kind, style);
+        if (m.ao !== undefined) {
+          // Baked ambient occlusion (tools/export_zanatomy.py): darken folds,
+          // crevices and contact areas through the vertex colour.
+          const ao = new Uint8Array(bin, m.ao, m.vertexCount);
+          const col = new Float32Array(m.vertexCount * 3);
+          for (let i = 0; i < m.vertexCount; i++) {
+            const shade = 1 - AO_STRENGTH * (1 - Math.pow(ao[i] / 255, 1.3));
+            col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = shade;
+          }
+          geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+          material.vertexColors = true;
+        }
+        const mesh = new THREE.Mesh(geo, material);
         if (style.kind === "muscle") helpers.setFiberDirection(mesh);
         if (!byId.has(m.id)) byId.set(m.id, []);
         byId.get(m.id).push(mesh);
@@ -213,6 +229,7 @@
       this.focusIds = new Set();
       this.selectedId = null;
       this.labelMode = "some"; // "off" | "some" (pins and the selected structure) | "all"
+      this.hidden = new Set(); // structures hidden by double-clicking them
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
@@ -221,6 +238,9 @@
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
       if ("outputColorSpace" in this.renderer) this.renderer.outputColorSpace = THREE.SRGBColorSpace;
       else this.renderer.outputEncoding = THREE.sRGBEncoding;
+      // Soft shadows from the key light (opaque structures cast them).
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       const pmrem = new THREE.PMREMGenerator(this.renderer);
       this.scene.environment = pmrem.fromScene(studio(), 0.04).texture;
       container.appendChild(this.renderer.domElement);
@@ -232,9 +252,18 @@
       // Three.js r155+ uses physical light units; older builds need ~1/π the intensity.
       const L = Number(THREE.REVISION) >= 155 ? 1 : 1 / Math.PI;
       this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.35 * L));
+      // The key light follows the camera (above and to the left of the eye),
+      // so its shadows always fall where they can be seen. See render().
       const key = new THREE.DirectionalLight(0xfff4e8, 1.5 * L);
       key.position.set(-10, 8, 12);
-      this.scene.add(key);
+      key.castShadow = true;
+      key.shadow.mapSize.set(2048, 2048);
+      key.shadow.bias = -0.0005;
+      key.shadow.normalBias = 0.04;
+      key.shadow.radius = 4;
+      this.scene.add(key, key.target);
+      this.key = key;
+      this.extent = { centre: new THREE.Vector3(), radius: 20 };
       const fill = new THREE.DirectionalLight(0xe8eeff, 0.4 * L);
       fill.position.set(8, -4, -6);
       this.scene.add(fill);
@@ -280,6 +309,8 @@
     }
 
     load(region, model) {
+      this.hidden.clear();
+      this.onHiddenChange && this.onHiddenChange(0);
       this.clearCourse();
       this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
@@ -325,6 +356,14 @@
         });
       }
       for (const l of region.layers) this.layerVisible[l.id] = l.defaultOn;
+      // Fit the key light's shadow camera to the region.
+      const box = new THREE.Box3();
+      for (const s of this.structures.values()) box.expandByObject(s.root);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      this.extent = { centre: sphere.center, radius: sphere.radius || 20 };
+      const cam = this.key.shadow.camera, r = this.extent.radius;
+      Object.assign(cam, { left: -r, right: r, top: r, bottom: -r, near: 0.1, far: r * 4 });
+      cam.updateProjectionMatrix();
       this.home = model.camera;
       this.resetView();
       this.refresh();
@@ -347,6 +386,7 @@
 
     select(id, notify) {
       this.selectedId = id;
+      if (id && this.hidden.delete(id)) this.onHiddenChange && this.onHiddenChange(this.hidden.size);
       if (id) {
         const s = this.structures.get(id);
         if (s && !this.layerVisible[s.layer]) {
@@ -362,11 +402,26 @@
       this.dirty = true;
     }
 
+    // Hide one structure (double-click or double-tap on it); showHidden() brings them all back.
+    hide(id) {
+      if (!id) return;
+      this.hidden.add(id);
+      if (this.selectedId === id) this.select(null, true);
+      else this.refresh();
+      this.onHiddenChange && this.onHiddenChange(this.hidden.size);
+    }
+
+    showHidden() {
+      this.hidden.clear();
+      this.refresh();
+      this.onHiddenChange && this.onHiddenChange(0);
+    }
+
     refresh() {
       this.dirty = true;
       const dimOthers = this.focusIds.size > 0 || this.selectedId;
       for (const [id, s] of this.structures) {
-        s.root.visible = !!this.layerVisible[s.layer];
+        s.root.visible = !!this.layerVisible[s.layer] && !this.hidden.has(id);
         const highlighted = id === this.selectedId || this.focusIds.has(id);
         s.root.traverse((o) => {
           if (!o.isMesh) return;
@@ -379,6 +434,8 @@
           m.opacity = opacity;
           m.transparent = opacity < 1;
           m.depthWrite = opacity >= 1;
+          o.castShadow = opacity >= 1; // translucent and dimmed structures cast no shadow
+          o.receiveShadow = true;
         });
         s.label.classList.toggle("is-hidden", !s.root.visible || this.labelMode === "off" || (this.labelMode === "some" && !highlighted));
         s.label.classList.toggle("is-active", highlighted);
@@ -415,6 +472,12 @@
         this.target.z + radius * Math.sin(phi) * Math.cos(theta)
       );
       this.camera.lookAt(this.target);
+      const { centre, radius: r } = this.extent;
+      const eye = this.camera.position.clone().sub(this.target).normalize();
+      const up = this.camera.up.clone().sub(eye.clone().multiplyScalar(eye.dot(this.camera.up))).normalize();
+      const left = up.clone().cross(eye).normalize();
+      this.key.position.copy(centre).addScaledVector(eye.add(up.multiplyScalar(0.7)).add(left.multiplyScalar(0.5)).normalize(), r * 2);
+      this.key.target.position.copy(centre);
       this.renderer.render(this.scene, this.camera);
       this.positionLabels();
     }
@@ -609,7 +672,7 @@
       const el = this.renderer.domElement;
       el.style.touchAction = "none";
       const pointers = new Map();
-      let mode = null, last = null, downAt = null, pinchStart = 0, radiusStart = 0;
+      let mode = null, last = null, downAt = null, pinchStart = 0, radiusStart = 0, lastTap = null;
 
       el.addEventListener("pointerdown", (e) => {
         this.stopFly();
@@ -657,7 +720,16 @@
         if (downAt && pointers.size === 0) {
           const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
           if (moved < 6 && performance.now() - downAt.t < 500) {
-            this.select(this.pick(e.clientX, e.clientY), true);
+            // A second tap within 350 ms on the same spot hides the structure;
+            // a single tap selects it.
+            const now = performance.now(), id = this.pick(e.clientX, e.clientY);
+            if (lastTap && now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 20) {
+              this.hide(id || lastTap.id);
+              lastTap = null;
+            } else {
+              this.select(id, true);
+              lastTap = { x: e.clientX, y: e.clientY, t: now, id };
+            }
           }
         }
         if (pointers.size === 0) mode = null;

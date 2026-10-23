@@ -833,5 +833,204 @@ window.ANATOMY.figures = {
     <text x="526" y="112" text-anchor="end" font-weight="600">Sphenopalatine</text>
   </g>
   <text x="8" y="334" class="fig-label small">From the neck of the mandible (left) towards the nose (right).</text>
+</svg>`,
+
+  pterygopalatineFossa: `
+<svg viewBox="0 0 600 440" role="img" aria-label="Diagram of the pterygopalatine fossa and its seven openings, with the structures passing through each">
+  <line x1="105" y1="60" x2="270" y2="160" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="105" y1="180" x2="260" y2="200" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="105" y1="300" x2="272" y2="240" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="60" x2="320" y2="158" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="180" x2="340" y2="200" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="495" y1="300" x2="330" y2="240" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <line x1="300" y1="390" x2="300" y2="290" stroke="var(--fig-stroke)" stroke-width="1" stroke-dasharray="4 3"/>
+  <!-- the fossa: inverted pyramid -->
+  <path d="M246 150 L354 150 L312 300 L288 300 Z" fill="#7fb8e6" opacity=".25" stroke="var(--fig-stroke)" stroke-width="1.2"/>
+  <path d="M256 168 Q300 160 346 172" fill="none" stroke="var(--fig-nerve)" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="296" cy="190" rx="9" ry="6" fill="#e8a93a" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <line x1="292" y1="172" x2="294" y2="185" stroke="var(--fig-nerve)" stroke-width="1.5"/>
+  <path d="M350 232 Q320 226 310 214 Q302 204 320 200" fill="none" stroke="var(--fig-artery)" stroke-width="3" stroke-linecap="round"/>
+  <text x="300" y="148" class="fig-label small" text-anchor="middle">V2</text>
+  <text x="300" y="214" class="fig-label small" text-anchor="end">Ganglion</text>
+  <text x="302" y="262" class="fig-label small" text-anchor="middle">Maxillary a.</text>
+  <text x="300" y="276" class="fig-label small" text-anchor="middle">(3rd part)</text>
+  <rect x="16" y="30" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="48" class="fig-label" font-weight="600">Foramen rotundum</text>
+  <text x="24" y="64" class="fig-label small">↔ middle cranial fossa</text>
+  <text x="24" y="80" class="fig-label small">Maxillary nerve (V2)</text>
+  <rect x="16" y="150" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="168" class="fig-label" font-weight="600">Pterygoid (Vidian) canal</text>
+  <text x="24" y="184" class="fig-label small">↔ foramen lacerum</text>
+  <text x="24" y="200" class="fig-label small">Vidian nerve and artery</text>
+  <rect x="16" y="270" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="24" y="288" class="fig-label" font-weight="600">Palatovaginal canal</text>
+  <text x="24" y="304" class="fig-label small">↔ nasopharynx</text>
+  <text x="24" y="320" class="fig-label small">Pharyngeal nerve and artery</text>
+  <rect x="406" y="30" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="48" class="fig-label" font-weight="600">Inferior orbital fissure</text>
+  <text x="414" y="64" class="fig-label small">↔ orbit</text>
+  <text x="414" y="80" class="fig-label small">Infraorbital and zygomatic nn.</text>
+  <rect x="406" y="150" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="168" class="fig-label" font-weight="600">Sphenopalatine foramen</text>
+  <text x="414" y="184" class="fig-label small">↔ nasal cavity (medial)</text>
+  <text x="414" y="200" class="fig-label small">Sphenopalatine a., nasopalatine n.</text>
+  <rect x="406" y="270" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="414" y="288" class="fig-label" font-weight="600">Pterygomaxillary fissure</text>
+  <text x="414" y="304" class="fig-label small">↔ infratemporal fossa (lateral)</text>
+  <text x="414" y="320" class="fig-label small">Maxillary a. in; PSA nn. out</text>
+  <rect x="211" y="360" width="184" height="62" rx="8" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="219" y="378" class="fig-label" font-weight="600">Greater palatine canal</text>
+  <text x="219" y="394" class="fig-label small">↔ oral cavity (palate)</text>
+  <text x="219" y="410" class="fig-label small">Greater and lesser palatine nn. and aa.</text>
+  <text x="8" y="434" class="fig-label small">Schematic, right side. Posterior openings on the left, anterior, medial and lateral on the right.</text>
+</svg>`,
+
+  orbitApex: `
+<svg viewBox="0 0 560 440" role="img" aria-label="Right orbital apex seen from the front: the common tendinous ring around the optic canal and the medial part of the superior orbital fissure, with the nerves and vessels passing inside and outside it">
+  <!-- apex bone -->
+  <path d="M70 60 Q280 20 470 70 Q520 220 450 360 Q280 420 110 360 Q30 220 70 60 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- superior orbital fissure: narrow laterally (viewer's left), wide medially -->
+  <path d="M96 104 Q170 132 238 186 Q258 206 256 246 Q232 252 214 232 Q160 170 92 116 Z" fill="#3b3226" opacity=".85"/>
+  <!-- optic canal -->
+  <circle cx="306" cy="168" r="24" fill="#3b3226" opacity=".85"/>
+  <circle cx="306" cy="164" r="13" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <circle cx="296" cy="184" r="4.5" fill="var(--fig-artery)"/>
+  <!-- common tendinous ring -->
+  <ellipse cx="270" cy="210" rx="92" ry="78" fill="none" stroke="#c9b48a" stroke-width="9" opacity=".9"/>
+  <!-- rectus origins on the ring -->
+  <g fill="var(--fig-muscle)" opacity=".85" stroke="var(--fig-stroke)" stroke-width=".6">
+    <rect x="248" y="122" width="44" height="14" rx="4"/>
+    <rect x="354" y="190" width="14" height="40" rx="4"/>
+    <rect x="248" y="282" width="44" height="14" rx="4"/>
+    <rect x="172" y="196" width="14" height="40" rx="4"/>
+  </g>
+  <!-- levator and superior oblique outside the ring -->
+  <rect x="250" y="98" width="46" height="12" rx="4" fill="var(--fig-muscle)" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".6"/>
+  <rect x="342" y="112" width="34" height="12" rx="4" fill="var(--fig-muscle)" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".6" transform="rotate(25 359 118)"/>
+  <!-- outside the ring, in the lateral fissure: lacrimal, frontal, IV, superior ophthalmic vein -->
+  <circle cx="120" cy="118" r="4" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="146" cy="132" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="172" cy="148" r="3.5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="186" cy="166" r="6" fill="var(--fig-vein)"/>
+  <!-- inside the ring, in the medial fissure: III superior, nasociliary, III inferior, VI -->
+  <circle cx="232" cy="196" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="244" cy="214" r="3.5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="236" cy="234" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <circle cx="218" cy="222" r="4" fill="var(--fig-nerve)" stroke="var(--fig-stroke)" stroke-width=".5"/>
+  <!-- inferior ophthalmic vein below the ring -->
+  <circle cx="232" cy="318" r="5" fill="var(--fig-vein)"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="6" y="24">Lacrimal n.</text>
+    <text x="6" y="38">Frontal n.</text>
+    <text x="6" y="52">Trochlear n. (IV)</text>
+    <text x="6" y="66">Sup. ophthalmic v.</text>
+    <text x="6" y="186" font-weight="600">Outside the ring</text>
+    <text x="6" y="200">(above it, in the</text>
+    <text x="6" y="214">lateral fissure)</text>
+    <text x="6" y="268">Sup. division of III</text>
+    <text x="6" y="282">Nasociliary n.</text>
+    <text x="6" y="296">Inf. division of III</text>
+    <text x="6" y="310">Abducens n. (VI)</text>
+    <text x="6" y="324" font-weight="600">Inside the ring</text>
+    <text x="6" y="400">Inf. ophthalmic v.</text>
+    <text x="350" y="160">Optic nerve (II)</text>
+    <text x="350" y="174">Ophthalmic a.</text>
+    <text x="350" y="188" font-weight="600">Optic canal</text>
+    <text x="302" y="90">Levator</text>
+    <text x="386" y="104">Sup. oblique</text>
+    <text x="244" y="133" text-anchor="end">SR</text>
+    <text x="374" y="246">MR</text>
+    <text x="300" y="312">IR</text>
+    <text x="150" y="250">LR</text>
+    <text x="330" y="270">Common tendinous ring</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" fill="none">
+    <line x1="64" y1="20" x2="118" y2="114"/>
+    <line x1="58" y1="34" x2="144" y2="128"/>
+    <line x1="96" y1="48" x2="170" y2="144"/>
+    <line x1="106" y1="62" x2="183" y2="161"/>
+    <line x1="112" y1="264" x2="229" y2="198"/>
+    <line x1="88" y1="278" x2="241" y2="215"/>
+    <line x1="110" y1="292" x2="233" y2="236"/>
+    <line x1="104" y1="306" x2="215" y2="225"/>
+    <line x1="104" y1="396" x2="228" y2="321"/>
+    <line x1="348" y1="157" x2="318" y2="162"/>
+    <line x1="348" y1="171" x2="301" y2="184"/>
+    <line x1="328" y1="266" x2="330" y2="262"/>
+  </g>
+  <text x="6" y="432" class="fig-label small">Right orbit seen from the front: lateral on the left, medial on the right. Not to scale.</text>
+</svg>`,
+
+  ostiomeatalUnit: `
+<svg viewBox="0 0 560 470" role="img" aria-label="Coronal section through the right ostiomeatal unit: orbit, ethmoid cells, ethmoid bulla, uncinate process, infundibulum, maxillary sinus and ostium, middle and inferior turbinates, septum and the cribriform plate with the lateral lamella">
+  <!-- skull base: fovea ethmoidalis, lateral lamella, cribriform plate -->
+  <path d="M120 60 L260 60 L272 98 L300 98" fill="none" stroke="var(--fig-stroke)" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M272 98 L300 98" stroke="#d9b27a" stroke-width="4" stroke-dasharray="3 2"/>
+  <!-- septum -->
+  <rect x="298" y="60" width="8" height="350" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- orbit with lamina papyracea -->
+  <circle cx="130" cy="130" r="62" fill="#f2efe8" stroke="var(--fig-stroke)"/>
+  <circle cx="170" cy="150" r="10" fill="var(--fig-muscle)" opacity=".7"/>
+  <line x1="200" y1="66" x2="200" y2="186" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <!-- ethmoid cells -->
+  <g fill="#6fcf97" opacity=".55" stroke="var(--fig-stroke)" stroke-width=".7">
+    <rect x="206" y="66" width="28" height="30" rx="8"/><rect x="238" y="70" width="26" height="26" rx="8"/>
+    <rect x="206" y="100" width="30" height="32" rx="8"/><rect x="240" y="102" width="26" height="30" rx="8"/>
+  </g>
+  <!-- ethmoid bulla -->
+  <circle cx="234" cy="166" r="24" fill="#6fcf97" opacity=".75" stroke="var(--fig-stroke)"/>
+  <!-- middle turbinate hanging from the skull base -->
+  <path d="M286 98 L286 150 Q290 205 266 236 Q254 246 258 226 Q274 196 272 150 L272 104" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- maxillary sinus with ostium -->
+  <path d="M86 196 L200 192 L204 210 L206 330 Q150 360 90 330 Q66 270 86 196 Z" fill="#f2c14e" opacity=".5" stroke="var(--fig-stroke)"/>
+  <rect x="198" y="196" width="10" height="10" fill="#3b3226"/>
+  <!-- uncinate process: from the lateral wall, hooking up and back -->
+  <path d="M206 250 Q214 222 214 196" fill="none" stroke="var(--fig-stroke)" stroke-width="4" stroke-linecap="round"/>
+  <!-- infundibulum (between uncinate and lamina/bulla) -->
+  <path d="M204 206 Q208 196 212 190" fill="none" stroke="#2fb7a0" stroke-width="3"/>
+  <!-- mucociliary route: sinus → ostium → infundibulum → hiatus → middle meatus -->
+  <path d="M150 300 Q180 240 202 202 Q212 186 226 196 Q240 214 246 238" fill="none" stroke="#2fb7a0" stroke-width="2" stroke-dasharray="5 3"/>
+  <path d="M242 232 L248 242 L252 230 Z" fill="#2fb7a0"/>
+  <!-- inferior turbinate, lateral nasal wall, palate -->
+  <line x1="206" y1="250" x2="206" y2="400" stroke="var(--fig-stroke)" stroke-width="2"/>
+  <path d="M206 300 Q260 290 262 322 Q262 350 226 352 Q212 350 206 340" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <rect x="80" y="400" width="226" height="14" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <!-- labels -->
+  <g class="fig-label small">
+    <text x="330" y="54">Fovea ethmoidalis (ethmoid roof)</text>
+    <text x="330" y="96">Lateral lamella + cribriform plate</text>
+    <text x="330" y="110">(Keros: depth of this step)</text>
+    <text x="330" y="140">Ethmoid cells</text>
+    <text x="330" y="172">Ethmoid bulla</text>
+    <text x="330" y="200">Lamina papyracea</text>
+    <text x="330" y="216">Infundibulum</text>
+    <text x="330" y="232">Hiatus semilunaris → middle meatus</text>
+    <text x="330" y="252">Uncinate process</text>
+    <text x="330" y="268">Middle turbinate</text>
+    <text x="330" y="290">Maxillary ostium</text>
+    <text x="330" y="330">Inferior turbinate</text>
+    <text x="330" y="372">Inferior meatus (nasolacrimal duct)</text>
+    <text x="330" y="400">Septum</text>
+    <text x="96" y="130">Orbit</text>
+    <text x="110" y="280">Maxillary sinus</text>
+  </g>
+  <g stroke="var(--fig-stroke)" stroke-width=".6" fill="none">
+    <line x1="328" y1="51" x2="230" y2="62"/>
+    <line x1="328" y1="93" x2="286" y2="99"/>
+    <line x1="328" y1="137" x2="266" y2="116"/>
+    <line x1="328" y1="169" x2="258" y2="166"/>
+    <line x1="328" y1="197" x2="202" y2="150"/>
+    <line x1="328" y1="213" x2="210" y2="198"/>
+    <line x1="328" y1="229" x2="244" y2="226"/>
+    <line x1="328" y1="249" x2="214" y2="232"/>
+    <line x1="328" y1="265" x2="282" y2="200"/>
+    <line x1="328" y1="287" x2="206" y2="202"/>
+    <line x1="328" y1="327" x2="262" y2="324"/>
+    <line x1="328" y1="369" x2="222" y2="372"/>
+    <line x1="328" y1="397" x2="306" y2="380"/>
+  </g>
+  <text x="6" y="438" class="fig-label small">Seen from the front as on coronal CT: the patient's right side, lateral on the left, septum at the midline.</text>
+  <text x="6" y="454" class="fig-label small">Teal: mucociliary route from the maxillary sinus. Not to scale.</text>
 </svg>`
 };
