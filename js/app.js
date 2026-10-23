@@ -393,7 +393,7 @@
     const names = Object.fromEntries(r.structures.map((s) => [s.id, s.name]));
     return `
       <h2>${esc(p.title)}</h2>
-      <p class="muted">Step through the operation. The model shows the layers you would see at each stage and highlights the key structures.</p>
+      <p class="muted">${esc(p.intro || "Step through the operation. The model shows the layers you would see at each stage and highlights the key structures.")}</p>
       <div class="steps-nav">
         <span class="count">Step ${state.step + 1} of ${p.steps.length}</span>
         <button data-step="-1" ${state.step === 0 ? "disabled" : ""}>← Prev</button>
@@ -405,7 +405,7 @@
         <div class="focus-list">${st.focus.map((id) => `<button data-select="${id}">${esc(names[id])}</button>`).join("")}</div>
       </div>
       <div class="step-dots">${p.steps.map((_, i) => `<span class="${i <= state.step ? "on" : ""}"></span>`).join("")}</div>
-      <h3>Complications</h3>
+      <h3>${esc(p.complicationsTitle || "Complications")}</h3>
       <div class="callout danger"><ul>${p.complications.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
       ${refChips(p.refs)}`;
   }

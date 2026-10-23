@@ -4,6 +4,60 @@
 window.ANATOMY = window.ANATOMY || { regions: {} };
 
 window.ANATOMY.figures = {
+  // Right face from the side, face to the right: the five facial nerve branches
+  // fanning from the parotid to the muscles they supply.
+  facialNerveMuscles: `
+<svg viewBox="0 0 560 440" role="img" aria-label="Right side of the face showing the temporal, zygomatic, buccal, marginal mandibular and cervical branches of the facial nerve, the muscles each supplies, Pitanguy's line and the parotid duct">
+  <!-- head outline -->
+  <path d="M120 40 Q250 0 380 40 Q440 70 450 140 L470 200 Q478 214 462 220 L468 252 Q474 262 460 268 L458 300 Q450 330 420 334 L360 344 Q330 380 300 396 L250 420" fill="none" stroke="var(--fig-stroke)" stroke-width="1.4"/>
+  <path d="M120 40 Q70 120 96 230 Q110 300 150 350 L170 420" fill="none" stroke="var(--fig-stroke)" stroke-width="1.4"/>
+  <!-- ear -->
+  <path d="M150 170 Q130 140 150 120 Q180 110 190 150 Q196 190 176 220 Q160 236 154 214" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <!-- zygomatic arch and mandible -->
+  <path d="M196 182 L330 176" stroke="var(--fig-stroke)" stroke-width="5" opacity=".35" stroke-linecap="round"/>
+  <text x="246" y="172" class="fig-label small">Zygomatic arch</text>
+  <path d="M196 236 Q206 320 232 336 L380 330" fill="none" stroke="var(--fig-stroke)" stroke-width="4" opacity=".3"/>
+  <!-- muscles -->
+  <path d="M250 40 Q330 30 400 60 L392 110 Q320 96 256 104 Z" fill="var(--fig-muscle)" opacity=".28"/>
+  <text x="300" y="78" class="fig-label">Frontalis</text>
+  <ellipse cx="384" cy="148" rx="42" ry="26" fill="none" stroke="var(--fig-muscle)" stroke-width="10" opacity=".45"/>
+  <text x="352" y="196" class="fig-label small">Orbicularis oculi</text>
+  <path d="M332 196 L404 272" stroke="var(--fig-muscle)" stroke-width="12" stroke-linecap="round" opacity=".5"/>
+  <text x="300" y="232" class="fig-label small">Zygomaticus</text>
+  <text x="300" y="244" class="fig-label small">major</text>
+  <ellipse cx="434" cy="282" rx="30" ry="18" fill="none" stroke="var(--fig-muscle)" stroke-width="9" opacity=".45"/>
+  <text x="470" y="292" class="fig-label small">Orbicularis oris</text>
+  <path d="M402 300 L384 332 L420 330 Z" fill="var(--fig-muscle)" opacity=".45"/>
+  <text x="430" y="352" class="fig-label small">Depressors of the</text>
+  <text x="430" y="364" class="fig-label small">lower lip, mentalis</text>
+  <path d="M196 330 Q260 370 360 360 L330 430 L190 430 Z" fill="var(--fig-muscle)" opacity=".16"/>
+  <text x="236" y="404" class="fig-label small">Platysma</text>
+  <!-- parotid and duct -->
+  <path d="M184 186 Q228 190 232 230 Q238 290 214 318 Q190 300 186 250 Z" fill="var(--fig-gland)" stroke="var(--fig-stroke)" stroke-width="1"/>
+  <text x="120" y="300" class="fig-label small">Parotid</text>
+  <path d="M232 214 L330 214 Q344 214 348 228" fill="none" stroke="var(--fig-duct)" stroke-width="5"/>
+  <text x="252" y="208" class="fig-label small">Parotid duct</text>
+  <!-- facial nerve: trunk, pes, five branches -->
+  <path d="M178 232 L206 244" stroke="var(--fig-nerve)" stroke-width="5"/>
+  <circle cx="206" cy="244" r="4" fill="var(--fig-nerve)"/>
+  <path d="M206 244 Q226 200 250 150 Q270 110 300 104" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <path d="M206 244 Q260 210 342 166" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <path d="M206 244 Q280 228 400 262" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <path d="M206 244 Q222 300 260 330 Q330 334 396 312" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <path d="M206 244 Q210 320 226 380" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <text x="222" y="130" class="fig-label strong">Temporal</text>
+  <text x="270" y="152" class="fig-label strong">Zygomatic</text>
+  <text x="292" y="256" class="fig-label strong">Buccal</text>
+  <text x="252" y="318" class="fig-label strong">Marginal mandibular</text>
+  <text x="140" y="372" class="fig-label strong">Cervical</text>
+  <text x="120" y="252" class="fig-label small">Stylomastoid</text>
+  <text x="120" y="264" class="fig-label small">foramen → pes</text>
+  <!-- Pitanguy's line -->
+  <path d="M178 222 L360 116" stroke="var(--fig-incision)" stroke-width="2" stroke-dasharray="5 5"/>
+  <text x="362" y="108" class="fig-label small">Pitanguy's line: 0.5 cm below the tragus</text>
+  <text x="362" y="120" class="fig-label small">to 1.5 cm above the lateral eyebrow</text>
+  <text x="6" y="436" class="fig-label small">Yellow: facial nerve. The zygomatic and buccal branches interconnect; the temporal and marginal mandibular rarely do. Not to scale.</text>
+</svg>`,
   // Lateral view, right side, face to the right.
   triangle: `
 <svg viewBox="0 0 440 320" role="img" aria-label="Lateral view of the right submandibular triangle">
