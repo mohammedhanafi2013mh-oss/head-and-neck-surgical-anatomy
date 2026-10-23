@@ -528,6 +528,12 @@ window.ANATOMY.regions.deep_neck = {
     { id: "vertebrae", name: "Cervical vertebrae", layer: "bone", summary: "Behind the prevertebral space.", relations: [], supply: {}, surgical: [], danger: [], variations: [], refs: ["gray"] }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "transcervical", "name": "Transcervical incision", "note": "Two to three finger breadths below the angle and body of the mandible, in a skin crease.", "points": [[-3.84, -1.94, 0.47], [-3.82, -1.95, 1.27], [-3.41, -2.17, 2.07], [-2.98, -2.37, 2.87], [-2.52, -2.6, 3.67], [-2.06, -2.86, 4.47]], "axis": [0.0, -2.4]}
+  ],
+
   procedure: {
     title: "Transcervical drainage of a parapharyngeal and submandibular abscess",
     steps: [
@@ -544,7 +550,7 @@ window.ANATOMY.regions.deep_neck = {
         focus: ["s_parapharyngeal", "s_carotid", "s_retropharyngeal", "s_danger"]
       },
       {
-        title: "Incision",
+        title: "Incision", incision: "transcervical",
         text: "A horizontal incision two to three finger breadths below the angle and body of the mandible, in a skin crease. Raise flaps deep to platysma; protect the marginal mandibular nerve.",
         show: ["fascia", "bone", "gland"],
         focus: ["investing_fascia", "mandible", "smg"]

@@ -925,17 +925,23 @@ window.ANATOMY.regions.infratemporal = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "hemicoronal", "name": "Hemicoronal incision with preauricular extension", "note": "Behind the hairline from the midline to above the ear, then down in the preauricular crease to the lobule.", "points": [[3.6, 13.85, -0.19], [0.6, 12.55, -0.39], [-1.9, 9.55, -1.19], [-3.2, 6.18, -1.0], [-3.2, 3.18, -0.61], [-3.23, 1.28, -0.61], [-2.2, -1.91, -1.31]], "toward": [3.6, 2.68, -1.19]}
+  ],
+
   procedure: {
     title: "Lateral (preauricular–subtemporal) approach to the infratemporal fossa",
     steps: [
       {
-        title: "Plan, position and incision",
+        title: "Plan, position and incision", incision: "hemicoronal",
         text: "For tumours of the fossa and lateral skull base. Supine, head turned away, facial nerve monitoring, lumbar drain if dura may be opened. A hemicoronal incision carried down in front of the ear and into an upper neck crease.",
         show: ["bone", "superficial", "artery"],
         focus: ["temporalis", "zygomatic", "parotid", "sta"]
       },
       {
-        title: "Scalp flap and frontal branch",
+        title: "Scalp flap and frontal branch", incision: "hemicoronal",
         text: "Raise the flap above the zygomatic arch deep to the superficial layer of deep temporal fascia (or under both layers), so that the frontal branch of VII stays in the flap. Keep the superficial temporal artery in the flap if possible.",
         show: ["bone", "superficial", "artery", "context"],
         focus: ["zygomatic", "facial_nerve", "sta"]

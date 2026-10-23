@@ -691,17 +691,23 @@ window.ANATOMY.regions.submandibular = {
 
   // Step-by-step transcervical submandibular gland excision.
   // `show` sets which layers are visible for the step; `focus` highlights structures.
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "submandibular", "name": "Skin-crease incision", "note": "At least 3–4 cm (two finger breadths) below the lower border of the mandible, so the marginal mandibular nerve stays above the flap.", "points": [[-1.45, -2.98, -2.48], [-1.44, -2.99, -1.68], [-1.02, -3.21, -0.88], [-0.59, -3.4, -0.08], [-0.14, -3.63, 0.72], [0.32, -3.9, 1.52]], "axis": [2.38, -5.35]}
+  ],
+
   procedure: {
     title: "Submandibular gland excision (transcervical)",
     steps: [
       {
-        title: "Position and incision",
+        title: "Position and incision", incision: "submandibular",
         text: "Supine, with the neck extended and the head turned to the opposite side. Mark a skin-crease incision at least 3–4 cm (about two finger breadths) below the lower border of the mandible, over the lower part of the gland.",
         show: ["superficial", "bone", "gland"],
         focus: ["platysma"]
       },
       {
-        title: "Subplatysmal flap",
+        title: "Subplatysmal flap", incision: "submandibular",
         text: "Divide platysma along the line of the incision and raise the upper flap in the plane just deep to it. The marginal mandibular nerve lies just deep to this plane, on the investing fascia. Do not go deep to the fascia yet.",
         show: ["superficial", "bone", "gland", "nerve", "vein"],
         focus: ["platysma", "mmn"]

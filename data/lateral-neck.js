@@ -817,17 +817,23 @@ window.ANATOMY.regions.lateral_neck = {
     }
   ],
 
+  // Incisions drawn on the model at the surgery steps that name them (step.incision):
+  // control points in app space, laid onto the outer surface along "axis" or "toward".
+  incisions: [
+    {"id": "utility", "name": "Hockey-stick (utility) incision", "note": "From the mastoid down behind sternocleidomastoid, then forward in a low skin crease to the midline about two finger breadths above the clavicle.", "points": [[0.39, 7.67, 1.38], [1.56, 5.57, -1.41], [1.21, 3.07, -0.27], [0.72, 0.57, 0.77], [0.7, -0.68, 1.26], [1.0, -2.08, 5.0], [-0.5, -1.88, 5.0], [-2.3, -1.48, 5.0], [-3.5, -1.38, 5.0]], "axis": [-3.5, -0.2]}
+  ],
+
   procedure: {
     title: "Modified radical neck dissection (levels I–V)",
     steps: [
       {
-        title: "Position and incision",
+        title: "Position and incision", incision: "utility",
         text: "Supine with a shoulder roll, neck extended and head turned to the opposite side. Use a skin-crease incision (for example an apron, or a transverse incision with a vertical limb) that gives access from the mandible to the clavicle and from the midline to trapezius, and keeps flap corners away from the carotid.",
         show: ["superficial", "bone", "muscle"],
         focus: ["platysma", "scm", "clavicle", "trapezius"]
       },
       {
-        title: "Subplatysmal flaps",
+        title: "Subplatysmal flaps", incision: "utility",
         text: "Raise flaps just deep to platysma: up to the lower border of the mandible, down to the clavicle, back to the anterior border of trapezius and forward to the midline. Keep the external jugular vein and great auricular nerve on sternocleidomastoid. Protect the marginal mandibular nerve in the upper flap.",
         show: ["superficial", "bone", "muscle", "vein", "nerve"],
         focus: ["platysma", "ejv", "great_auricular", "mmn"]

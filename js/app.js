@@ -144,6 +144,7 @@
     landmarksShown = null;
     state.selected = null;
     state.step = 0;
+    shownIncisions = ""; // viewer.load() clears the drawn incisions
     state.quiz = {};
     state.search = "";
     if (state.tab === "surgery") state.tab = "overview";
@@ -403,6 +404,7 @@
         <h4>${esc(st.title)}</h4>
         <p>${esc(st.text)}</p>
         <div class="focus-list">${st.focus.map((id) => `<button data-select="${id}">${esc(names[id])}</button>`).join("")}</div>
+        ${stepIncisions(st).map((i) => `<p class="incision-note"><span class="swatch" aria-hidden="true"></span><span><strong>${esc(i.name)}</strong>${i.note ? ` · ${esc(i.note)}` : ""}</span></p>`).join("")}
       </div>
       <div class="step-dots">${p.steps.map((_, i) => `<span class="${i <= state.step ? "on" : ""}"></span>`).join("")}</div>
       <h3>${esc(p.complicationsTitle || "Complications")}</h3>
@@ -550,15 +552,31 @@
   }
 
   // ---------- surgical walkthrough ↔ viewer ----------
+  // The incisions a step draws on the model (region.incisions, named by step.incision).
+  const stepIncisions = (st) => {
+    const ids = [].concat(st.incision || []);
+    return (state.region.incisions || []).filter((i) => ids.includes(i.id));
+  };
+
+  let shownIncisions = "";
   function applyStep() {
     const st = state.region.procedure.steps[state.step];
     viewer.setLayers(st.show);
     viewer.setFocus(st.focus);
     viewer.select(state.selected, false);
+    // Redraw (and re-frame) only when the step's incisions change.
+    const inc = stepIncisions(st);
+    const key = inc.map((i) => i.id).join();
+    if (key !== shownIncisions) {
+      shownIncisions = key;
+      viewer.showIncisions(inc);
+    }
     renderLayerToggles();
   }
 
   function exitWalkthrough() {
+    shownIncisions = "";
+    viewer.showIncisions([]);
     viewer.setFocus([]);
     viewer.setLayers(state.region.layers.filter((l) => l.defaultOn).map((l) => l.id));
     renderLayerToggles();

@@ -190,6 +190,7 @@ button, select { font: inherit; color: inherit; }
 .label.is-hidden { display: none; }
 .pin-label { position: absolute; left: 0; top: 0; white-space: nowrap; pointer-events: none; padding: 1px 5px; border-radius: 5px; font: 600 10px/1.3 system-ui, sans-serif; color: #2a1d00; background: #ffd25e; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
 .pin-label.is-foramen { color: #3a2f12; background: rgba(255, 236, 170, .92); font-weight: 500; font-size: 9.5px; }
+.pin-label.is-incision { color: #fff; background: #7b2fd0; }
 .tooltip {
   position: absolute; left: 0; top: 0;
   pointer-events: none;
@@ -474,3 +475,7 @@ kbd { font: 12px ui-monospace, monospace; padding: 1px 5px; border: 1px solid va
   .region-picker { flex: 1; min-width: 0; }
   .region-picker select { width: 100%; max-width: none; }
 }
+
+/* Incision note on a surgery step */
+.incision-note { display: flex; gap: 8px; align-items: baseline; margin: 10px 0 0; padding: 8px 10px; border-radius: 8px; background: color-mix(in srgb, #7b2fd0 12%, transparent); font-size: 14px; }
+.incision-note .swatch { width: 18px; height: 4px; border-radius: 2px; background: #7b2fd0; flex: none; transform: translateY(-3px); }

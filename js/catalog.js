@@ -14,6 +14,11 @@ window.ANATOMY.catalog = [
     scripts: ["data/face.js", "data/face-meshes.js", "js/models/face-model.js"]
   },
   {
+    id: "oral_cavity",
+    title: "Oral cavity",
+    scripts: ["data/oral-cavity.js", "data/oral-cavity-meshes.js", "js/models/oral-cavity-model.js"]
+  },
+  {
     id: "parotid",
     title: "Parotid & facial nerve",
     scripts: ["data/parotid.js", "data/parotid-meshes.js", "js/models/parotid-model.js"]
