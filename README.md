@@ -284,7 +284,7 @@ The same tab has **Real CT** and **Real MRI** modes showing scans of the Visible
   - **Per-region refinement:** `tools/refine_vhp_registration.py` re-fits each region on its own bones and keeps the result where it is clearly better. Thyroid: 2.9 → 1.7 mm. Larynx: 1.4 → 1.1 mm. The other regions were already about 1 mm.
   - **Display:** the app picks the CT slice at the model slice's level and shows the whole body cross-section, framed from boxes recorded by `tools/add_ct_body_boxes.py`.
   - **Labels, hover and outlines** come from the registered model, so treat them as approximate for soft tissue.
-- **Real MRI** (T1 and T2, axial and coronal) is a separate scan that isn't registered to the model; browse it with the slider.
+- **Real MRI** (T1 and T2, axial and coronal) was scanned separately. `tools/register_vhp_mri.py` matches each MR frame to the CT by the body outline (rigid; the axial series covers the head, the coronal series the head and neck). Through the CT it is matched to the model, so the model slice follows the MRI slice, and **labels, hover names and outlines** appear on the MRI wherever its slice crosses the region. They are approximate: a few millimetres, more for soft tissue that moved between scans.
 - Data: NCI Imaging Data Commons collection `nlm_visible_human_project` (patient VHP-M), used under the National Library of Medicine terms and conditions (May 21, 2019). Credit: *Courtesy of the U.S. National Library of Medicine.*
 
 To regenerate `data/scans/`:
@@ -298,6 +298,7 @@ python tools/register_vhp_ct.py CT_SERIES_DIR model_bone_mm.npy WORK_DIR
 python tools/export_vhp_scans.py WORK_DIR MR_ROOT data/scans
 python tools/add_ct_body_boxes.py data/scans
 python tools/refine_vhp_registration.py WORK_DIR data/scans/vhp-scans.js data/*-meshes.js
+python tools/register_vhp_mri.py WORK_DIR MR_ROOT data/scans/vhp-scans.js
 ```
 
 ## Project layout
@@ -311,7 +312,7 @@ data/<region>-meshes.js        packed 3D meshes (generated; CC BY-SA, see below)
 js/models/<region>-model.js    camera, view angles and tissue type per structure
 js/viewer.js                   Three.js viewer: mesh decoding, camera controls, picking, labels, layers, materials
 js/sections.js                 CT / MRI-style cross-sections through the 3D model
-js/scans.js                    real Visible Human CT (registered to the model) and MRI
+js/scans.js                    real Visible Human CT and MRI, both registered to the model
 data/scans/                    CT and MRI slice sprite sheets and manifest (generated)
 tools/export_vhp_scans.py      exports the Visible Human scans for the app
 tools/export_zanatomy.py       exports each region's meshes from the Z-Anatomy Blender file

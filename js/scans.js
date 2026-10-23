@@ -5,7 +5,10 @@
 // to the CT skeleton (tools/export_vhp_scans.py). The real slice is chosen
 // and framed to match the current model slice; outlines and hover names come
 // from the registered model.
-// MRI: browsed on its own (separate scan, not registered to the model).
+// MRI: scanned separately, matched to the CT by the body outline
+// (tools/register_vhp_mri.py) and so, through the CT, to the model: the model
+// slice follows the MRI slice, and labels, hover names and outlines come from
+// the model as they do on the CT.
 
 (function () {
   const OUTLINE = "#3fb0e0";
@@ -132,12 +135,16 @@
       ctx.clip();
       ctx.drawImage(img, (n % grid) * tile, Math.floor(n / grid) * tile, tile, tile, 0, 0, tile, tile);
       ctx.restore();
-      this.drawOutlines(v);
+      this.drawOutlines((q) => {
+        const [px, py] = this.toPixel(q, v.plane.frame);
+        return [(px - v.sx) * v.kx, (py - v.sy) * v.ky];
+      });
       this.view = v;
     }
 
-    // Cut outlines from the registered model, projected onto the real slice.
-    drawOutlines(v) {
+    // Cut outlines from the registered model, projected onto the real slice
+    // (screen: CT mm -> canvas pixels).
+    drawOutlines(screen) {
       const s = this.s, ctx = this.ctx, viewer = s.viewer;
       const { right, up } = s.basis;
       const p = new THREE.Vector3();
@@ -151,8 +158,8 @@
         for (let i = 0; i < e.cut.length; i += step) {
           const [u, vv] = e.cut[i];
           p.copy(s.centre).addScaledVector(right, u).addScaledVector(up, vv);
-          const [px, py] = this.toPixel(this.appToCt(p), v.plane.frame);
-          ctx.fillRect((px - v.sx) * v.kx - 1.5, (py - v.sy) * v.ky - 1.5, 3, 3);
+          const [x, y] = screen(this.appToCt(p));
+          ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
         }
       }
       ctx.globalAlpha = 1;
@@ -176,21 +183,80 @@
       return this.m.mri.series.filter((x) => x.plane === plane);
     }
 
+    // The series and slice index the slider points at.
+    mriSlice() {
+      const series = this.m.mri.series.find((x) => x.id === this.mriSeries[this.s.planeName]);
+      return series ? { series, k: Math.round(this.mriLevel[this.s.planeName] * (series.count - 1)) } : null;
+    }
+
+    // MR pixel (column i, row j of slice k) <-> MR patient mm <-> CT mm.
+    mrPixelToMm(series, k, i, j) {
+      const g = series.geometry, s = g.mmPerPixel;
+      return [0, 1, 2].map((a) => g.origin[a] + g.step[a] * k + g.row[a] * i * s + g.col[a] * j * s);
+    }
+
+    mrMmToPixel(series, k, m) {
+      const g = series.geometry, s = g.mmPerPixel;
+      const d = [0, 1, 2].map((a) => m[a] - g.origin[a] - g.step[a] * k);
+      return [(d[0] * g.row[0] + d[1] * g.row[1] + d[2] * g.row[2]) / s, (d[0] * g.col[0] + d[1] * g.col[1] + d[2] * g.col[2]) / s];
+    }
+
+    mrToCt(series, m) {
+      const { R, t } = series.registration;
+      return [0, 1, 2].map((i) => R[i][0] * m[0] + R[i][1] * m[1] + R[i][2] * m[2] + t[i]);
+    }
+
+    ctToMr(series, q) {
+      const { R, t } = series.registration;
+      const d = [q[0] - t[0], q[1] - t[1], q[2] - t[2]];
+      return [0, 1, 2].map((i) => R[0][i] * d[0] + R[1][i] * d[1] + R[2][i] * d[2]);
+    }
+
+    // Where the current MRI slice crosses the model: the slice centre in app space.
+    mriCentreApp() {
+      const sl = this.mriSlice();
+      if (!sl || !sl.series.registration) return null;
+      const T = sl.series.tile;
+      return this.ctToApp(this.mrToCt(sl.series, this.mrPixelToMm(sl.series, sl.k, T / 2, T / 2)));
+    }
+
+    // Canvas pixel of a CT point on the current MRI slice.
+    mriScreen(q) {
+      const sl = this.mriSlice();
+      const [i, j] = this.mrMmToPixel(sl.series, sl.k, this.ctToMr(sl.series, q));
+      const W = this.canvas.width / sl.series.tile;
+      return [i * W, j * W];
+    }
+
     drawMri() {
       const s = this.s, ctx = this.ctx, W = this.canvas.width, H = this.canvas.height;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, W, H);
-      const series = this.m.mri.series.find((x) => x.id === this.mriSeries[s.planeName]);
-      if (!series) return this.message("No MRI in this plane");
-      const k = Math.round(this.mriLevel[s.planeName] * (series.count - 1));
+      const sl = this.mriSlice();
+      if (!sl) return this.message("No MRI in this plane");
+      const { series, k } = sl;
       const per = this.m.mri.grid * this.m.mri.grid;
       const img = this.image(series.files[Math.floor(k / per)]);
       if (!img) return this.message("Loading scan…");
       const n = k % per, g = this.m.mri.grid, T = series.tile;
       ctx.drawImage(img, (n % g) * T, Math.floor(n / g) * T, T, T, 0, 0, W, H);
+      if (s.mriLinked) this.drawOutlines((q) => this.mriScreen(q));
       this.mriCmCss = (10 / series.mmPerPixel) * (this.canvas.clientWidth / T);
-      this.mriLabel = `Slice ${k + 1} of ${series.count} · ${series.thickness} mm`;
+      this.mriLabel = `Slice ${k + 1} of ${series.count} · ${series.thickness} mm` +
+        (s.mriLinked ? "" : " · outside this region's model, so no labels");
+      this.view = null;
+    }
+
+    // Structure under a point of the real MRI, via the CT and the registered model.
+    mriPick(ev) {
+      const sl = this.mriSlice();
+      if (!sl || !this.s.mriLinked) return null;
+      const r = this.canvas.getBoundingClientRect();
+      const T = sl.series.tile;
+      const i = ((ev.clientX - r.left) / r.width) * T, j = ((ev.clientY - r.top) / r.height) * T;
+      const ndc = this.ctToApp(this.mrToCt(sl.series, this.mrPixelToMm(sl.series, sl.k, i, j))).project(this.s.camera);
+      return this.s.pickNdc(ndc.x, ndc.y);
     }
 
     message(text) {
