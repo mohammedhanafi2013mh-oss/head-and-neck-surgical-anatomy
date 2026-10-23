@@ -43,6 +43,8 @@ Each operation also lists its **structures at risk**, each with what injuring it
 
 In a structure's notes, the **names of other structures are links**. Tap one to see it on the model together with the open structure. "Related structures" gathers every structure the notes name and every structure whose notes name this one; › opens its notes.
 
+Every structure, overview and operation ends with its **review status** and a **⚑ Report an error** link. The link opens a GitHub issue that already names the region, structure or step, so a correction can be checked and fixed. Once a specialist has checked a region, add `review: { by: "Name, specialty", date: "2026-11" }` to its data file (or to one structure or operation) and the note says who reviewed it.
+
 The **Quiz** tab has three modes:
 - **Questions**: multiple choice, with explanations.
 - **Find it on the model**: tap the named structure in 3D.

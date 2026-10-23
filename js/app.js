@@ -357,7 +357,8 @@
       <ul>${o.contents.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
       <div class="callout pearl"><div class="callout-title">Key surgical points</div>
         <ul>${o.keyPoints.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
-      ${refChips(o.refs)}`;
+      ${refChips(o.refs)}
+      ${provenance(`${r.title} › Overview`, r.id, r)}`;
   }
 
   function structures(r) {
@@ -387,6 +388,36 @@
           </ul></div>`
         )
         .join("") || `<p class="muted">No matches.</p>`}`;
+  }
+
+  // ---------- content provenance ----------
+  // Every structure, overview and operation ends with its review status and a
+  // link that opens a pre-filled GitHub issue naming exactly where the error is.
+  const REPO = "https://github.com/mohammedhanafi2013mh-oss/head-and-neck-surgical-anatomy";
+  const SITE = "https://mohammedhanafi2013mh-oss.github.io/head-and-neck-surgical-anatomy/";
+  function reportUrl(where, hash) {
+    const body = [
+      `**Where:** ${where}`,
+      `**Link:** ${SITE}${hash ? "#" + hash : ""}`,
+      "",
+      "**What is wrong:**",
+      "",
+      "",
+      "**Suggested correction, with a source (textbook, paper or guideline):**",
+      ""
+    ].join("\n");
+    return `${REPO}/issues/new?title=${encodeURIComponent("Content: " + where)}&body=${encodeURIComponent(body)}`;
+  }
+  // region.review / structure.review / procedure.review: { by, date } once a specialist has checked it.
+  function reviewNote(...items) {
+    const rev = items.find((x) => x && x.review)?.review;
+    return rev
+      ? `Reviewed by ${esc(rev.by)}${rev.date ? `, ${esc(rev.date)}` : ""}`
+      : "Not yet reviewed by a specialist: check against the references before teaching from it";
+  }
+  function provenance(where, hash, ...items) {
+    return `<div class="content-meta"><span>${reviewNote(...items)}</span>
+      <a class="report-link" href="${esc(reportUrl(where, hash))}" target="_blank" rel="noopener">⚑ Report an error</a></div>`;
   }
 
   // ---------- links between structures ----------
@@ -469,7 +500,8 @@
       ${s.danger?.length ? `<div class="callout danger"><div class="callout-title">Danger points</div>${list(s.danger)}</div>` : ""}
       ${s.variations?.length ? `<h3>Variations</h3>${list(s.variations)}` : ""}
       ${relatedHtml(s, found)}
-      ${refChips(s.refs)}`;
+      ${refChips(s.refs)}
+      ${provenance(`${state.region.title} › ${s.name}`, `${state.regionId}/${s.id}`, s, state.region)}`;
   }
 
   // Structures named in these notes, and those whose notes name this one.
@@ -527,7 +559,8 @@
       <div class="step-dots">${p.steps.map((_, i) => `<span class="${i <= state.step ? "on" : ""}"></span>`).join("")}</div>
       <h3>${esc(p.complicationsTitle || "Complications")}</h3>
       <div class="callout danger"><ul>${p.complications.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
-      ${refChips(p.refs)}`;
+      ${refChips(p.refs)}
+      ${provenance(`${r.title} › ${p.title}, step ${state.step + 1}: ${st.title}`, r.id, p, r)}`;
   }
 
   const riskIds = (p) => (p.atRisk || []).map((a) => a.id);

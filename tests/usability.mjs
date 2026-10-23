@@ -307,6 +307,8 @@ await check("Structures", "Names in the notes link to other structures, shown to
   await page.click(".rel-link");
   const focus = await page.evaluate(() => window.ANATOMY.viewer.focusIds.size);
   expect(focus > 0, "related structure not highlighted");
+  const report = await page.getAttribute(".report-link", "href");
+  expect(/issues\/new\?title=.*Right%20recurrent/.test(report), `report link: ${report}`);
   await page.click("[data-back]");
   return `${links} links, ${related} related structures`;
 });

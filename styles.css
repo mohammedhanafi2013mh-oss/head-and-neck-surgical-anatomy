@@ -529,3 +529,8 @@ kbd { font: 12px ui-monospace, monospace; padding: 1px 5px; border: 1px solid va
 .q3-feedback.wrong { background: var(--danger-soft); border-color: var(--danger); }
 .q3-feedback p { margin: 0 0 6px; }
 .q3-score { margin-top: 10px; }
+
+/* Review status and error reports at the end of each card. */
+.content-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.report-link { color: var(--accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.report-link:hover { text-decoration: underline; }
