@@ -419,7 +419,7 @@ window.ANATOMY.regions.deep_neck = {
       name: "Cervical sympathetic trunk",
       layer: "nerve",
       drawn: true,
-      summary: "Runs on longus capitis and longus colli, embedded in the prevertebral fascia, behind the carotid sheath. Drawn for this app from the prevertebral muscles.",
+      summary: "Runs on longus capitis and longus colli, embedded in the prevertebral fascia, behind the carotid sheath.",
       course: [
         { key: "top", label: "Below the skull base", text: "Its fibres leave the superior cervical ganglion along the internal carotid artery." },
         { key: "scg", label: "Superior cervical ganglion", text: "At C2–C3, behind the internal carotid: a fusiform swelling 2–3 cm long, easily mistaken for a lymph node." },
@@ -439,7 +439,7 @@ window.ANATOMY.regions.deep_neck = {
       aka: "Lower molar to submandibular and parapharyngeal spaces",
       layer: "route",
       drawn: true,
-      summary: "The commonest source of deep neck infection in adults. The roots of the lower second and third molars lie below the mylohyoid line, so their abscesses break through the thin lingual cortex into the submandibular space, and from there back into the parapharyngeal space. Drawn for this app.",
+      summary: "The commonest source of deep neck infection in adults. The roots of the lower second and third molars lie below the mylohyoid line, so their abscesses break through the thin lingual cortex into the submandibular space, and from there back into the parapharyngeal space.",
       course: [
         { key: "molar", label: "Lower second and third molars", text: "Their root apices lie below the mylohyoid line." },
         { key: "mylohyoid", label: "Through the lingual cortex", text: "Below the mylohyoid line, pus enters the submandibular space; above it (premolars, first molar), the sublingual space." },
@@ -459,7 +459,7 @@ window.ANATOMY.regions.deep_neck = {
       aka: "Peritonsillar to parapharyngeal and carotid spaces",
       layer: "route",
       drawn: true,
-      summary: "A peritonsillar abscess can break through the superior constrictor into the parapharyngeal space, then reach the carotid space and track down the carotid sheath into the mediastinum. Drawn for this app.",
+      summary: "A peritonsillar abscess can break through the superior constrictor into the parapharyngeal space, then reach the carotid space and track down the carotid sheath into the mediastinum.",
       course: [
         { key: "tonsil", label: "Peritonsillar space", text: "Quinsy: pus between the tonsil capsule and the superior constrictor." },
         { key: "pps", label: "Through the constrictor", text: "Into the parapharyngeal space: trismus (medial pterygoid) and medial bulging of the lateral pharyngeal wall." },
@@ -479,7 +479,7 @@ window.ANATOMY.regions.deep_neck = {
       aka: "Rouvière node to the mediastinum",
       layer: "route",
       drawn: true,
-      summary: "In young children, suppurating lateral retropharyngeal (Rouvière) nodes form a retropharyngeal abscess, which can spread down in front of the alar fascia to the upper mediastinum. Drawn for this app.",
+      summary: "In young children, suppurating lateral retropharyngeal (Rouvière) nodes form a retropharyngeal abscess, which can spread down in front of the alar fascia to the upper mediastinum.",
       course: [
         { key: "node", label: "Lateral retropharyngeal node", text: "Drains the nasopharynx, adenoids, sinuses and middle ear; suppurates mostly under the age of 5." },
         { key: "space", label: "Retropharyngeal space", text: "Between the buccopharyngeal fascia in front and the alar fascia behind; a midline raphe keeps early collections to one side." },
@@ -498,7 +498,7 @@ window.ANATOMY.regions.deep_neck = {
       aka: "Retropharyngeal to danger space and mediastinum",
       layer: "route",
       drawn: true,
-      summary: "Infection breaching the alar fascia enters the danger space, which has no barrier from the skull base to the diaphragm, and can cause descending necrotising mediastinitis. Drawn for this app.",
+      summary: "Infection breaching the alar fascia enters the danger space, which has no barrier from the skull base to the diaphragm, and can cause descending necrotising mediastinitis.",
       course: [
         { key: "retro", label: "Retropharyngeal space", text: "The usual source." },
         { key: "alar", label: "Through the alar fascia", text: "Into the danger space, between the alar and prevertebral layers." },

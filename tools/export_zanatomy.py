@@ -1891,7 +1891,7 @@ def drawn_route_odontogenic(L):
     gland = dn_verts("Submandibular gland.r")
     g = sum(gland, Vector()) / len(gland)
     return [apex + Vector((0.001, 0, 0.002)), Vector((inner + 0.0025, apex.y, apex.z - 0.002)),
-            g + Vector((0.002, 0.004, 0.002)), Vector((-0.024, -0.022, 1.516)), Vector((-0.0235, -0.014, 1.526)),
+            g + Vector((0.002, 0.007, -0.005)), Vector((-0.024, -0.020, 1.514)), Vector((-0.0235, -0.014, 1.526)),
             Vector((-0.0225, -0.017, 1.540))]
 
 
