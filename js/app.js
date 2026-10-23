@@ -311,8 +311,15 @@
         items: r.structures.filter((s) => s.layer === l.id && (!q || (s.name + " " + (s.aka || "")).toLowerCase().includes(q)))
       }))
       .filter((g) => g.items.length);
+    // Nerves and vessels with a traced course, for one-tap tracing.
+    const traced = q ? [] : r.structures.filter((s) => courseFor(s));
     return `
       <input class="search" type="search" placeholder="Search structures…" value="${esc(state.search)}" data-search>
+      ${traced.length ? `<div class="structure-group trace-quick"><h3>Trace a course</h3>
+        <p class="muted small">Nerves and vessels of surgical importance: tap one to follow its path and branches on the model.</p>
+        <div class="focus-list">${traced
+          .map((s) => `<button data-select="${s.id}" data-autotrace><span class="dot" style="background:${LAYER_COLORS[s.layer]}"></span>${esc(short(s.name))}</button>`)
+          .join("")}</div></div>` : ""}
       ${groups
         .map(
           (g) => `<div class="structure-group"><h3>${esc(g.l.label)}</h3><ul class="structure-list">
@@ -438,6 +445,7 @@
     body.querySelectorAll("[data-select]").forEach((b) =>
       b.addEventListener("click", () => {
         state.selected = b.dataset.select;
+        state.autoTrace = "autotrace" in b.dataset;
         if (state.tab === "surgery") {
           viewer.select(state.selected, false);
           return;
@@ -455,6 +463,12 @@
         if (li) li.classList.add("reached");
       });
     });
+    // Picked from the "Trace a course" list: start the tracer straight away.
+    if (state.autoTrace) {
+      state.autoTrace = false;
+      // After render() has shown the course on the model.
+      if (trace && course) setTimeout(() => trace.isConnected && trace.click(), 0);
+    }
     body.querySelectorAll("[data-pin]").forEach((b) =>
       b.addEventListener("click", () => {
         if (course) viewer.flyTo(course.steps[Number(b.dataset.pin)].p, 9);

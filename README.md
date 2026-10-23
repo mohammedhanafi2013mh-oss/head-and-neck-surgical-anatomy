@@ -19,11 +19,14 @@ Modules so far:
 
 Every region shows **both sides**. Regions modelled on one side are mirrored across the midline at export, so selecting a structure highlights it on both sides; courses, pins and notes describe the traced side. **Double-click** (or double-tap) a structure to hide it, and use "Show hidden" to bring hidden structures back. The 3D view has baked ambient occlusion and soft shadows for depth.
 
-Selected nerves and vessels can be **traced**: open one in Structures and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+Nerves and vessels of surgical importance can be **traced**: pick one from "Trace a course" at the top of the Structures tab, or open it and press "Trace the course". A tracer runs along it from its origin, through its foramina, to its branches and danger points, pinning each point on the model. The path is drawn through bone so it can be followed. Traced courses:
+- **Submandibular triangle:** the marginal mandibular, lingual and hypoglossal nerves, and the facial artery.
+- **Parotid:** the facial nerve, the external carotid and superficial temporal arteries, and the great auricular nerve.
+- **Lateral neck:** the accessory nerve across the posterior triangle, the internal jugular vein, vagus, phrenic and great auricular nerves, and the thoracic duct.
+- **Thyroid:** both recurrent laryngeal nerves, the external branch of the superior laryngeal nerve, the superior and inferior thyroid arteries, and the middle thyroid vein.
+- **Larynx:** the superior laryngeal nerve and its external branch, and both recurrent laryngeal nerves.
+- **Carotid triangle:** the internal and external carotid arteries, the vagus, the hypoglossal loop and ansa cervicalis, the accessory and superior laryngeal nerves, and the superior thyroid artery.
 - **Skull base:** all twelve cranial nerves and V1–V3, the internal carotid, vertebral, basilar and middle meningeal arteries, and the transverse–sigmoid sinus.
-- **Parotid:** the facial nerve.
-- **Carotid triangle:** the external carotid and its branches.
-- **Thyroid:** both recurrent laryngeal nerves.
 - **Infratemporal fossa:** the maxillary artery in its three parts, the middle meningeal artery, V3 to the mental foramen, and the lingual, buccal, auriculotemporal and chorda tympani nerves.
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.

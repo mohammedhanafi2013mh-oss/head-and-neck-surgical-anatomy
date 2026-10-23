@@ -184,6 +184,13 @@ window.ANATOMY.regions.lateral_neck = {
       name: "Accessory nerve",
       aka: "Cranial nerve XI (spinal part)",
       layer: "nerve",
+      course: [
+        { key: "foramen", label: "Jugular foramen", text: "Leaves the skull with IX and X, in front of the internal jugular vein." },
+        { key: "ijv", label: "Crosses the internal jugular vein", text: "At the transverse process of C1, usually superficial to the vein (deep to it in roughly a quarter). This is the level IIa/IIb boundary." },
+        { key: "scm", label: "Deep surface of sternocleidomastoid", text: "Supplies the muscle as it passes through or under it." },
+        { key: "erb", label: "Posterior border of sternocleidomastoid", text: "Emerges about 1 cm above Erb's point, where the great auricular nerve winds round the muscle." },
+        { key: "trapezius", label: "Under the anterior border of trapezius", text: "Crosses the posterior triangle on levator scapulae, very superficially, to reach trapezius 3–5 cm above the clavicle." }
+      ],
       summary: "Leaves the jugular foramen, crosses the internal jugular vein high in level II, enters and supplies sternocleidomastoid, then crosses the posterior triangle on levator scapulae to reach trapezius.",
       relations: [
         "Usually passes superficial (lateral) to the internal jugular vein, but deep to it in a significant minority",
@@ -207,6 +214,12 @@ window.ANATOMY.regions.lateral_neck = {
       name: "Vagus nerve",
       aka: "Cranial nerve X",
       layer: "nerve",
+      course: [
+        { key: "foramen", label: "Jugular foramen", text: "Inferior (nodose) ganglion just below the skull base." },
+        { key: "sln", label: "Superior laryngeal nerve", text: "Arises from the inferior ganglion and runs down and forward deep to both carotids." },
+        { key: "sheath", label: "In the carotid sheath", text: "Posterior, in the groove between the carotid artery and the internal jugular vein." },
+        { key: "thorax", label: "Enters the thorax", text: "Between the left common carotid and subclavian arteries; the left recurrent nerve leaves it under the aortic arch." }
+      ],
       summary: "Runs down inside the carotid sheath, in the groove behind and between the internal jugular vein and the carotid arteries.",
       relations: ["Posterior, between the internal jugular vein (lateral) and the internal and common carotid arteries (medial)"],
       supply: { "Branches in the neck": "Pharyngeal branch, superior laryngeal nerve, cardiac branches; the left recurrent laryngeal nerve arises in the thorax" },
@@ -234,6 +247,11 @@ window.ANATOMY.regions.lateral_neck = {
       aka: "C3, C4, C5",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "origin", label: "C3–C5, lateral border of scalenus anterior", text: "Mainly C4, at the upper lateral border of the muscle." },
+        { key: "tca", label: "Under the transverse cervical and suprascapular arteries", text: "Runs obliquely down and medially on scalenus anterior, deep to the prevertebral fascia." },
+        { key: "thorax", label: "Enters the thorax", text: "In front of the subclavian artery and behind the subclavian vein, at the muscle's medial border." }
+      ],
       summary: "Runs down the front of scalenus anterior, from its lateral border above to its medial border below, deep to the prevertebral fascia.",
       relations: [
         "Deep to the prevertebral fascia, the transverse cervical and suprascapular arteries, and (on the left) the thoracic duct",
@@ -288,6 +306,11 @@ window.ANATOMY.regions.lateral_neck = {
       aka: "C2, C3 (cervical plexus)",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "erb", label: "Erb's point", text: "Winds round the posterior border of sternocleidomastoid from C2–C3." },
+        { key: "scm", label: "Over sternocleidomastoid", text: "Climbs on the muscle with the external jugular vein, deep to platysma." },
+        { key: "lobule", label: "To the ear lobe", text: "Supplies the lobule, the skin over the parotid and the angle of the mandible." }
+      ],
       summary: "Winds round the posterior border of sternocleidomastoid at Erb's point and runs up across the muscle towards the ear lobe, parallel to and behind the external jugular vein.",
       relations: ["Superficial to sternocleidomastoid, deep to platysma"],
       supply: { "Sensory": "Skin over the parotid, angle of the mandible and ear lobe" },
@@ -318,6 +341,13 @@ window.ANATOMY.regions.lateral_neck = {
       id: "ijv",
       name: "Internal jugular vein",
       layer: "vein",
+      course: [
+        { key: "bulb", label: "Jugular bulb", text: "Leaves the jugular foramen as the sigmoid sinus continues; the accessory nerve, IX and X lie close in front." },
+        { key: "accessory", label: "Crossed by the accessory nerve", text: "At C1, the high-risk point for XI in level II dissection." },
+        { key: "facial", label: "Common facial vein", text: "Its main anterior tributary, at the carotid bifurcation; divide it to open the carotid sheath." },
+        { key: "omohyoid", label: "Crossed by omohyoid", text: "The intermediate tendon divides level III from IV, at about the cricoid." },
+        { key: "angle", label: "Venous angle", text: "Joins the subclavian vein behind the sternoclavicular joint; on the left the thoracic duct enters here." }
+      ],
       summary: "The lateral component of the carotid sheath, running from the jugular foramen to join the subclavian vein behind the sternoclavicular joint.",
       relations: ["Lateral to the carotid arteries, with the vagus behind and between them; the deep cervical nodes (levels II–IV) cluster round it"],
       supply: { "Tributaries in the neck": "Common facial, lingual, pharyngeal, superior and middle thyroid veins" },
@@ -478,6 +508,11 @@ window.ANATOMY.regions.lateral_neck = {
       name: "Thoracic duct",
       layer: "lymph",
       drawn: true,
+      course: [
+        { key: "ascent", label: "Rises from the thorax", text: "On the left of the oesophagus." },
+        { key: "arch", label: "Arches at C7", text: "Behind the carotid sheath, in front of the vertebral artery, scalenus anterior and phrenic nerve." },
+        { key: "angle", label: "Left venous angle", text: "Drains into the junction of the internal jugular and subclavian veins; a chyle leak follows injury in left level IV." }
+      ],
       summary: "Ascends from the thorax on the left, arches laterally at about C7 behind the carotid sheath and in front of the vertebral artery, scalenus anterior and phrenic nerve, then empties into the left venous angle.",
       relations: [
         "The arch can rise 3–4 cm above the clavicle",

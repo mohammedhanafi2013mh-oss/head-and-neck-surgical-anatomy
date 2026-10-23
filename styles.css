@@ -396,3 +396,6 @@ figcaption { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .course-list li.reached::marker { color: #e0a800; }
 .course-list li.reached button { text-decoration: underline; text-decoration-color: #e0a800; text-underline-offset: 3px; }
 .small { font-size: 12px; }
+.trace-quick .focus-list { margin-top: 6px; }
+.trace-quick .focus-list button { display: inline-flex; align-items: center; gap: 6px; }
+.trace-quick .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }

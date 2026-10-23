@@ -220,6 +220,11 @@ window.ANATOMY.regions.parotid = {
       aka: "C2, C3",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "erb", label: "Erb's point", text: "Winds round the posterior border of sternocleidomastoid." },
+        { key: "scm", label: "Over sternocleidomastoid", text: "Up toward the parotid, deep to platysma." },
+        { key: "lobule", label: "Ear lobe and parotid skin", text: "Sacrificing it in parotidectomy numbs the lobule; keep the posterior branch if possible." }
+      ],
       summary: "Runs up across sternocleidomastoid to the ear lobe and the skin over the parotid. Its anterior branch enters the parotid fascia; its posterior branch goes to the back of the ear lobe.",
       relations: ["Parallel to and behind the external jugular vein, deep to platysma"],
       supply: { "Sensory": "Ear lobe, skin over the parotid and angle of the mandible" },
@@ -265,6 +270,12 @@ window.ANATOMY.regions.parotid = {
       id: "eca",
       name: "External carotid artery",
       layer: "artery",
+      course: [
+        { key: "digastric", label: "Deep to digastric and stylohyoid", text: "Rises from the carotid triangle." },
+        { key: "enters", label: "Enters the parotid", text: "Through its deep surface." },
+        { key: "facial_nerve", label: "Deep to the facial nerve", text: "The nerve and then the retromandibular vein lie superficial to it within the gland." },
+        { key: "division", label: "Terminal division", text: "Behind the neck of the mandible, into the maxillary and superficial temporal arteries." }
+      ],
       summary: "Enters the deep part of the gland and divides behind the neck of the mandible into the maxillary and superficial temporal arteries.",
       relations: ["The deepest of the three main structures in the gland"],
       supply: {},
@@ -277,6 +288,12 @@ window.ANATOMY.regions.parotid = {
       id: "sta",
       name: "Superficial temporal artery",
       layer: "artery",
+      course: [
+        { key: "origin", label: "In the parotid", text: "Terminal branch of the external carotid." },
+        { key: "transverse_facial", label: "Transverse facial artery", text: "Runs forward above the parotid duct." },
+        { key: "zygoma", label: "Over the root of the zygomatic arch", text: "In front of the tragus, with the auriculotemporal nerve behind it; the pulse is felt here." },
+        { key: "scalp", label: "To the scalp", text: "Divides into frontal and parietal branches; the frontal branch of the facial nerve runs near the frontal branch of the artery." }
+      ],
       summary: "Leaves the upper pole of the gland, crosses the root of the zygoma in front of the ear and divides into frontal and parietal branches.",
       relations: ["The auriculotemporal nerve lies just behind it; the temporal branch of the facial nerve lies in front and deep"],
       supply: {},

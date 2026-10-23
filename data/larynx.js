@@ -547,6 +547,11 @@ window.ANATOMY.regions.larynx = {
       name: "Superior laryngeal nerve and internal branch",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "vagus", label: "Leaves the vagus", text: "From the inferior ganglion." },
+        { key: "division", label: "Divides", text: "Near the greater horn of the hyoid, into the internal and external branches." },
+        { key: "membrane", label: "Pierces the thyrohyoid membrane", text: "The internal branch, with the superior laryngeal artery, to supply the mucosa above the vocal folds." }
+      ],
       summary:
         "Leaves the vagus high in the neck and divides near the greater horn of the hyoid. The internal branch pierces the thyrohyoid membrane and supplies sensation to the larynx above the vocal folds, the epiglottis and the piriform fossa.",
       relations: [
@@ -567,6 +572,10 @@ window.ANATOMY.regions.larynx = {
       name: "External branch of the superior laryngeal nerve",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "origin", label: "From the superior laryngeal nerve", text: "Down on the inferior constrictor, deep to the superior thyroid artery." },
+        { key: "cricothyroid", label: "Enters cricothyroid", text: "The only intrinsic muscle it supplies; it tenses the vocal folds." }
+      ],
       summary: "A thin motor branch that runs down on the inferior constrictor, close to the superior thyroid artery, to cricothyroid.",
       relations: ["Its crossing with the superior thyroid artery varies (Cernea types 1, 2a and 2b)"],
       supply: { "Motor": "Cricothyroid" },
@@ -580,6 +589,10 @@ window.ANATOMY.regions.larynx = {
       name: "Right recurrent laryngeal nerve (end)",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "groove", label: "Tracheo-oesophageal groove", text: "Climbs beside the trachea." },
+        { key: "entry", label: "Enters the larynx", text: "Behind the cricothyroid joint, under the inferior constrictor; supplies all intrinsic muscles except cricothyroid." }
+      ],
       summary: "Enters the larynx behind the right cricothyroid joint, under the lower border of the inferior constrictor, and divides into branches to the intrinsic muscles.",
       relations: ["The posterior branch supplies the posterior cricoarytenoid and interarytenoid; the anterior branch supplies the lateral cricoarytenoid and thyroarytenoid"],
       supply: { "Motor": "All intrinsic muscles except cricothyroid", "Sensory": "Below the vocal folds" },
@@ -593,6 +606,10 @@ window.ANATOMY.regions.larynx = {
       name: "Left recurrent laryngeal nerve (end)",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "groove", label: "Tracheo-oesophageal groove", text: "Climbs beside the trachea." },
+        { key: "entry", label: "Enters the larynx", text: "Behind the cricothyroid joint, under the inferior constrictor." }
+      ],
       summary: "Climbs in the left tracheo-oesophageal groove and enters the larynx behind the left cricothyroid joint.",
       relations: ["Its long course round the aortic arch explains why left vocal fold palsy can be the first sign of a chest cancer"],
       supply: { "Motor": "All intrinsic muscles except cricothyroid on the left" },

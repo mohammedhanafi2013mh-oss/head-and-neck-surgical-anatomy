@@ -86,6 +86,13 @@ window.ANATOMY.regions.carotid = {
       id: "ica",
       name: "Internal carotid artery",
       layer: "artery",
+      course: [
+        { key: "cca", label: "Common carotid artery", text: "No branches in the neck." },
+        { key: "bifurcation", label: "Bifurcation", text: "Usually at the upper border of the thyroid cartilage (C3–C4); the internal carotid lies posterolateral." },
+        { key: "sinus", label: "Carotid sinus", text: "The dilated origin; baroreceptors supplied by the carotid sinus nerve of IX. Handling it can cause bradycardia." },
+        { key: "digastric", label: "Deep to the posterior belly of digastric", text: "Keep the dissection below the digastric, or divide it for higher exposure." },
+        { key: "skull", label: "To the carotid canal", text: "No branches in the neck: a branch identifies the external carotid." }
+      ],
       summary: "Usually posterolateral to the external carotid at its origin. It has no branches in the neck and runs up to the carotid canal, deep to the posterior belly of digastric and the styloid muscles.",
       relations: [
         "Its first part is dilated as the carotid sinus",
@@ -129,6 +136,11 @@ window.ANATOMY.regions.carotid = {
       name: "Superior thyroid artery",
       layer: "artery",
       drawn: true,
+      course: [
+        { key: "origin", label: "First branch of the external carotid", text: "Just above the bifurcation." },
+        { key: "sla", label: "Superior laryngeal artery", text: "Runs medially with the internal laryngeal nerve to the thyrohyoid membrane." },
+        { key: "pole", label: "Upper pole of the thyroid", text: "Ligate on the gland capsule to spare the external branch of the superior laryngeal nerve." }
+      ],
       summary: "Usually the first branch of the external carotid, curving down to the upper pole of the thyroid with the external branch of the superior laryngeal nerve close by.",
       relations: ["Gives the superior laryngeal artery and the sternocleidomastoid artery"],
       supply: {},
@@ -323,6 +335,11 @@ window.ANATOMY.regions.carotid = {
       aka: "Cranial nerve X",
       layer: "nerve",
       drawn: "redrawn",
+      course: [
+        { key: "top", label: "Below the skull base", text: "Behind the internal carotid artery and the internal jugular vein." },
+        { key: "sln", label: "Superior laryngeal nerve", text: "Leaves the vagus high, from the inferior ganglion." },
+        { key: "sheath", label: "Down the carotid sheath", text: "Posterior, between the artery and the vein; check it before clamping the sheath." }
+      ],
       summary: "Runs down inside the carotid sheath, behind and between the carotid artery and the internal jugular vein.",
       relations: [
         "Gives the superior laryngeal nerve high in the neck, which passes deep to the carotids",
@@ -340,6 +357,13 @@ window.ANATOMY.regions.carotid = {
       aka: "Cranial nerve XII",
       layer: "nerve",
       drawn: "redrawn",
+      course: [
+        { key: "between", label: "Between the internal carotid and the jugular", text: "Descends from the skull base, deep to the posterior belly of digastric." },
+        { key: "occipital", label: "Hooks round the occipital artery", text: "The sternocleidomastoid branch of the occipital artery tethers the nerve; divide it to free XII." },
+        { key: "eca", label: "Crosses the external carotid", text: "Superficially, 1–2 cm above the bifurcation, just below the digastric." },
+        { key: "ansa", label: "Gives off the superior root", text: "The superior root of the ansa (C1 fibres) leaves the nerve and runs down on the carotid sheath." },
+        { key: "hyoglossus", label: "To hyoglossus", text: "Forward above the greater horn of the hyoid, toward the tongue." }
+      ],
       summary: "Comes down between the internal carotid and the jugular vein, hooks round the occipital artery, crosses superficial to the internal and external carotids and the lingual artery loop, and runs forward above the hyoid onto hyoglossus.",
       relations: [
         "Tethered by the sternocleidomastoid branch of the occipital artery and its vein",
@@ -360,6 +384,10 @@ window.ANATOMY.regions.carotid = {
       name: "Ansa cervicalis",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "root", label: "Superior root", text: "Leaves the hypoglossal nerve as it curves forward round the occipital artery and across the carotids." },
+        { key: "loop", label: "The loop on the sheath", text: "Joins the inferior root (C2–C3) low on the carotid sheath; twigs supply the strap muscles." }
+      ],
       summary: "A nerve loop on the carotid sheath. The superior root (C1 fibres travelling with XII) runs down on the front of the sheath; the inferior root (C2–C3) curves round the lateral side of the jugular vein. They join low on the sheath.",
       relations: ["Branches from the loop supply sternohyoid, sternothyroid and the inferior belly of omohyoid; the superior root supplies the superior belly of omohyoid"],
       supply: { "Motor": "Infrahyoid (strap) muscles, except thyrohyoid (C1 via XII)" },
@@ -376,6 +404,12 @@ window.ANATOMY.regions.carotid = {
       name: "Superior laryngeal nerve",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "vagus", label: "Leaves the vagus", text: "From the inferior ganglion, high in the neck." },
+        { key: "ica", label: "Deep to the internal carotid", text: "Runs down and forward medial to both carotid arteries." },
+        { key: "division", label: "Divides", text: "Into the internal branch (sensory) and the external branch (to cricothyroid)." },
+        { key: "membrane", label: "Pierces the thyrohyoid membrane", text: "The internal branch, with the superior laryngeal artery." }
+      ],
       summary: "Leaves the vagus high in the neck and passes deep (medial) to both the internal and external carotids, dividing into the internal branch (to the thyrohyoid membrane) and the external branch.",
       relations: [],
       supply: { "Sensory (internal branch)": "Larynx above the vocal folds" },
@@ -389,6 +423,11 @@ window.ANATOMY.regions.carotid = {
       name: "External branch of the superior laryngeal nerve",
       layer: "nerve",
       drawn: true,
+      course: [
+        { key: "origin", label: "From the superior laryngeal nerve", text: "Runs down on the inferior constrictor." },
+        { key: "sta", label: "With the superior thyroid artery", text: "Deep to the artery; close to it near the upper pole." },
+        { key: "cricothyroid", label: "Enters cricothyroid", text: "Injury lowers the voice's pitch and power." }
+      ],
       summary: "Runs down deep to the superior thyroid artery to cricothyroid.",
       relations: [],
       supply: { "Motor": "Cricothyroid" },
@@ -415,6 +454,11 @@ window.ANATOMY.regions.carotid = {
       name: "Accessory nerve",
       aka: "Cranial nerve XI",
       layer: "nerve",
+      course: [
+        { key: "foramen", label: "Jugular foramen", text: "Leaves the skull with IX and X." },
+        { key: "ijv", label: "Crosses the internal jugular vein", text: "At C1, usually superficial to it, then enters the deep surface of sternocleidomastoid." },
+        { key: "posterior", label: "Toward the posterior triangle", text: "Through or under sternocleidomastoid, then across the posterior triangle to trapezius." }
+      ],
       summary: "Crosses the internal jugular vein high in the neck, usually superficially (in this model, deep to it), and enters the deep surface of sternocleidomastoid.",
       relations: [],
       supply: { "Motor": "Sternocleidomastoid and trapezius" },
