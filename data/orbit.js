@@ -739,6 +739,7 @@ window.ANATOMY.regions.orbit = {
 
   procedure: {
     title: "Orbital floor fracture repair through a transconjunctival approach",
+    atRisk: [{"id": "v2", "why": "The infraorbital nerve runs in the floor: cheek and lip numbness"}, {"id": "inferior_rectus", "why": "Trapped in the fracture or damaged freeing it: double vision"}, {"id": "inferior_oblique", "why": "Arises from the front of the floor: double vision if detached"}, {"id": "cn2", "why": "Lies about 4 cm behind the rim: stop dissection short of the posterior floor"}, {"id": "lacrimal_drainage", "why": "Medial to the floor at the front: watery eye if the duct is injured"}],
     steps: [
       {
         title: "Decide and prepare",

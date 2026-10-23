@@ -604,6 +604,7 @@ window.ANATOMY.regions.sinonasal = {
 
   procedure: {
     title: "Functional endoscopic sinus surgery (FESS)",
+    atRisk: [{"id": "orbit_contents", "why": "Through the lamina papyracea: orbital fat, medial rectus, double vision"}, {"id": "cn2", "why": "In the lateral wall of the sphenoid and posterior ethmoid: blindness"}, {"id": "ica", "why": "Bulges into the lateral sphenoid wall, sometimes without bone cover"}, {"id": "ethmoidal_arteries", "why": "The anterior ethmoidal artery crosses the skull base: orbital haematoma if cut"}, {"id": "nasolacrimal", "why": "In front of the natural ostium: watery eye if the antrostomy goes too far forward"}, {"id": "f_cribriform", "why": "Thin and low (Keros): CSF leak and meningitis"}],
     steps: [
       {
         title: "Plan from the CT",

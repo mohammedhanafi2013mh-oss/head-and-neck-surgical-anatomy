@@ -283,6 +283,46 @@ await check("Quiz", "Answering a question gives feedback", async () => {
   const marked = await page.$$eval(".quiz-opt.correct, .quiz-opt.wrong", (b) => b.length);
   expect(marked > 0, "no feedback");
 });
+await check("Quiz", "Find it and Name it: answers on the 3D model are marked, with names hidden meanwhile", async () => {
+  await page.click('[data-qmode="find"]');
+  const target = await page.getAttribute(".q3-prompt", "data-target");
+  expect(await page.evaluate(() => window.ANATOMY.viewer.hideNames), "names still shown");
+  await page.evaluate((id) => window.ANATOMY.viewer.select(id, true), target); // a tap on the right structure
+  await page.waitForSelector(".q3-feedback.correct");
+  await page.click('[data-qmode="name"]');
+  const t2 = await page.getAttribute(".q3-prompt", "data-target");
+  await page.click(`[data-q3-opt="${t2}"]`);
+  await page.waitForSelector(".q3-feedback.correct");
+  const score = await page.textContent(".q3-score");
+  await page.click('[data-qmode="questions"]');
+  expect(!(await page.evaluate(() => window.ANATOMY.viewer.hideNames)), "names not restored");
+  return score.split(" · ")[0];
+});
+await check("Structures", "Names in the notes link to other structures, shown together on the model", async () => {
+  await page.click('[data-tab="structures"]');
+  await page.click('[data-select="rln_right"]');
+  const links = await page.$$eval(".rel-link", (e) => e.length);
+  const related = await page.$$eval(".rel-toggle", (e) => e.length);
+  expect(links > 0 && related > 0, `links ${links}, related ${related}`);
+  await page.click(".rel-link");
+  const focus = await page.evaluate(() => window.ANATOMY.viewer.focusIds.size);
+  expect(focus > 0, "related structure not highlighted");
+  await page.click("[data-back]");
+  return `${links} links, ${related} related structures`;
+});
+await check("Surgery", "The operation's structures at risk are listed and tinted on the model", async () => {
+  await page.click('[data-tab="surgery"]');
+  const items = await page.$$eval(".risk-list li", (e) => e.length);
+  const tinted = () => page.evaluate(() => window.ANATOMY.viewer.dangerIds.size);
+  const on = await tinted();
+  expect(items >= 3 && on === items, `listed ${items}, tinted ${on}`);
+  await page.click("[data-risk-toggle]");
+  expect((await tinted()) === 0, "still tinted after switching off");
+  await page.click("[data-risk-toggle]");
+  await page.click('[data-tab="overview"]');
+  expect((await tinted()) === 0, "tint left on after leaving Surgery");
+  return `${items} structures at risk`;
+});
 await check("Guide", "'?' opens the quick guide with offline status", async () => {
   await page.click('[data-tab="overview"]');
   await page.keyboard.press("?");

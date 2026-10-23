@@ -923,6 +923,7 @@ window.ANATOMY.regions.skull_base = {
 
   procedure: {
     title: "Endoscopic endonasal transsphenoidal approach to the pituitary",
+    atRisk: [{"id": "ica", "why": "Lateral to the sella in the cavernous sinus: catastrophic bleeding"}, {"id": "cavernous_sinus", "why": "Lateral limit of the exposure: venous bleeding and cranial nerve palsies"}, {"id": "optic_chiasm", "why": "Above the sella: visual field loss"}, {"id": "cn2", "why": "In the optico-carotid region of the sphenoid"}, {"id": "cn6", "why": "The most medial nerve in the cavernous sinus: double vision"}],
     steps: [
       {
         title: "Position and preparation",

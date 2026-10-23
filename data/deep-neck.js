@@ -536,6 +536,7 @@ window.ANATOMY.regions.deep_neck = {
 
   procedure: {
     title: "Transcervical drainage of a parapharyngeal and submandibular abscess",
+    atRisk: [{"id": "carotids", "why": "Run through the carotid space next to the abscess: erosion and bleeding"}, {"id": "ijv", "why": "Thrombosis from spreading infection (Lemierre syndrome)"}, {"id": "vagus", "why": "In the carotid sheath: hoarseness and aspiration"}, {"id": "hypoglossal", "why": "Crosses the carotids below the posterior belly of digastric"}, {"id": "glossopharyngeal", "why": "Near the styloid muscles in the parapharyngeal space"}],
     steps: [
       {
         title: "Airway first",

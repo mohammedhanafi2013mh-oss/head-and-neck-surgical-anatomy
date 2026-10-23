@@ -699,6 +699,7 @@ window.ANATOMY.regions.submandibular = {
 
   procedure: {
     title: "Submandibular gland excision (transcervical)",
+    atRisk: [{"id": "mmn", "why": "Below the mandible over the facial vessels: lower-lip weakness"}, {"id": "lingual_nerve", "why": "Tethered to the gland by the submandibular ganglion: tongue numbness"}, {"id": "hypoglossal", "why": "On hyoglossus, deep to the gland: tongue weakness"}, {"id": "facial_artery", "why": "Hooks over the gland: bleeding if not tied"}],
     steps: [
       {
         title: "Position and incision", incision: "submandibular",

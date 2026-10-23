@@ -546,6 +546,7 @@ window.ANATOMY.regions.oral_cavity = {
     {
       "short": "Partial glossectomy",
       "title": "Transoral partial glossectomy for a lateral tongue cancer",
+      "atRisk": [{"id": "lingual_nerve", "why": "Runs into the side of the tongue from the floor of mouth: numbness and loss of taste"}, {"id": "hypoglossal", "why": "On hyoglossus in the floor of mouth: tongue weakness if the resection goes deep"}, {"id": "lingual_artery", "why": "Deep to hyoglossus: the main source of bleeding after glossectomy"}, {"id": "wharton", "why": "In the floor of mouth: a cut duct obstructs the submandibular gland"}],
       "steps": [
         {
           "title": "Assess and stage",
@@ -696,6 +697,7 @@ window.ANATOMY.regions.oral_cavity = {
     {
     "short": "Ranula",
     "title": "Transoral excision of the sublingual gland for a ranula",
+    "atRisk": [{"id": "lingual_nerve", "why": "Loops under the duct on the deep side of the gland: numbness of the tongue"}, {"id": "wharton", "why": "Medial to the gland: injury or narrowing swells the submandibular gland"}, {"id": "lingual_artery", "why": "Its sublingual branch supplies the gland: bleeding into the floor of mouth"}],
     "intro": "A ranula is mucus leaking from the sublingual gland, so the cure is to remove the gland. Step through the operation; switch on the Ranula layer at any time to see the swelling.",
     "steps": [
       {

@@ -39,12 +39,27 @@
     selected: null,
     proc: 0, // which operation, when a region has several (region.procedures)
     step: 0,
+    showRisk: true, // tint the operation's structures at risk on the model
+    riskOpen: true, // the list of structures at risk is expanded
+    relFocus: new Set(), // related structures shown with the open structure
+    relFor: null,
     quiz: {},
+    quizMode: "questions", // "questions" | "find" (tap it on the model) | "name" (name the highlighted one)
+    q3: null,
     search: ""
   };
 
+  try { state.showRisk = localStorage.getItem("showRisk") !== "0"; } catch (e) {}
+
   const viewer = new Viewer($("#viewer"), {
     onSelect: (id) => {
+      // In the model quizzes a tap is an answer (Find it), or is ignored so the
+      // highlighted structure stays (Name it).
+      if (state.tab === "quiz" && state.quizMode !== "questions" && state.q3) {
+        if (state.quizMode === "find" && !state.q3.answered && id) answerQuiz3d(id);
+        else viewer.select(state.selected, false);
+        return;
+      }
       state.selected = id;
       if (id && state.tab !== "surgery" && state.tab !== "sections") {
         state.tab = "structures";
@@ -150,6 +165,8 @@
     state.step = 0;
     shownIncisions = ""; // viewer.load() clears the drawn incisions
     state.quiz = {};
+    state.q3 = null;
+    state.relFocus = new Set();
     state.search = "";
     if (state.tab === "surgery") state.tab = "overview";
     $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
@@ -296,6 +313,10 @@
 
   function render() {
     if (!state.region) return;
+    if (state.relFor !== state.selected) {
+      state.relFocus = new Set(); // related structures belong to the structure they were opened from
+      state.relFor = state.selected;
+    }
     document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === state.tab)));
     const body = $("#panel-body");
     const r = state.region;
@@ -312,8 +333,13 @@
       sections.resize();
     }
     wire(body);
+    viewer.hideNames = state.tab === "quiz" && state.quizMode !== "questions";
     if (state.tab === "surgery") applyStep();
-    else viewer.select(state.selected, false);
+    else {
+      const rel = state.tab === "structures" && state.selected ? [...state.relFocus] : [];
+      if (rel.length || viewer.focusIds.size) viewer.setFocus(rel);
+      viewer.select(state.selected, false);
+    }
     syncCourse();
     syncHash();
   }
@@ -363,8 +389,70 @@
         .join("") || `<p class="muted">No matches.</p>`}`;
   }
 
+  // ---------- links between structures ----------
+  // Names of the region's structures found in a structure's notes become
+  // buttons: tapping one shows it on the model together with the open structure.
+  let linkCache = null;
+  function linker() {
+    const r = state.region;
+    if (linkCache && linkCache.region === r) return linkCache;
+    const map = new Map();
+    const add = (phrase, id) => {
+      const k = phrase.trim().toLowerCase();
+      if (k.length >= 4 && !map.has(k)) map.set(k, id);
+    };
+    for (const s of r.structures) {
+      const forms = [s.name, short(s.name), s.name.replace(/\s*\([^)]*\)/g, ""), ...(s.aka || "").split(/[,;]/)];
+      for (const f of forms) {
+        if (!f || !f.trim()) continue;
+        add(f, s.id);
+        if (/ies$/i.test(f)) add(f.replace(/ies$/i, "y"), s.id); // arteries -> artery
+        else if (/[^s]s$/i.test(f)) add(f.slice(0, -1), s.id); // glands -> gland
+      }
+    }
+    const phrases = [...map.keys()].sort((a, b) => b.length - a.length);
+    const re = new RegExp(`\\b(${phrases.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`, "gi");
+    linkCache = { region: r, map, re, mentions: null };
+    return linkCache;
+  }
+
+  // Text with the names of other structures turned into buttons; ids found go into `found`.
+  function linkify(text, selfId, found) {
+    const { map, re } = linker();
+    let out = "", last = 0;
+    for (const m of String(text).matchAll(re)) {
+      const id = map.get(m[0].toLowerCase());
+      if (!id || id === selfId) continue;
+      out += esc(text.slice(last, m.index)) + `<button type="button" class="rel-link" data-rel="${id}">${esc(m[0])}</button>`;
+      last = m.index + m[0].length;
+      found && found.add(id);
+    }
+    return out + esc(String(text).slice(last));
+  }
+
+  const noteTexts = (s) => [s.summary || "", ...(s.relations || []), ...Object.values(s.supply || {}), ...(s.surgical || []), ...(s.danger || []), ...(s.variations || [])];
+
+  // Structures whose notes mention each structure.
+  function mentionsOf(id) {
+    const L = linker();
+    if (!L.mentions) {
+      L.mentions = new Map();
+      for (const s of state.region.structures) {
+        const found = new Set();
+        for (const x of noteTexts(s)) linkify(x, s.id, found);
+        for (const t of found) {
+          if (!L.mentions.has(t)) L.mentions.set(t, new Set());
+          L.mentions.get(t).add(s.id);
+        }
+      }
+    }
+    return L.mentions.get(id) || new Set();
+  }
+
   function structureCard(s) {
-    const list = (items) => `<ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>`;
+    const found = new Set();
+    const link = (x) => linkify(x, s.id, found);
+    const list = (items) => `<ul>${items.map((i) => `<li>${link(i)}</li>`).join("")}</ul>`;
     const supply = Object.entries(s.supply || {});
     return `
       <button class="back" data-back>← All structures</button>
@@ -373,14 +461,30 @@
       ${viewer.structures.has(s.id) ? "" : pinFor(s) ? `<p class="aka">Shown as a pin on the 3D model.</p>` : `<p class="aka">Not shown in the 3D model yet.</p>`}
       ${s.drawn === "redrawn" ? `<p class="aka">Z-Anatomy's model places this structure inaccurately here, so its path in this region was redrawn for this app in its usual position.</p>`
         : s.drawn ? `<p class="aka">Z-Anatomy has no model of this structure. Its 3D path was drawn for this app from the surrounding anatomy.</p>` : ""}
-      <p>${esc(s.summary)}</p>
+      <p>${link(s.summary || "")}</p>
       ${courseHtml(courseFor(s))}
       ${s.relations?.length ? `<h3>Relations</h3>${list(s.relations)}` : ""}
-      ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
+      ${supply.length ? `<h3>Supply & function</h3><dl class="def-list">${supply.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${link(v)}</dd>`).join("")}</dl>` : ""}
       ${s.surgical?.length ? `<div class="callout pearl"><div class="callout-title">Surgical relevance</div>${list(s.surgical)}</div>` : ""}
       ${s.danger?.length ? `<div class="callout danger"><div class="callout-title">Danger points</div>${list(s.danger)}</div>` : ""}
       ${s.variations?.length ? `<h3>Variations</h3>${list(s.variations)}` : ""}
+      ${relatedHtml(s, found)}
       ${refChips(s.refs)}`;
+  }
+
+  // Structures named in these notes, and those whose notes name this one.
+  function relatedHtml(s, found) {
+    const ids = [...new Set([...found, ...mentionsOf(s.id)])].filter((id) => id !== s.id);
+    if (!ids.length) return "";
+    const byId = Object.fromEntries(state.region.structures.map((x) => [x.id, x]));
+    const inModel = ids.filter((id) => viewer.structures.has(id));
+    return `<div class="related"><h3>Related structures</h3>
+      <p class="muted small">Tap a name here or in the notes to see it on the model with ${esc(short(s.name))}; › opens its notes.</p>
+      <div class="rel-items">${ids
+        .map((id) => `<span class="rel-item"><button type="button" class="rel-toggle" data-rel="${id}" aria-pressed="${state.relFocus.has(id)}"${viewer.structures.has(id) ? "" : " disabled title=\"Not in the 3D model\""}><span class="dot" style="background:${LAYER_COLORS[byId[id].layer]}"></span>${esc(short(byId[id].name))}</button><button type="button" class="rel-open" data-select="${id}" aria-label="Open ${esc(short(byId[id].name))}">›</button></span>`)
+        .join("")}</div>
+      ${inModel.length > 1 ? `<div class="rel-actions"><button type="button" data-rel-all>Show all on the model</button>${state.relFocus.size ? `<button type="button" data-rel-clear>Clear</button>` : ""}</div>` : ""}
+    </div>`;
   }
 
   function courseHtml(course) {
@@ -413,16 +517,29 @@
         <button data-step="-1" ${state.step === 0 ? "disabled" : ""}>← Prev</button>
         <button data-step="1" ${state.step === p.steps.length - 1 ? "disabled" : ""}>Next →</button>
       </div>
+      ${riskHtml(p, names)}
       <div class="step-card">
         <h4>${esc(st.title)}</h4>
         <p>${esc(st.text)}</p>
-        <div class="focus-list">${st.focus.map((id) => `<button data-select="${id}">${esc(names[id])}</button>`).join("")}</div>
+        <div class="focus-list">${st.focus.map((id) => `<button data-select="${id}"${riskIds(p).includes(id) ? ` class="risk" title="At risk in this operation"` : ""}>${riskIds(p).includes(id) ? "⚠ " : ""}${esc(names[id])}</button>`).join("")}</div>
         ${stepIncisions(st).map((i) => `<p class="incision-note"><span class="swatch" aria-hidden="true"></span><span><strong>${esc(i.name)}</strong>${i.note ? ` · ${esc(i.note)}` : ""}</span></p>`).join("")}
       </div>
       <div class="step-dots">${p.steps.map((_, i) => `<span class="${i <= state.step ? "on" : ""}"></span>`).join("")}</div>
       <h3>${esc(p.complicationsTitle || "Complications")}</h3>
       <div class="callout danger"><ul>${p.complications.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
       ${refChips(p.refs)}`;
+  }
+
+  const riskIds = (p) => (p.atRisk || []).map((a) => a.id);
+
+  // The operation's structures at risk, each with what injury to it causes.
+  function riskHtml(p, names) {
+    if (!p.atRisk?.length) return "";
+    return `<details class="risk-box"${state.riskOpen ? " open" : ""}><summary>⚠ Structures at risk (${p.atRisk.length})</summary>
+      <label class="risk-toggle"><input type="checkbox" data-risk-toggle${state.showRisk ? " checked" : ""}> Highlight them on the model (orange)</label>
+      <ul class="risk-list">${p.atRisk
+        .map((a) => `<li><button type="button" data-select="${a.id}">${esc(short(names[a.id] || a.id))}</button><span>${esc(a.why)}</span></li>`)
+        .join("")}</ul></details>`;
   }
 
   function sectionsTab() {
@@ -439,6 +556,114 @@
   }
 
   function quiz(r) {
+    const modes = [["questions", "Questions"], ["find", "Find it on the model"], ["name", "Name it"]];
+    const picker = `<div class="proc-pick quiz-modes">${modes
+      .map(([m, label]) => `<button type="button" data-qmode="${m}" aria-pressed="${state.quizMode === m}">${label}</button>`)
+      .join("")}</div>`;
+    return picker + (state.quizMode === "questions" ? quizQuestions(r) : quiz3d(r));
+  }
+
+  // ---------- quizzes on the model ----------
+  // Progress is kept in this browser: per region and structure, [right, seen, last answer right].
+  const PROGRESS_KEY = "quiz3d";
+  function progress() {
+    try { return JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch (e) { return {}; }
+  }
+  function record(id, ok) {
+    const all = progress();
+    const mine = (all[state.regionId] = all[state.regionId] || {});
+    const [right = 0, seen = 0] = mine[id] || [];
+    mine[id] = [right + (ok ? 1 : 0), seen + 1, ok ? 1 : 0];
+    try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch (e) {}
+  }
+  // Structures in the 3D model that can be asked about.
+  const quizPool = () => state.region.structures.filter((s) => viewer.structures.has(s.id) && s.layer !== "route" && !viewer.hidden.has(s.id));
+  const known = (rec) => rec && rec[0] >= 2 && rec[2] === 1;
+
+  // Next structure: unseen and missed ones come up more often; not one of the last few.
+  function nextQuiz3d() {
+    const pool = quizPool();
+    if (!pool.length) return (state.q3 = null);
+    const mine = progress()[state.regionId] || {};
+    const prev = state.q3 || { correct: 0, total: 0, recent: [] };
+    const recent = prev.recent || [];
+    const weight = (s) => {
+      const rec = mine[s.id];
+      if (!rec) return 3;
+      return 1 + 4 * (1 - rec[0] / rec[1]) + (rec[2] ? 0 : 2) + (known(rec) ? -0.6 : 0);
+    };
+    const cands = pool.filter((s) => !recent.includes(s.id));
+    const list = cands.length ? cands : pool;
+    let x = Math.random() * list.reduce((a, s) => a + weight(s), 0);
+    const target = list.find((s) => (x -= weight(s)) <= 0) || list[list.length - 1];
+    // Name it: three other structures, from the same layer where possible.
+    const others = pool.filter((s) => s.id !== target.id);
+    const same = others.filter((s) => s.layer === target.layer).sort(() => Math.random() - 0.5);
+    const rest = others.filter((s) => s.layer !== target.layer).sort(() => Math.random() - 0.5);
+    const options = [target, ...same.concat(rest).slice(0, 3)].sort(() => Math.random() - 0.5).map((s) => s.id);
+    state.q3 = { target: target.id, options, answered: false, picked: null, correct: prev.correct, total: prev.total, recent: [target.id, ...recent].slice(0, 4) };
+    if (!viewer.layerVisible[target.layer]) {
+      viewer.setLayer(target.layer, true);
+      renderLayerToggles();
+    }
+    state.selected = state.quizMode === "name" ? target.id : null;
+    if (state.quizMode === "name") viewer.frameStructure(target.id);
+  }
+
+  function answerQuiz3d(id) {
+    const q = state.q3;
+    q.answered = true;
+    q.picked = id;
+    const ok = id === q.target;
+    q.total += 1;
+    if (ok) q.correct += 1;
+    record(q.target, ok);
+    state.selected = q.target;
+    if (!ok || state.quizMode === "find") viewer.frameStructure(q.target);
+    render();
+  }
+
+  function quiz3d(r) {
+    if (!state.q3 || !viewer.structures.has(state.q3.target)) nextQuiz3d();
+    const q = state.q3;
+    if (!q) return `<p class="muted">This region has no structures in the 3D model to ask about.</p>`;
+    // Name it shows the answer's structure highlighted; Find it only once answered.
+    state.selected = state.quizMode === "name" || q.answered ? q.target : null;
+    const byId = Object.fromEntries(r.structures.map((s) => [s.id, s]));
+    const t = byId[q.target];
+    const mine = progress()[state.regionId] || {};
+    const pool = quizPool();
+    const nKnown = pool.filter((s) => known(mine[s.id])).length;
+    const ok = q.answered && q.picked === q.target;
+    const intro = state.quizMode === "find"
+      ? `<p class="muted">Tap the structure on the 3D model. Labels and hover names are off while you play; rotate and zoom as usual.</p>`
+      : `<p class="muted">Which structure is highlighted on the 3D model? Labels are off while you play.</p>`;
+    const prompt = state.quizMode === "find"
+      ? `<p class="q3-prompt" data-target="${q.target}">Find the <strong>${esc(short(t.name))}</strong></p>`
+      : `<p class="q3-prompt" data-target="${q.target}">Name the highlighted structure</p>
+         <div class="q3-options">${q.options
+           .map((id) => {
+             const cls = q.answered ? (id === q.target ? " correct" : id === q.picked ? " wrong" : "") : "";
+             return `<button type="button" class="quiz-opt${cls}" data-q3-opt="${id}"${q.answered ? " disabled" : ""}>${esc(short(byId[id].name))}</button>`;
+           })
+           .join("")}</div>`;
+    const feedback = !q.answered ? (state.quizMode === "find"
+      ? `<div class="q3-actions"><button type="button" data-q3-reveal>Show me</button><button type="button" data-q3-skip>Skip</button></div>` : "")
+      : `<div class="q3-feedback ${ok ? "correct" : "wrong"}">
+          <p><strong>${ok ? "✓ Correct" : q.picked ? "✗ Not quite" : "Here it is"}</strong>${!ok && q.picked && byId[q.picked]
+            ? `: you chose ${esc(short(byId[q.picked].name))}` : ""}. Highlighted on the model: <strong>${esc(short(t.name))}</strong>.</p>
+          ${t.summary ? `<p>${esc(t.summary)}</p>` : ""}
+          <div class="q3-actions"><button type="button" data-q3-next>Next →</button><button type="button" data-select="${t.id}">Open its notes</button></div>
+        </div>`;
+    return `
+      <h2>${state.quizMode === "find" ? "Find it on the model" : "Name it"}</h2>
+      ${intro}
+      <div class="q3-card">${prompt}${feedback}</div>
+      <p class="muted small q3-score">This session: ${q.correct} / ${q.total} · Known in this region: ${nKnown} of ${pool.length} structures (right twice, and last time). Progress is saved on this device.</p>
+      ${nKnown || Object.keys(mine).length ? `<button type="button" class="quiz-opt" data-q3-reset>Reset progress for this region</button>` : ""}`;
+  }
+
+  function quizQuestions(r) {
     const answered = Object.keys(state.quiz).length;
     const correct = r.quiz.filter((q, i) => state.quiz[i] === q.answer).length;
     return `
@@ -547,6 +772,72 @@
         render();
       })
     );
+    body.querySelectorAll("[data-rel]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const id = b.dataset.rel;
+        if (state.relFocus.has(id)) state.relFocus.delete(id);
+        else {
+          state.relFocus.add(id);
+          const s = viewer.structures.get(id);
+          if (s && !viewer.layerVisible[s.layer]) {
+            viewer.setLayer(s.layer, true);
+            renderLayerToggles();
+          }
+        }
+        render();
+      })
+    );
+    const relAll = $("[data-rel-all]", body);
+    if (relAll) relAll.addEventListener("click", () => {
+      body.querySelectorAll(".rel-toggle:not([disabled])").forEach((b) => state.relFocus.add(b.dataset.rel));
+      for (const id of state.relFocus) {
+        const s = viewer.structures.get(id);
+        if (s) viewer.layerVisible[s.layer] = true;
+      }
+      renderLayerToggles();
+      render();
+    });
+    const relClear = $("[data-rel-clear]", body);
+    if (relClear) relClear.addEventListener("click", () => {
+      state.relFocus.clear();
+      render();
+    });
+    const riskBox = $(".risk-box", body);
+    if (riskBox) riskBox.addEventListener("toggle", () => (state.riskOpen = riskBox.open));
+    const riskToggle = $("[data-risk-toggle]", body);
+    if (riskToggle) riskToggle.addEventListener("change", () => {
+      state.showRisk = riskToggle.checked;
+      try { localStorage.setItem("showRisk", state.showRisk ? "1" : "0"); } catch (e) {}
+      applyStep();
+    });
+    body.querySelectorAll("[data-qmode]").forEach((b) =>
+      b.addEventListener("click", () => {
+        state.quizMode = b.dataset.qmode;
+        if (state.quizMode !== "questions") nextQuiz3d();
+        else state.selected = null;
+        render();
+      })
+    );
+    body.querySelectorAll("[data-q3-opt]").forEach((b) => b.addEventListener("click", () => answerQuiz3d(b.dataset.q3Opt)));
+    const reveal = $("[data-q3-reveal]", body);
+    if (reveal) reveal.addEventListener("click", () => answerQuiz3d(null));
+    const skip = $("[data-q3-skip]", body);
+    if (skip) skip.addEventListener("click", () => {
+      nextQuiz3d();
+      render();
+    });
+    const next = $("[data-q3-next]", body);
+    if (next) next.addEventListener("click", () => {
+      nextQuiz3d();
+      render();
+    });
+    const q3reset = $("[data-q3-reset]", body);
+    if (q3reset) q3reset.addEventListener("click", () => {
+      const all = progress();
+      delete all[state.regionId];
+      try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch (e) {}
+      render();
+    });
     body.querySelectorAll("[data-quiz]").forEach((b) =>
       b.addEventListener("click", () => {
         const [i, j] = b.dataset.quiz.split(":").map(Number);
@@ -581,8 +872,10 @@
 
   let shownIncisions = "";
   function applyStep() {
-    const st = procedureOf(state.region).steps[state.step];
+    const p = procedureOf(state.region);
+    const st = p.steps[state.step];
     viewer.setLayers(st.show);
+    viewer.setDanger(state.showRisk ? riskIds(p) : []);
     viewer.setFocus(st.focus);
     viewer.select(state.selected, false);
     // Redraw (and re-frame) only when the step's incisions change.
@@ -598,6 +891,7 @@
   function exitWalkthrough() {
     shownIncisions = "";
     viewer.showIncisions([]);
+    viewer.setDanger([]);
     viewer.setFocus([]);
     viewer.setLayers(state.region.layers.filter((l) => l.defaultOn).map((l) => l.id));
     renderLayerToggles();
