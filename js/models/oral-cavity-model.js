@@ -9,35 +9,47 @@ window.ANATOMY = window.ANATOMY || { regions: {} };
 window.ANATOMY.models = window.ANATOMY.models || {};
 
 window.ANATOMY.models.oral_cavity = {
-  // Default view: from below, in front and to the right, looking up into the floor of mouth.
-  camera: { target: [0, 0, 0.3], radius: 22, theta: -0.8, phi: 2.15 },
+  // Default view: the open mouth from in front and a little below, looking in
+  // past the teeth to the uvula, pillars and tonsils.
+  camera: { target: [0, 0.2, 1.2], radius: 17, theta: -0.25, phi: 1.72 },
 
   views: {
     lateral: [-Math.PI / 2, Math.PI / 2],
-    inferior: [-0.3, 2.6],
-    anterior: [0, Math.PI / 2]
+    inferior: [-0.3, 2.45],
+    anterior: [0, 1.75]
   },
-  viewLabels: { inferior: "From below", anterior: "Front" },
+  viewLabels: { inferior: "From below", anterior: "Open mouth" },
 
   // Starting axial level (0 = bottom, 1 = top): through the tongue and floor of mouth.
   sectionLevel: 0.45,
 
   look: {
-    mandible: { kind: "bone", opacity: 0.35 },
-    maxilla: { kind: "bone", opacity: 0.3 },
+    mandible: { kind: "bone", opacity: 0.45 },
+    maxilla: { kind: "bone", opacity: 0.45 },
     hyoid: { kind: "bone" },
-    gingiva: { kind: "muscle", color: 0xe0a4a0, opacity: 0.6 },
-    tongue: { kind: "muscle", color: 0xd98a86 },
+    gingiva: { kind: "mucosa", color: 0xe3a29c },
+    hard_palate: { kind: "mucosa", color: 0xe8aaa4 },
+    tongue: { kind: "mucosa", color: 0xd9827e },
     genioglossus: { kind: "muscle", color: 0xb5524a },
     hyoglossus: { kind: "muscle", color: 0xa94b45 },
+    styloglossus: { kind: "muscle", color: 0xa4473f },
     geniohyoid: { kind: "muscle", color: 0x9c3a3c },
     mylohyoid: { kind: "muscle", color: 0x9a3c3c, opacity: 0.7 },
     digastric_ant: { kind: "muscle", color: 0xa4423f },
-    soft_palate: { kind: "muscle", color: 0xe0a4a0 },
-    tonsils: { kind: "gland", color: 0xd98a86 },
+    soft_palate: { kind: "mucosa", color: 0xe0948f },
+    palatoglossus: { kind: "mucosa", color: 0xd4807b },
+    palatopharyngeus: { kind: "mucosa", color: 0xcc7873 },
+    tonsils: { kind: "gland", color: 0xd78680 },
+    superior_constrictor: { kind: "muscle", color: 0xb0585a, opacity: 0.6 },
+    levator_veli: { kind: "muscle", color: 0xb0504a },
+    tensor_veli: { kind: "muscle", color: 0xa84c48 },
+    salpingopharyngeus: { kind: "muscle", color: 0xa94e4a },
+    auditory_tube: { kind: "cartilage", color: 0xd9c2b8 },
     sublingual: { kind: "gland", color: 0xdcae7a },
+    sublingual_ducts: { kind: "duct", color: 0xf4e3a6 },
     smg: { kind: "gland", color: 0xd8a06a },
     wharton: { kind: "duct", color: 0xf4e3a6 },
+    ranula: { kind: "space", color: 0x86aee6, opacity: 0.6 },
     lingual_nerve: { kind: "nerve" },
     hypoglossal: { kind: "nerve" },
     inferior_alveolar: { kind: "nerve" },

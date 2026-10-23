@@ -25,6 +25,8 @@
     duct: "#2fb7a0",
     cartilage: "#c9d6e0",
     mucosa: "#e0a4a0",
+    pharynx: "#c96f7a",
+    pathology: "#86aee6",
     route: "#ff6a2a"
   };
 
@@ -35,6 +37,7 @@
     region: null,
     tab: "overview",
     selected: null,
+    proc: 0, // which operation, when a region has several (region.procedures)
     step: 0,
     quiz: {},
     search: ""
@@ -143,6 +146,7 @@
     state.model = models[entry.id];
     landmarksShown = null;
     state.selected = null;
+    state.proc = 0;
     state.step = 0;
     shownIncisions = ""; // viewer.load() clears the drawn incisions
     state.quiz = {};
@@ -388,11 +392,20 @@
       <p class="muted small">Pins mark each point on the model; the line shows the path, drawn through bone so it can be followed.</p></div>`;
   }
 
+  // A region has one operation (region.procedure) or a choice of several (region.procedures).
+  const procedureOf = (r) => (r.procedures ? r.procedures[state.proc] || r.procedures[0] : r.procedure);
+
   function surgery(r) {
-    const p = r.procedure;
+    const p = procedureOf(r);
     const st = p.steps[state.step];
     const names = Object.fromEntries(r.structures.map((s) => [s.id, s.name]));
+    const picker = r.procedures && r.procedures.length > 1
+      ? `<div class="proc-pick">${r.procedures
+          .map((q, i) => `<button type="button" data-proc="${i}" aria-pressed="${i === state.proc}">${esc(q.short || q.title)}</button>`)
+          .join("")}</div>`
+      : "";
     return `
+      ${picker}
       <h2>${esc(p.title)}</h2>
       <p class="muted">${esc(p.intro || "Step through the operation. The model shows the layers you would see at each stage and highlights the key structures.")}</p>
       <div class="steps-nav">
@@ -519,6 +532,14 @@
         s.setSelectionRange(pos, pos);
       });
     }
+    body.querySelectorAll("[data-proc]").forEach((b) =>
+      b.addEventListener("click", () => {
+        state.proc = Number(b.dataset.proc);
+        state.step = 0;
+        state.selected = null;
+        render();
+      })
+    );
     body.querySelectorAll("[data-step]").forEach((b) =>
       b.addEventListener("click", () => {
         state.step += Number(b.dataset.step);
@@ -560,7 +581,7 @@
 
   let shownIncisions = "";
   function applyStep() {
-    const st = state.region.procedure.steps[state.step];
+    const st = procedureOf(state.region).steps[state.step];
     viewer.setLayers(st.show);
     viewer.setFocus(st.focus);
     viewer.select(state.selected, false);

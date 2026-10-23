@@ -235,6 +235,23 @@ await check("Surgery", "The incision is drawn on the model at the incision step,
   for (let i = 0; i < 2; i++) await page.click('[data-step="-1"]');
   return first[1].split(" · ")[0];
 });
+await check("Surgery", "A region with several operations offers a picker, and each draws its own incision", async () => {
+  // The oral cavity has a partial glossectomy and a ranula excision; then back to the thyroid.
+  const go = async (id) => {
+    await page.selectOption("#region-select", id);
+    await page.waitForFunction((r) => location.hash.startsWith("#" + r) && document.querySelector("#viewer-loading").hidden, id, { timeout: 60000 });
+  };
+  await go("oral_cavity");
+  await page.click('[data-tab="surgery"]');
+  const names = await page.$$eval("[data-proc]", (b) => b.map((x) => x.textContent));
+  expect(names.length >= 2, `operations: ${names}`);
+  await page.click('[data-proc="1"]');
+  for (let i = 0; i < 2; i++) await page.click('[data-step="1"]');
+  const note = await page.evaluate(() => [window.ANATOMY.viewer.incisionGroup.children.length, document.querySelector(".incision-note")?.textContent || ""]);
+  expect(note[0] > 0 && note[1], `ranula step 3: ${note}`);
+  await go("thyroid");
+  return `${names.join(" / ")}: ${note[1].split(" · ")[0]}`;
+});
 await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.click('[data-tab="sections"]');
   await page.waitForTimeout(1000);
@@ -245,6 +262,20 @@ await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.waitForTimeout(1500);
   await shot(page, "04-ct.png", "CT / MRI tab: the real Visible Human CT at the slice level");
   await page.click('[data-mode="sim"]');
+});
+await check("CT / MRI", "Real MRI is labelled from the model where its slice crosses the region", async () => {
+  // Thyroid, coronal MRI through the neck: the model slice follows the MRI slice.
+  await page.click('[data-tab="sections"]');
+  await page.click('[data-mode="mri"]');
+  await page.click('[data-plane="coronal"]');
+  await page.fill("#section-level", "620");
+  await page.dispatchEvent("#section-level", "input");
+  await page.waitForFunction(() => document.querySelectorAll(".section-mark").length >= 4, null, { timeout: 30000 });
+  const names = await page.$$eval(".section-mark", (e) => e.map((x) => x.textContent));
+  expect(names.some((n) => /thyroid/i.test(n)), `labels: ${names.join(", ")}`);
+  await shot(page, "04b-mri.png", "CT / MRI tab: the real coronal MRI, labelled from the registered model");
+  await page.click('[data-mode="sim"]');
+  return `${names.length} labels, e.g. ${names.slice(0, 3).join(", ")}`;
 });
 await check("Quiz", "Answering a question gives feedback", async () => {
   await page.click('[data-tab="quiz"]');

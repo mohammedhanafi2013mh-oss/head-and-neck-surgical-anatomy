@@ -17,6 +17,8 @@
     nerve: { color: 0xf0d064, roughness: 0.4, clearcoat: 0.4, sheen: 0.5, sheenColor: 0xfff2c0 },
     node: { color: 0x86ad6a, roughness: 0.5, clearcoat: 0.3 },
     cartilage: { color: 0xe7c3b4, roughness: 0.45, clearcoat: 0.3, sheen: 0.4, sheenColor: 0xffe2d6 },
+    // Moist lining (tongue, palate, gums): glossy, with fine papillae.
+    mucosa: { color: 0xdc8f8a, roughness: 0.5, clearcoat: 0.55, clearcoatRoughness: 0.25, sheen: 0.35, sheenColor: 0xffc4bd },
     // Fascial spaces: translucent volumes around their contents.
     space: { color: 0x7fb8e6, roughness: 0.85, clearcoat: 0 }
   };
@@ -142,6 +144,7 @@
   const SURFACE = {
     muscle: { strength: 0.012, height: "fibers(p)" },
     gland: { strength: 0.03, height: "lobules(p)" },
+    mucosa: { strength: 0.006, height: "vnoise(p * 28.0) * 0.7 + vnoise(p * 61.0) * 0.3" },
     bone: { strength: 0.01, height: "vnoise(p * 7.0) * 0.6 + vnoise(p * 19.0) * 0.4" },
     node: { strength: 0.01, height: "vnoise(p * 9.0)" }
   };
