@@ -487,7 +487,7 @@ REGIONS = {
             "vagus": {"path": [("vagus", 0)],
                       "points": {"top": "start", "sln": ("nearest_start", "sln"), "sheath": "end"}},
             "hypoglossal": {"path": [("hypoglossal", 0)],
-                            "points": {"between": "start", "occipital": ("nearest_start", "Occipital artery.r"),
+                            "points": {"between": "start",
                                        "eca": ("nearest", "External carotid artery.r"),
                                        "ansa": ("nearest_start", "ansa_cervicalis"), "hyoglossus": "end"}},
             "ansa_cervicalis": {"path": [("ansa_cervicalis", 0)],

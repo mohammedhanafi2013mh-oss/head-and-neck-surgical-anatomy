@@ -359,8 +359,7 @@ window.ANATOMY.regions.carotid = {
       drawn: "redrawn",
       course: [
         { key: "between", label: "Between the internal carotid and the jugular", text: "Descends from the skull base, deep to the posterior belly of digastric." },
-        { key: "occipital", label: "Hooks round the occipital artery", text: "The sternocleidomastoid branch of the occipital artery tethers the nerve; divide it to free XII." },
-        { key: "eca", label: "Crosses the external carotid", text: "Superficially, 1–2 cm above the bifurcation, just below the digastric." },
+        { key: "eca", label: "Hooks round the occipital artery and crosses the carotids", text: "Superficially, 1–2 cm above the bifurcation, just below the digastric. The sternocleidomastoid branch of the occipital artery tethers the nerve here; divide it to free XII." },
         { key: "ansa", label: "Gives off the superior root", text: "The superior root of the ansa (C1 fibres) leaves the nerve and runs down on the carotid sheath." },
         { key: "hyoglossus", label: "To hyoglossus", text: "Forward above the greater horn of the hyoid, toward the tongue." }
       ],

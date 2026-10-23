@@ -598,7 +598,8 @@
       this.tracer.visible = true;
       this.trail.material.opacity = 0.95;
       const step = (now) => {
-        const t = Math.min(1, (now - start) / duration);
+        // rAF timestamps can be slightly earlier than performance.now() at the start.
+        const t = Math.min(1, Math.max(0, (now - start) / duration));
         this.tracer.position.copy(this.curve.getPointAt(t));
         this.trail.geometry.setDrawRange(0, Math.round(t * this.trailSegments) * 36);
         this.coursePins.pins.forEach((pin, i) => {
