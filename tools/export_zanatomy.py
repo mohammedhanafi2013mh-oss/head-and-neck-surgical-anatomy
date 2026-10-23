@@ -19,6 +19,7 @@ Blender coordinates are metres, Z up, front = -Y; the patient's left is +X.
 
 import base64
 import json
+import os
 import struct
 import sys
 from collections import defaultdict
@@ -2071,6 +2072,79 @@ lo = Vector((min(v[i] for p in parts for v in p[2]) for i in range(3)))
 hi = Vector((max(v[i] for p in parts for v in p[2]) for i in range(3)))
 span = hi - lo
 
+# ---------- baked ambient occlusion ----------
+# Per-vertex visibility (0 = fully enclosed, 255 = open sky), from rays cast over
+# the hemisphere around each vertex against every opaque mesh of the region.
+# The app darkens the surface colour by it, so folds, crevices and places where
+# structures touch read as depth. Translucent shells (fascial spaces and the
+# region's "ao_ignore" list) don't occlude. Both sides of each surface are
+# tried and the more open one kept, so meshes with inverted winding still work.
+
+def translucent_ids():
+    """Structures the region's model draws see-through (opacity < 0.6), read
+    from js/models/<region>-model.js; they cast no occlusion."""
+    import re
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "js", "models",
+                        REGION.replace("_", "-") + "-model.js")
+    if not os.path.exists(path):
+        return set()
+    text = open(path).read()
+    found = {m.group(1) for m in re.finditer(r"(\w+): \{[^}]*opacity: ([0-9.]+)", text) if float(m.group(2)) < 0.6}
+    print("ao ignores", sorted(found))
+    return found
+
+
+def bake_ao(parts, radius=1.2, rays=14):
+    import numpy as np
+    from mathutils.bvhtree import BVHTree
+    skip = set(cfg.get("spaces", {})) | translucent_ids()
+    allv, allf = [], []
+    for sid, _, verts, tris in parts:
+        if sid in skip:
+            continue
+        base = len(allv)
+        allv += [tuple(v) for v in verts]
+        allf += [(a + base, b + base, c + base) for a, b, c in tris]
+    tree = BVHTree.FromPolygons(allv, allf)
+    # Stratified cosine-weighted directions in a local frame (z = normal).
+    golden = np.pi * (3 - np.sqrt(5))
+    k = np.arange(rays) + 0.5
+    r = np.sqrt(k / rays)
+    local = np.stack([r * np.cos(k * golden), r * np.sin(k * golden), np.sqrt(1 - r * r)], 1)
+    out = []
+    for sid, _, verts, tris in parts:
+        V = np.array([tuple(v) for v in verts], dtype=np.float64)
+        F = np.array(tris, dtype=np.int64)
+        N = np.zeros_like(V)
+        fn = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]])
+        for j in range(3):
+            np.add.at(N, F[:, j], fn)
+        N /= np.maximum(np.linalg.norm(N, axis=1, keepdims=True), 1e-12)
+        vis = np.empty(len(V))
+        for i, (p, n) in enumerate(zip(V, N)):
+            t = np.array([0.0, 1.0, 0.0]) if abs(n[0]) > 0.9 else np.array([1.0, 0.0, 0.0])
+            t = np.cross(n, t)
+            t /= np.linalg.norm(t)
+            b = np.cross(n, t)
+            best = 0.0
+            for side in (1.0, -1.0):
+                dirs = local[:, :1] * t + local[:, 1:2] * b + local[:, 2:] * (n * side)
+                origin = Vector(p + n * side * 0.004)
+                open_ = 0.0
+                for d in dirs:
+                    hit = tree.ray_cast(origin, Vector(d), radius)
+                    open_ += 1.0 if hit[0] is None else hit[3] / radius
+                best = max(best, open_ / rays)
+                if best > 0.97:
+                    break
+            vis[i] = best
+        out.append(np.clip(np.round(vis * 255), 0, 255).astype(np.uint8).tobytes())
+        print(f"ao {sid:20} mean {vis.mean():.2f}")
+    return out
+
+
+AO = bake_ao(parts) if not os.environ.get("NO_AO") else None
+
 blob = bytearray()
 meshes = []
 for sid, name, verts, tris in parts:
@@ -2089,6 +2163,11 @@ for sid, name, verts, tris in parts:
         blob += struct.pack(fmt, *t)
     while len(blob) % 4:
         blob += b"\0"
+    if AO:
+        entry["ao"] = len(blob)
+        blob += AO[len(meshes)]
+        while len(blob) % 4:
+            blob += b"\0"
     meshes.append(entry)
 
 
