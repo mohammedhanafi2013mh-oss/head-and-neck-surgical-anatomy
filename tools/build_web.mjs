@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const out = process.argv[2] || join(root, "dist", "web");
-const ENTRIES = ["index.html", "styles.css", "manifest.webmanifest", "sw.js", "icons", "js", "vendor", "data"];
+const ENTRIES = ["index.html", "privacy.html", "styles.css", "manifest.webmanifest", "sw.js", "icons", "js", "vendor", "data"];
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });

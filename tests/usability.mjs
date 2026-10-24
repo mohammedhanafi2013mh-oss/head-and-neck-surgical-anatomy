@@ -408,6 +408,10 @@ await check("Phone", "Fits the screen with no sideways scrolling", async () => {
   expect(w[0] <= w[1] + 1, `page ${w[0]} px wide on a ${w[1]} px screen`);
   const offscreen = await phone.page.$$eval(".app-header button, .app-header select", (els) => els.filter((e) => e.getBoundingClientRect().right > screen.width + 1).map((e) => e.id));
   expect(!offscreen.length, `controls off-screen: ${offscreen.join(", ")}`);
+  expect(!(await phone.page.isVisible("#layer-toggles")), "layer chips cover the model");
+  await phone.page.tap("#layers-toggle");
+  expect(await phone.page.isVisible("#layer-toggles"), "Layers button does not show the chips");
+  await phone.page.tap("#layers-toggle");
   await shot(phone.page, "07-phone.png", "Phone (iPhone 13 size)");
   return `${w[1]} px`;
 });

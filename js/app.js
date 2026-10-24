@@ -271,6 +271,14 @@
       if (names[v]) b.textContent = (state.model.viewLabels || {})[v] || names[v];
     });
   }
+  // Phones: show or hide the layer chips.
+  $("#layers-toggle").addEventListener("click", (e) => {
+    const bar = e.currentTarget.parentElement;
+    const open = bar.classList.toggle("open");
+    e.currentTarget.setAttribute("aria-expanded", String(open));
+    e.currentTarget.textContent = open ? "Layers ▴" : "Layers ▾";
+  });
+
   function renderLayerToggles() {
     const box = $("#layer-toggles");
     box.innerHTML = "";

@@ -76,6 +76,8 @@ Each push to `main` builds the apps and publishes them on the [Releases page](ht
 | **Any browser** | The same web app installs from Chrome or Edge (install icon in the address bar, or "Install app" in the quick guide). |
 | **No install** | Unzip `…-web.zip` (or this repository) and open `index.html`. It works offline from the files, with no server. |
 
+**Google Play:** everything for a Play Store listing is ready in [`packaging/play-store/`](packaging/play-store/README.md): a signed app bundle built by CI once the upload-key secrets are added, the listing text, data-safety answers, privacy policy, feature graphic and screenshots, with a step-by-step guide. On phones, the layer buttons fold behind a **Layers** button so they don't cover the model.
+
 GitHub Pages must be turned on once: **Settings → Pages → Source: GitHub Actions**. iPhone apps can only be built and signed on a Mac with an Apple developer account, so iOS uses the installable web app, which works offline like an app.
 
 ## Run it from source

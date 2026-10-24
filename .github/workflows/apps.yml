@@ -59,6 +59,12 @@ jobs:
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      # Play Store upload key (repository secrets; see packaging/play-store/README.md).
+      # Without them the Play bundle step is skipped and only the APK is built.
+      PLAY_KEYSTORE_BASE64: ${{ secrets.PLAY_KEYSTORE_BASE64 }}
+      PLAY_KEYSTORE_PASSWORD: ${{ secrets.PLAY_KEYSTORE_PASSWORD }}
+      PLAY_KEY_ALIAS: ${{ secrets.PLAY_KEY_ALIAS }}
+      PLAY_KEY_PASSWORD: ${{ secrets.PLAY_KEY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -79,10 +85,13 @@ jobs:
           cp icons/icon-1024.png assets/icon-only.png
           cp icons/icon-1024.png assets/logo.png
           npx capacitor-assets generate --android --iconBackgroundColor '#134e63' --splashBackgroundColor '#f5f3ee'
-      - name: Version
+      - name: Version and target SDK
         run: |
           sed -i "s/versionCode 1$/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"$APP_VERSION\"/" android/app/build.gradle
           grep -E "versionCode|versionName" android/app/build.gradle
+          # Google Play requires a recent target API level for new apps and updates.
+          sed -i "s/compileSdkVersion = 35/compileSdkVersion = 36/; s/targetSdkVersion = 35/targetSdkVersion = 36/" android/variables.gradle
+          grep -E "SdkVersion" android/variables.gradle
       - run: npx cap sync android
       - name: Build the APK
         run: |
@@ -91,10 +100,23 @@ jobs:
           mkdir -p ~/.android && cp packaging/android-debug.keystore ~/.android/debug.keystore
           cd android && ./gradlew assembleDebug --no-daemon
           mkdir -p ../dist/release && cp app/build/outputs/apk/debug/app-debug.apk "../dist/release/HN-Anatomy-$APP_VERSION-android.apk"
+      - name: Build the Play Store bundle (signed AAB)
+        if: env.PLAY_KEYSTORE_BASE64 != ''
+        run: |
+          echo "$PLAY_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          cd android && ./gradlew bundleRelease --no-daemon \
+            -Pandroid.injected.signing.store.file="$RUNNER_TEMP/upload.jks" \
+            -Pandroid.injected.signing.store.password="$PLAY_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$PLAY_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$PLAY_KEY_PASSWORD"
+          cp app/build/outputs/bundle/release/app-release.aab "../dist/release/HN-Anatomy-$APP_VERSION-play.aab"
+          rm -f "$RUNNER_TEMP/upload.jks"
       - uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: dist/release/*.apk
+          path: |
+            dist/release/*.apk
+            dist/release/*.aab
 
   windows:
     name: Windows app (installer and portable)
@@ -147,6 +169,7 @@ jobs:
             For education only. Check every surgical detail against current atlases and senior guidance.
           files: |
             artifacts/android-apk/*.apk
+            artifacts/android-apk/*.aab
             artifacts/windows-app/*.exe
             artifacts/*.zip
 
