@@ -1200,8 +1200,7 @@ REGIONS = {
             # ---- bone ----
             "temporal": ["Temporal bone.r"],
             # ---- external ear ----
-            "auricle": ["Helix.r", "Antihelix.r", "Crura of antihelix.r", "Tragus.r", "Antitragus.r", "Lobule of auricle.r",
-                        "Concha of auricle.r", "Cavity of concha.r", "Cymba conchae.r"],
+            "auricle": ["Auricle (skin)"],
             "eac": ["External acoustic meatus (sculpted)"],
             "tympanic_membrane": ["Tympanic membrane.r"],
             # ---- middle ear and mastoid ----
@@ -2845,52 +2844,159 @@ BUILDERS = {"oral": build_oral}
 # modelled here from its landmarks (right ear), as are the surgical landmarks
 # pinned on the model.
 
+def bvh_of(name):
+    from mathutils.bvhtree import BVHTree
+    o = D[name]
+    me = o.evaluated_get(deps).to_mesh()
+    return BVHTree.FromPolygons([o.matrix_world @ v.co for v in me.vertices], [list(p.vertices) for p in me.polygons])
+
+
+def inside_mesh(bvh, p):
+    """Inside a (possibly imperfect) closed surface: odd crossings along most of five rays."""
+    votes = 0
+    for d in (Vector((1, 0, 0)), Vector((0, 1, 0)), Vector((0, 0, 1)), Vector((-1, 0, 0)), Vector((0, -1, 0))):
+        n, q = 0, p.copy()
+        for _ in range(64):
+            hit = bvh.ray_cast(q, d, 0.3)[0]
+            if hit is None:
+                break
+            n, q = n + 1, hit + d * 1e-6
+        votes += n % 2
+    return votes >= 3
+
+
+def radial_cell(c, R, planes, blockers, n=16, m=10):
+    """A rounded polyhedral cell round c: rays from c, each stopped at R, at the
+    first of the planes (unit normal, distance from c) and short of the first
+    blocker surface it meets (bvh, margin); corners are then softened.
+    Returns verts, faces and the mean radius."""
+    sv, faces = ellipsoid(c, (Vector((1, 0, 0)), Vector((0, 1, 0)), Vector((0, 0, 1))), n=n, m=m)
+    dirs = [(v - c).normalized() for v in sv]
+    radii = []
+    for u in dirs:
+        t = R
+        for nrm, d in planes:
+            k = u.dot(nrm)
+            if k > 1e-6:
+                t = min(t, d / k)
+        for bvh, margin in blockers:
+            hit = bvh.ray_cast(c, u, t + margin)[0]
+            if hit is not None:
+                t = min(t, (hit - c).length - margin)
+        radii.append(max(t, 0.00015))
+    nb = defaultdict(set)
+    for f in faces:
+        for a in f:
+            nb[a].update(f)
+    for _ in range(1):
+        radii = [min(radii[i], sum(radii[j] for j in nb[i]) / len(nb[i])) for i in range(len(radii))]
+    return [c + u * t for u, t in zip(dirs, radii)], faces, sum(radii) / len(radii)
+
+
+# Skin patches of the right auricle in Z-Anatomy (front, rim and back), joined
+# into one watertight ear by build_auricle().
+AURICLE_PATCHES = ["Helix.r", "Antihelix.r", "Crura of antihelix.r", "Tragus.r", "Antitragus.r", "Lobule of auricle.r",
+                   "Concha of auricle.r", "Cavity of concha.r", "Cymba conchae.r", "Scapha.r", "Triangular fossa.r",
+                   "Fossa antihelica.r", "Intertragic incisure.r", "Anterior notch of auricle.r", "Apex of auricle.r",
+                   "Auricular tubercle.r", "Eminentia conchae.r", "Eminentia fossae triangularis.r", "Eminentia scaphae.r",
+                   "Posterior auricular groove.r"]
+
+
+def build_auricle(cutter):
+    """One skin surface for the auricle: the patches welded, thickened,
+    voxel-remeshed to fill the seams and smoothed, with the opening of the ear
+    canal cut through the concha by the cutter object."""
+    verts, faces = [], []
+    for n in AURICLE_PATCHES:
+        o = D[n]
+        me = o.evaluated_get(deps).to_mesh()
+        faces += [[k + len(verts) for k in p.vertices] for p in me.polygons]
+        verts += [o.matrix_world @ v.co for v in me.vertices]
+    obj = mesh_object("Auricle (skin)", verts, faces)
+    for kind, opts in (("WELD", {"merge_threshold": 0.0004}),
+                       ("SOLIDIFY", {"thickness": 0.0014, "offset": 0.0}),
+                       ("REMESH", {"mode": "VOXEL", "voxel_size": 0.00032, "adaptivity": 0.0}),
+                       ("CORRECTIVE_SMOOTH", {"factor": 0.6, "iterations": 12, "smooth_type": "SIMPLE", "use_only_smooth": True}),
+                       ("BOOLEAN", {"operation": "DIFFERENCE", "object": cutter, "solver": "EXACT"}),
+                       ("DECIMATE", {"ratio": 0.13})):
+        mod = obj.modifiers.new(kind.lower(), kind)
+        for k, v in opts.items():
+            setattr(mod, k, v)
+    cutter.hide_render = True
+    deps.update()
+    return obj
+
+
 def build_ear():
     import random
-    from mathutils.bvhtree import BVHTree
     tm = eval_world("Tympanic membrane.r")
     c = sum(tm, Vector()) / len(tm)
     concha = eval_world("Cavity of concha.r")
     cc = sum(concha, Vector()) / len(concha)
-    # Ear canal: from the concha, a gentle S through the cartilaginous and bony
-    # parts (narrowest at the isthmus) to the rim of the eardrum. Open at both ends.
-    canal = [cc + Vector((0.0015, 0, 0)), Vector((-0.0600, 0.0043, 1.5752)), Vector((-0.0545, 0.0040, 1.5770)),
-             Vector((c.x - 0.0008, c.y, c.z - 0.0003))]
-    mesh_object("External acoustic meatus (sculpted)", *sweep(canal, [0.0036, 0.0033, 0.0029, 0.0040], [0.0042, 0.0038, 0.0032, 0.0046],
+    # Ear canal: from its opening in the concha, a gentle S through the
+    # cartilaginous and bony parts (narrowest at the isthmus) to the rim of the
+    # eardrum, slightly flared at the entrance. Open at both ends.
+    canal = [cc + Vector((-0.0010, 0, 0)), cc + Vector((0.0015, 0, 0)), Vector((-0.0600, 0.0043, 1.5752)),
+             Vector((-0.0545, 0.0040, 1.5770)), Vector((c.x - 0.0008, c.y, c.z - 0.0003))]
+    widths, thick = [0.0044, 0.0036, 0.0033, 0.0029, 0.0040], [0.0050, 0.0042, 0.0038, 0.0032, 0.0046]
+    # The canal's own tube, closed and run out through the side of the ear, cuts its opening.
+    build_auricle(mesh_object("Ear canal cutter", *sweep([canal[0] + Vector((-0.006, 0, 0))] + canal[:3], [widths[0]] + widths[:3],
+                                                         [thick[0]] + thick[:3], across=Vector((0, 0, 1)), n=18)))
+    mesh_object("External acoustic meatus (sculpted)", *sweep(canal, widths, thick,
                                                                across=Vector((0, 0, 1)), n=18, caps=False), subsurf=1)
-    # Mastoid antrum, about 1.5 cm deep to the suprameatal triangle and lateral
-    # to the lateral semicircular canal, joined to the attic by the aditus.
+    # Mastoid antrum and air cells: one honeycomb of rounded polyhedral cells
+    # packed through the solid mastoid, separated by thin bony septa and kept
+    # inside the cortex and clear of the sigmoid sinus, facial nerve,
+    # labyrinth and ear canal. The antrum is its largest cell, lateral to the
+    # lateral semicircular canal and joined to the attic by the aditus.
     ves = eval_world("Vestibule.r")
     lscc = min(ves, key=lambda v: v.x)  # prominence of the lateral semicircular canal
     antrum = lscc + Vector((-0.0052, 0.0035, 0.0022))
-    av, af = ellipsoid(antrum, (Vector((0.0026, 0, 0)), Vector((0, 0.0040, 0.0004)), Vector((0, -0.0004, 0.0030))))
     attic = Vector((-0.0470, 0.0063, 1.5856))
+    bone_verts = eval_world("Temporal bone.r")
+    bone = bvh_of("Temporal bone.r")
+    blockers = [(bone, 0.0005)] + [(bvh_of(n), m) for n, m in (
+        ("Sigmoid sinus.r", 0.0006), ("Facial nerve (VII).r", 0.0007), ("Vestibule.r", 0.0007), ("Cochlea.r", 0.0007),
+        ("Incus.r", 0.0008), ("Malleus.r", 0.0008), ("External acoustic meatus (sculpted)", 0.0006))]
+    sigmoid = bvh_of("Sigmoid sinus.r")
+    lumen = smooth_line(canal, 8)
+    rnd = random.Random(11)
+    seeds = [(antrum, 0.0030)]
+    for _ in range(30000):
+        if len(seeds) >= 150:
+            break
+        p = Vector((rnd.uniform(-0.068, -0.040), rnd.uniform(0.006, 0.042), rnd.uniform(1.556, 1.596)))
+        r = rnd.uniform(0.0010, 0.0021) * (1.25 if p.z < 1.570 else 1.0)  # larger cells towards the tip
+        if any((p - q).length < 0.85 * (r + rq) for q, rq in seeds):
+            continue
+        if not inside_mesh(bone, p) or bone.find_nearest(p)[3] < 0.0008:
+            continue
+        if min((p - q).length for q in lumen) < 0.0055:
+            continue  # in or beside the ear canal
+        if inside_mesh(sigmoid, p) or any(b.find_nearest(p)[3] < m + 0.0004 for b, m in blockers[1:]):
+            continue
+        seeds.append((p, r))
+    cells = []
+    for i, (p, r) in enumerate(seeds):
+        planes = []
+        for j, (q, rq) in enumerate(seeds):
+            d = (q - p).length
+            if j == i or d > 2.6 * (r + rq):
+                continue
+            planes.append(((q - p) / d, (d * d + r * r - rq * rq) / (2 * d) - 0.00009))
+        cv, cf, mean = radial_cell(p, r * 2.1, planes, blockers)
+        if mean < 0.0005:
+            continue
+        cells.append((cv, cf))
+    print("air cells", len(cells) - 1, "of", len(seeds) - 1, "seeds")
+    av, af = cells[0]
     dv, df = sweep([attic, attic.lerp(antrum, 0.5) + Vector((0, 0, 0.0006)), antrum], [0.0016, 0.0015, 0.0018], [0.0012, 0.0012, 0.0016])
     mesh_object("Mastoid antrum (sculpted)", av + dv, af + [[k + len(av) for k in f] for f in df], subsurf=1)
-    # Air cells: small rounded cells through the mastoid process, behind and
-    # below the antrum, kept inside the bone.
-    o = D["Temporal bone.r"]
-    me = o.evaluated_get(deps).to_mesh()
-    bone = BVHTree.FromPolygons([o.matrix_world @ v.co for v in me.vertices], [list(p.vertices) for p in me.polygons])
-    rnd = random.Random(7)
-    cells, verts, faces = [], [], []
-    for _ in range(4000):
-        if len(cells) >= 46:
-            break
-        p = Vector((rnd.uniform(-0.059, -0.046), rnd.uniform(0.011, 0.036), rnd.uniform(1.555, 1.588)))
-        if (p - antrum).length < 0.005:
-            continue
-        hit = bone.find_nearest(p)
-        if hit[0] is None or (p - hit[0]).dot(hit[1]) > 0 or hit[3] < 0.0016:
-            continue  # outside the bone, or too close to its surface
-        if any((p - q).length < 0.0034 for q in cells):
-            continue
-        cells.append(p)
-        r = rnd.uniform(0.0011, 0.0019)
-        cv, cf = ellipsoid(p, (Vector((r, 0, 0)), Vector((0, r * rnd.uniform(0.9, 1.4), 0)), Vector((0, 0, r * rnd.uniform(0.8, 1.2)))), n=10, m=7)
+    verts, faces = [], []
+    for cv, cf in cells[1:]:
         faces += [[k + len(verts) for k in f] for f in cf]
         verts += cv
-    mesh_object("Mastoid air cells (sculpted)", verts, faces, subsurf=1)
+    mesh_object("Mastoid air cells (sculpted)", verts, faces)
     # Tensor tympani: in its semicanal above the auditory tube; its tendon turns
     # round the cochleariform process to the neck of the malleus.
     cochleariform = Vector((-0.0441, 0.0006, 1.5826))
@@ -2912,7 +3018,7 @@ def build_ear():
     pts = {
         "spine_of_henle": lateral(0.0092, 1.5812) or Vector((-0.0595, 0.0092, 1.5812)),
         "suprameatal_triangle": lateral(0.0150, 1.5870) or Vector((-0.0630, 0.0150, 1.5870)),
-        "mastoid_tip": min([v for v in (o.matrix_world @ w.co for w in me.vertices) if v.y > 0.012], key=lambda v: v.z),
+        "mastoid_tip": min([v for v in bone_verts if v.y > 0.012], key=lambda v: v.z),
         "lscc": lscc,
         "tegmen": antrum + Vector((0, 0, 0.0040)),
         "oval_window": max(st, key=lambda v: v.x),

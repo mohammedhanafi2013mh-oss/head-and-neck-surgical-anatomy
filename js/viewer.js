@@ -20,7 +20,12 @@
     // Moist lining (tongue, palate, gums): glossy, with fine papillae.
     mucosa: { color: 0xdc8f8a, roughness: 0.5, clearcoat: 0.55, clearcoatRoughness: 0.25, sheen: 0.35, sheenColor: 0xffc4bd },
     // Fascial spaces: translucent volumes around their contents.
-    space: { color: 0x7fb8e6, roughness: 0.85, clearcoat: 0 }
+    space: { color: 0x7fb8e6, roughness: 0.85, clearcoat: 0 },
+    // Skin (auricle, ear canal): soft sheen, fine pores, and a faint warm glow
+    // in the shadows standing in for light scattered under the surface.
+    skin: { color: 0xe0ae94, roughness: 0.52, clearcoat: 0.12, clearcoatRoughness: 0.45, sheen: 0.8, sheenColor: 0xffc2ad, emissive: 0x3a1408 },
+    // Thin glistening membrane (eardrum): pearly, with a sharp light reflex.
+    membrane: { color: 0xd9d3cf, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.06, sheen: 0.5, sheenColor: 0xf4eee8 }
   };
 
   // How much baked ambient occlusion darkens the most enclosed surfaces (0–1).
@@ -44,6 +49,7 @@
         side: THREE.DoubleSide
       });
       // Sheen takes a number from r133; older builds lack sheenColor.
+      if (t.emissive) m.emissive.setHex(t.emissive);
       if (t.sheen && "sheenColor" in m) {
         m.sheen = t.sheen;
         m.sheenColor.setHex(t.sheenColor);
@@ -99,13 +105,14 @@
         geo.computeBoundingBox();
         const style = look[m.id] || { kind: "muscle" };
         const material = helpers.tissue(style.kind, style);
-        if (m.ao !== undefined) {
+        const aoStrength = style.ao ?? AO_STRENGTH; // a structure deep inside others can ask for less
+        if (m.ao !== undefined && aoStrength > 0) {
           // Baked ambient occlusion (tools/export_zanatomy.py): darken folds,
           // crevices and contact areas through the vertex colour.
           const ao = new Uint8Array(bin, m.ao, m.vertexCount);
           const col = new Float32Array(m.vertexCount * 3);
           for (let i = 0; i < m.vertexCount; i++) {
-            const shade = 1 - AO_STRENGTH * (1 - Math.pow(ao[i] / 255, 1.3));
+            const shade = 1 - aoStrength * (1 - Math.pow(ao[i] / 255, 1.3));
             col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = shade;
           }
           geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
@@ -146,7 +153,8 @@
     gland: { strength: 0.03, height: "lobules(p)" },
     mucosa: { strength: 0.006, height: "vnoise(p * 28.0) * 0.7 + vnoise(p * 61.0) * 0.3" },
     bone: { strength: 0.01, height: "vnoise(p * 7.0) * 0.6 + vnoise(p * 19.0) * 0.4" },
-    node: { strength: 0.01, height: "vnoise(p * 9.0)" }
+    node: { strength: 0.01, height: "vnoise(p * 9.0)" },
+    skin: { strength: 0.0022, height: "vnoise(p * 45.0) * 0.6 + vnoise(p * 95.0) * 0.25 + vnoise(p * 12.0) * 0.15" }
   };
 
   const NOISE_GLSL = `
@@ -481,9 +489,13 @@
       Object.assign(this.spherical, { radius: h.radius, theta: h.theta, phi: h.phi });
     }
 
-    setView(theta, phi) {
+    // A view is a direction, optionally with a distance and a point to look at.
+    setView(theta, phi, radius, target) {
+      this.stopFly();
       this.spherical.theta = theta;
       this.spherical.phi = phi;
+      if (radius) this.spherical.radius = radius;
+      if (target) this.target.copy(V3(target));
     }
 
     resize() {

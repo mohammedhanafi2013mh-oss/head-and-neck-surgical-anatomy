@@ -12,7 +12,7 @@ window.ANATOMY.regions.temporal_bone = {
   subtitle: "External, middle and inner ear, the facial nerve through the temporal bone and the mastoid (right ear)",
 
   overview: {
-    "intro": "The temporal bone houses the organs of hearing and balance and is crossed by the facial nerve, the internal carotid artery and the sigmoid sinus, all within millimetres of each other. Sound passes down the ear canal to the eardrum, is carried across the middle ear by the malleus, incus and stapes to the oval window, and moves the fluid of the cochlea. Middle-ear and mastoid surgery is navigated by a handful of landmarks: MacEwen's triangle on the surface, then the antrum, the lateral semicircular canal and the short process of the incus, which lead to the facial nerve. The model shows the right ear with the bone translucent; the facial nerve and chorda tympani can be traced.",
+    "intro": "The temporal bone houses the organs of hearing and balance and is crossed by the facial nerve, the internal carotid artery and the sigmoid sinus, all within millimetres of each other. Sound passes down the ear canal to the eardrum, is carried across the middle ear by the malleus, incus and stapes to the oval window, and moves the fluid of the cochlea. Middle-ear and mastoid surgery is navigated by a handful of landmarks: MacEwen's triangle on the surface, then the antrum, the lateral semicircular canal and the short process of the incus, which lead to the facial nerve. The model shows the right ear with the bone translucent; the facial nerve and chorda tympani can be traced, and the Otoscope view looks down the canal at the eardrum.",
     "boundaries": [
       {
         "label": "Middle ear roof",
@@ -96,7 +96,7 @@ window.ANATOMY.regions.temporal_bone = {
       id: "eac",
       name: "External acoustic meatus (ear canal)",
       layer: "external",
-      summary: "About 2.5 cm long, S-shaped: the outer third is cartilage (with hairs and ceruminous glands), the inner two-thirds bone, narrowing at the isthmus near the bony–cartilaginous junction. Pulling the auricle up and back straightens it for examination in adults. Sculpted for this app.",
+      summary: "About 2.5 cm long, S-shaped: the outer third is cartilage (with hairs and ceruminous glands), the inner two-thirds bone, narrowing at the isthmus near the bony–cartilaginous junction. Pulling the auricle up and back straightens it for examination in adults. Sculpted for this app; the Otoscope view looks down it at the eardrum.",
       relations: ["Ends at the tympanic membrane, which sits obliquely, so the floor and front wall are longer than the roof and back wall", "In front: the temporomandibular joint (jaw movement can be felt through the canal); behind: the mastoid air cells; above: the middle cranial fossa"],
       supply: {"Sensation": "Auriculotemporal nerve (front and roof), auricular branch of the vagus (back and floor: the cough reflex when cleaning the canal), facial nerve fibres (a small posterior area: Hitselberger's sign)"},
       surgical: ["Malignant (necrotising) otitis externa spreads from the canal floor through the fissures of Santorini to the skull base and facial nerve; suspect it in diabetic or immunocompromised patients with pain out of proportion to the findings.", "The canal skin over bone is thin and bleeds easily: instruments should rest on the cartilaginous part."],
@@ -192,7 +192,7 @@ window.ANATOMY.regions.temporal_bone = {
       id: "air_cells",
       name: "Mastoid air cells",
       layer: "middle",
-      summary: "Air spaces lined with mucosa, opening from the antrum through the mastoid process; pneumatisation varies from extensive to sclerotic. Shown schematically.",
+      summary: "Air spaces lined with mucosa, opening from the antrum through the mastoid process; pneumatisation varies from extensive to sclerotic. Modelled as a well-pneumatised mastoid: a honeycomb of cells packed between the cortex and the sigmoid sinus, separated by thin bony septa (sculpted for this app; the real pattern differs from person to person).",
       relations: ["Cells can extend to the tip, around the sigmoid sinus, along the zygomatic root and into the petrous apex"],
       supply: {},
       surgical: ["Acute mastoiditis: infection breaks down the cell walls (coalescent mastoiditis) and can spread to a subperiosteal abscess behind the ear, to the neck (Bezold's abscess, through the tip), or inside the skull (extradural abscess, sigmoid sinus thrombosis, meningitis, brain abscess).", "A sclerotic, poorly pneumatised mastoid with a low tegmen and forward sigmoid sinus is typical of chronic ear disease and makes the operation harder."],
