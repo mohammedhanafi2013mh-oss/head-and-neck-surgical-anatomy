@@ -36,6 +36,9 @@ window.ANATOMY.regions.thyroid = {
     refs: ["gray", "randolph", "robbins2002", "carty2009"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "muscle", "gland", "vein", "artery", "nerve", "lymph", "context"]},
+
   layers: [
     { id: "superficial", label: "Platysma", defaultOn: false },
     { id: "bone", label: "Larynx, trachea & bone", defaultOn: true },

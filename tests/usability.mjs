@@ -307,8 +307,35 @@ await check("Structures", "Names in the notes link to other structures, shown to
   await page.click(".rel-link");
   const focus = await page.evaluate(() => window.ANATOMY.viewer.focusIds.size);
   expect(focus > 0, "related structure not highlighted");
+  await page.click("[data-bookmark]");
+  expect((await page.textContent("[data-bookmark]")).includes("Saved"), "bookmark not set");
+  const report = await page.getAttribute(".report-link", "href");
+  expect(/issues\/new\?title=.*Right%20recurrent/.test(report), `report link: ${report}`);
   await page.click("[data-back]");
-  return `${links} links, ${related} related structures`;
+  expect(await page.$$eval(".structure-group h3", (h) => h.some((x) => /bookmarks/i.test(x.textContent))), "bookmark not listed");
+  await page.keyboard.press("/");
+  let heads = [];
+  try {
+    await page.waitForSelector("#search-dialog[open] .search-head", { timeout: 20000 });
+    heads = await page.$$eval(".search-head", (h) => h.map((x) => x.textContent));
+  } finally {
+    await page.keyboard.press("Escape"); // never leave the dialog over the page
+  }
+  return `${links} links, ${related} related structures; search shows ${heads.join(" + ")}`;
+});
+await check("Structures", "Guided dissection peels layers from superficial to deep, with a check at each", async () => {
+  await page.click('[data-tab="structures"]');
+  await page.click("[data-dissect-start]");
+  const shown = () => page.evaluate(() => Object.values(window.ANATOMY.viewer.layerVisible).filter(Boolean).length);
+  const before = await shown();
+  const target = await page.getAttribute(".q3-prompt", "data-target");
+  await page.evaluate((id) => window.ANATOMY.viewer.select(id, true), target);
+  await page.waitForSelector(".q3-feedback.correct");
+  await page.click('[data-dissect-step="1"]');
+  const after = await shown();
+  expect(after < before, `layers ${before} -> ${after}`);
+  await page.click("[data-dissect-exit]");
+  return `${await page.$$eval(".structure-group", (g) => g.length)} groups after exit; layers ${before} -> ${after}`;
 });
 await check("Surgery", "The operation's structures at risk are listed and tinted on the model", async () => {
   await page.click('[data-tab="surgery"]');
@@ -381,6 +408,10 @@ await check("Phone", "Fits the screen with no sideways scrolling", async () => {
   expect(w[0] <= w[1] + 1, `page ${w[0]} px wide on a ${w[1]} px screen`);
   const offscreen = await phone.page.$$eval(".app-header button, .app-header select", (els) => els.filter((e) => e.getBoundingClientRect().right > screen.width + 1).map((e) => e.id));
   expect(!offscreen.length, `controls off-screen: ${offscreen.join(", ")}`);
+  expect(!(await phone.page.isVisible("#layer-toggles")), "layer chips cover the model");
+  await phone.page.tap("#layers-toggle");
+  expect(await phone.page.isVisible("#layer-toggles"), "Layers button does not show the chips");
+  await phone.page.tap("#layers-toggle");
   await shot(phone.page, "07-phone.png", "Phone (iPhone 13 size)");
   return `${w[1]} px`;
 });

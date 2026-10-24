@@ -36,6 +36,9 @@ window.ANATOMY.regions.skull_base = {
     refs: ["gray", "rhoton", "bouthillier"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["context", "deep", "brain", "vein", "artery", "nerve", "foramina"]},
+
   layers: [
     { id: "bone", label: "Skull base", defaultOn: true },
     { id: "foramina", label: "Foramina (pins)", defaultOn: true },

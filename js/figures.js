@@ -158,6 +158,100 @@ window.ANATOMY.figures = {
   <line x1="110" y1="340" x2="160" y2="330" stroke="var(--fig-stroke)" stroke-width=".8"/>
   <text x="300" y="370" class="fig-label small" text-anchor="middle">Coronal section, patient's right on the left. Not to scale.</text>
 </svg>`,
+  // A right cortical mastoidectomy seen through the microscope (lateral view,
+  // anterior to the right): the landmarks that lead to the facial nerve.
+  mastoidCavity: `
+<svg viewBox="0 0 600 400" role="img" aria-label="Right mastoidectomy cavity: tegmen above, sigmoid sinus behind, ear canal in front, antrum with the lateral semicircular canal and short process of the incus, the facial nerve running down to the stylomastoid foramen at the front of the digastric ridge, and the chorda tympani bounding the facial recess">
+  <text x="300" y="18" class="fig-label strong" text-anchor="middle">Right mastoid, lateral view (anterior to the right)</text>
+  <!-- cavity -->
+  <path d="M120 70 Q300 40 470 80 L470 300 Q420 360 300 370 Q170 360 120 300 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <path d="M150 95 Q300 72 440 100 L440 290 Q400 335 300 342 Q190 334 150 285 Z" fill="var(--fig-bone)" stroke="var(--fig-stroke)" stroke-dasharray="4 3" opacity=".7"/>
+  <!-- tegmen -->
+  <path d="M150 95 Q300 72 440 100" fill="none" stroke="#9c7ac0" stroke-width="6" opacity=".8"/>
+  <text x="300" y="66" class="fig-label small" text-anchor="middle">Tegmen (middle fossa dura above)</text>
+  <!-- sigmoid sinus -->
+  <path d="M165 105 Q140 180 160 250 Q175 300 205 335" fill="none" stroke="var(--fig-vein)" stroke-width="14" opacity=".75" stroke-linecap="round"/>
+  <text x="18" y="200" class="fig-label small">Sigmoid sinus</text>
+  <line x1="88" y1="196" x2="146" y2="190" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <text x="150" y="88" class="fig-label small">Sinodural angle</text>
+  <!-- ear canal (front) -->
+  <path d="M470 120 Q520 170 520 220 Q515 260 470 280" fill="#e7b3a3" opacity=".55" stroke="var(--fig-stroke)"/>
+  <text x="528" y="200" class="fig-label small">Posterior</text>
+  <text x="528" y="212" class="fig-label small">canal wall</text>
+  <!-- antrum -->
+  <ellipse cx="365" cy="135" rx="44" ry="28" fill="#9fc7ea" opacity=".6" stroke="var(--fig-stroke)"/>
+  <text x="365" y="122" class="fig-label small" text-anchor="middle">Antrum</text>
+  <!-- lateral semicircular canal -->
+  <path d="M335 150 Q365 132 395 150 Q365 168 335 150 Z" fill="#d7a971" stroke="var(--fig-stroke)"/>
+  <text x="250" y="160" class="fig-label small">Lateral SCC</text>
+  <line x1="300" y1="157" x2="334" y2="151" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- incus short process -->
+  <path d="M415 140 L440 128 L445 140 L420 150 Z" fill="#ead8b0" stroke="var(--fig-stroke)"/>
+  <text x="452" y="114" class="fig-label small">Short process</text>
+  <text x="452" y="126" class="fig-label small">of incus</text>
+  <!-- facial nerve -->
+  <path d="M440 170 Q400 175 392 200 Q385 250 380 320" fill="none" stroke="var(--fig-nerve)" stroke-width="7" stroke-linecap="round"/>
+  <text x="300" y="232" class="fig-label small">Facial nerve</text>
+  <text x="300" y="244" class="fig-label small">(mastoid segment)</text>
+  <line x1="350" y1="236" x2="386" y2="236" stroke="var(--fig-stroke)" stroke-width=".8"/>
+  <!-- chorda and facial recess -->
+  <path d="M384 290 Q420 260 460 230" fill="none" stroke="var(--fig-nerve)" stroke-width="3"/>
+  <path d="M392 230 Q415 215 440 200 L455 232 Q420 250 392 268 Z" fill="var(--fig-incision)" opacity=".18"/>
+  <text x="470" y="250" class="fig-label small">Chorda tympani</text>
+  <text x="405" y="196" class="fig-label small" text-anchor="middle">Facial recess</text>
+  <!-- digastric ridge -->
+  <path d="M220 330 Q300 330 378 322" fill="none" stroke="var(--fig-muscle)" stroke-width="5" opacity=".7"/>
+  <text x="230" y="352" class="fig-label small">Digastric ridge → stylomastoid foramen</text>
+  <circle cx="380" cy="322" r="5" fill="var(--fig-nerve)" stroke="var(--fig-stroke)"/>
+  <text x="6" y="388" class="fig-label small">Drill at MacEwen's triangle, below the temporal line and parallel to the canal. Not to scale.</text>
+</svg>`,
+  // The middle ear as a box opened out: what lies on each of its six walls.
+  middleEarBox: `
+<svg viewBox="0 0 600 400" role="img" aria-label="The middle ear opened out like a box: roof tegmen, floor jugular bulb, anterior wall carotid artery and auditory tube, posterior wall aditus, pyramid and facial nerve, medial wall promontory, windows and facial nerve, lateral wall eardrum">
+  <text x="300" y="18" class="fig-label strong" text-anchor="middle">The middle ear as an opened box (right ear)</text>
+  <!-- medial wall in the centre -->
+  <rect x="210" y="130" width="180" height="140" fill="var(--fig-bone)" stroke="var(--fig-stroke)"/>
+  <text x="300" y="146" class="fig-label small strong" text-anchor="middle">Medial wall</text>
+  <ellipse cx="300" cy="215" rx="40" ry="30" fill="#e0b98c" stroke="var(--fig-stroke)"/>
+  <text x="300" y="219" class="fig-label small" text-anchor="middle">Promontory</text>
+  <ellipse cx="340" cy="180" rx="12" ry="7" fill="#fff" stroke="var(--fig-stroke)"/>
+  <text x="356" y="176" class="fig-label small">Oval window</text>
+  <circle cx="335" cy="250" r="7" fill="#fff" stroke="var(--fig-stroke)"/>
+  <text x="346" y="262" class="fig-label small">Round window</text>
+  <path d="M220 165 Q300 160 380 168" fill="none" stroke="var(--fig-nerve)" stroke-width="5"/>
+  <text x="222" y="160" class="fig-label small">Facial nerve (tympanic)</text>
+  <path d="M250 150 Q275 140 300 150" fill="none" stroke="#d7a971" stroke-width="5"/>
+  <!-- roof -->
+  <rect x="210" y="50" width="180" height="80" fill="#efe6f7" stroke="var(--fig-stroke)"/>
+  <text x="300" y="80" class="fig-label small strong" text-anchor="middle">Roof: tegmen tympani</text>
+  <text x="300" y="96" class="fig-label small" text-anchor="middle">middle cranial fossa, temporal lobe</text>
+  <!-- floor -->
+  <rect x="210" y="270" width="180" height="80" fill="#e3e9f7" stroke="var(--fig-stroke)"/>
+  <text x="300" y="300" class="fig-label small strong" text-anchor="middle">Floor: jugular bulb</text>
+  <text x="300" y="316" class="fig-label small" text-anchor="middle">(may be high or dehiscent)</text>
+  <!-- anterior wall -->
+  <rect x="390" y="130" width="120" height="140" fill="#f7e3e3" stroke="var(--fig-stroke)"/>
+  <text x="450" y="150" class="fig-label small strong" text-anchor="middle">Anterior wall</text>
+  <text x="450" y="176" class="fig-label small" text-anchor="middle">Tensor tympani</text>
+  <text x="450" y="200" class="fig-label small" text-anchor="middle">Auditory tube</text>
+  <text x="450" y="230" class="fig-label small" text-anchor="middle">Internal carotid</text>
+  <text x="450" y="244" class="fig-label small" text-anchor="middle">artery</text>
+  <!-- posterior wall -->
+  <rect x="90" y="130" width="120" height="140" fill="#eef5e8" stroke="var(--fig-stroke)"/>
+  <text x="150" y="150" class="fig-label small strong" text-anchor="middle">Posterior wall</text>
+  <text x="150" y="176" class="fig-label small" text-anchor="middle">Aditus to antrum</text>
+  <text x="150" y="200" class="fig-label small" text-anchor="middle">Pyramid (stapedius)</text>
+  <text x="150" y="224" class="fig-label small" text-anchor="middle">Facial nerve</text>
+  <text x="150" y="238" class="fig-label small" text-anchor="middle">(mastoid segment)</text>
+  <text x="150" y="258" class="fig-label small" text-anchor="middle">Chorda tympani enters</text>
+  <!-- lateral wall -->
+  <rect x="510" y="130" width="80" height="140" fill="#f4ece6" stroke="var(--fig-stroke)"/>
+  <text x="550" y="150" class="fig-label small strong" text-anchor="middle">Lateral</text>
+  <text x="550" y="176" class="fig-label small" text-anchor="middle">Eardrum</text>
+  <text x="550" y="196" class="fig-label small" text-anchor="middle">Scutum</text>
+  <text x="550" y="216" class="fig-label small" text-anchor="middle">(attic wall)</text>
+  <text x="6" y="388" class="fig-label small">Lay the walls out flat around the medial wall: the facial nerve runs along the medial wall, then down the posterior wall. Not to scale.</text>
+</svg>`,
   // Right face from the side, face to the right: the five facial nerve branches
   // fanning from the parotid to the muscles they supply.
   facialNerveMuscles: `

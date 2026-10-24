@@ -34,6 +34,9 @@ window.ANATOMY.regions.deep_neck = {
     refs: ["grodinsky", "harnsberger", "vieira", "gray"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["fascia", "muscle", "gland", "spaces", "lymph", "vein", "artery", "nerve", "route"]},
+
   layers: [
     { id: "spaces", label: "Spaces", defaultOn: true },
     { id: "fascia", label: "Investing fascia", defaultOn: false },

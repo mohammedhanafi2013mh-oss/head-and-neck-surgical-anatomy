@@ -26,6 +26,9 @@
     cartilage: "#c9d6e0",
     mucosa: "#e0a4a0",
     pharynx: "#c96f7a",
+    external: "#e0a48e",
+    middle: "#c08a5a",
+    inner: "#8fb7d8",
     pathology: "#86aee6",
     route: "#ff6a2a"
   };
@@ -46,6 +49,7 @@
     quiz: {},
     quizMode: "questions", // "questions" | "find" (tap it on the model) | "name" (name the highlighted one)
     q3: null,
+    dissect: null, // guided dissection in the Structures tab: { stage, ask: { id, answered, picked } }
     search: ""
   };
 
@@ -58,6 +62,15 @@
       if (state.tab === "quiz" && state.quizMode !== "questions" && state.q3) {
         if (state.quizMode === "find" && !state.q3.answered && id) answerQuiz3d(id);
         else viewer.select(state.selected, false);
+        return;
+      }
+      // Guided dissection: a tap answers the "find it" check at this layer.
+      const ask = state.tab === "structures" && !state.selected && state.dissect && state.dissect.ask;
+      if (ask && !ask.answered && id) {
+        ask.answered = true;
+        ask.picked = id;
+        viewer.frameStructure(ask.id);
+        render();
         return;
       }
       state.selected = id;
@@ -166,6 +179,7 @@
     shownIncisions = ""; // viewer.load() clears the drawn incisions
     state.quiz = {};
     state.q3 = null;
+    state.dissect = null;
     state.relFocus = new Set();
     state.search = "";
     if (state.tab === "surgery") state.tab = "overview";
@@ -257,6 +271,14 @@
       if (names[v]) b.textContent = (state.model.viewLabels || {})[v] || names[v];
     });
   }
+  // Phones: show or hide the layer chips.
+  $("#layers-toggle").addEventListener("click", (e) => {
+    const bar = e.currentTarget.parentElement;
+    const open = bar.classList.toggle("open");
+    e.currentTarget.setAttribute("aria-expanded", String(open));
+    e.currentTarget.textContent = open ? "Layers ▴" : "Layers ▾";
+  });
+
   function renderLayerToggles() {
     const box = $("#layer-toggles");
     box.innerHTML = "";
@@ -303,6 +325,7 @@
   document.querySelectorAll("[data-tab]").forEach((b) =>
     b.addEventListener("click", () => {
       const leavingSurgery = state.tab === "surgery" && b.dataset.tab !== "surgery";
+      if (state.dissect && b.dataset.tab !== "structures") exitDissection();
       state.tab = b.dataset.tab;
       if (b.dataset.tab === "structures") state.selected = state.selected || null;
       if (leavingSurgery) exitWalkthrough();
@@ -313,6 +336,7 @@
 
   function render() {
     if (!state.region) return;
+    if (state.tab === "structures" && state.selected) rememberViewed(state.regionId, state.selected);
     if (state.relFor !== state.selected) {
       state.relFocus = new Set(); // related structures belong to the structure they were opened from
       state.relFor = state.selected;
@@ -333,8 +357,10 @@
       sections.resize();
     }
     wire(body);
-    viewer.hideNames = state.tab === "quiz" && state.quizMode !== "questions";
+    const dissectAsk = state.tab === "structures" && !state.selected && state.dissect && state.dissect.ask;
+    viewer.hideNames = (state.tab === "quiz" && state.quizMode !== "questions") || !!(dissectAsk && !dissectAsk.answered);
     if (state.tab === "surgery") applyStep();
+    else if (state.tab === "structures" && state.dissect && !state.selected) applyDissection();
     else {
       const rel = state.tab === "structures" && state.selected ? [...state.relFocus] : [];
       if (rel.length || viewer.focusIds.size) viewer.setFocus(rel);
@@ -357,11 +383,13 @@
       <ul>${o.contents.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
       <div class="callout pearl"><div class="callout-title">Key surgical points</div>
         <ul>${o.keyPoints.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
-      ${refChips(o.refs)}`;
+      ${refChips(o.refs)}
+      ${provenance(`${r.title} › Overview`, r.id, r)}`;
   }
 
   function structures(r) {
     if (state.selected) return structureCard(r.structures.find((s) => s.id === state.selected));
+    if (state.dissect) return dissection(r);
     const q = state.search.toLowerCase();
     const groups = r.layers
       .map((l) => ({
@@ -373,6 +401,13 @@
     const traced = q ? [] : r.structures.filter((s) => courseFor(s));
     return `
       <input class="search" type="search" placeholder="Search structures…" value="${esc(state.search)}" data-search>
+      ${(() => {
+        const mine = q ? [] : store.get("bookmarks").filter((b) => b.region === r.id).map((b) => r.structures.find((s) => s.id === b.id)).filter(Boolean);
+        return mine.length ? `<div class="structure-group"><h3>★ Your bookmarks</h3><div class="focus-list">${mine
+          .map((s) => `<button data-select="${s.id}">${esc(short(s.name))}</button>`).join("")}</div></div>` : "";
+      })()}
+      ${!q && r.dissection ? `<div class="structure-group dissect-start"><button type="button" data-dissect-start>▶ Dissect layer by layer</button>
+        <span class="muted small">Peel the region from superficial to deep, with a quick check at each layer.</span></div>` : ""}
       ${traced.length ? `<div class="structure-group trace-quick"><h3>Trace a course</h3>
         <p class="muted small">Nerves and vessels of surgical importance: tap one to follow its path and branches on the model.</p>
         <div class="focus-list">${traced
@@ -387,6 +422,55 @@
           </ul></div>`
         )
         .join("") || `<p class="muted">No matches.</p>`}`;
+  }
+
+  // ---------- bookmarks and recently viewed (kept on this device) ----------
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const isBookmarked = (region, id) => store.get("bookmarks").some((b) => b.region === region && b.id === id);
+  function toggleBookmark(region, id) {
+    const list = store.get("bookmarks");
+    const i = list.findIndex((b) => b.region === region && b.id === id);
+    if (i >= 0) list.splice(i, 1);
+    else list.unshift({ region, id });
+    store.set("bookmarks", list);
+  }
+  function rememberViewed(region, id) {
+    const list = store.get("recent").filter((b) => !(b.region === region && b.id === id));
+    list.unshift({ region, id });
+    store.set("recent", list.slice(0, 12));
+  }
+
+  // ---------- content provenance ----------
+  // Every structure, overview and operation ends with its review status and a
+  // link that opens a pre-filled GitHub issue naming exactly where the error is.
+  const REPO = "https://github.com/mohammedhanafi2013mh-oss/head-and-neck-surgical-anatomy";
+  const SITE = "https://mohammedhanafi2013mh-oss.github.io/head-and-neck-surgical-anatomy/";
+  function reportUrl(where, hash) {
+    const body = [
+      `**Where:** ${where}`,
+      `**Link:** ${SITE}${hash ? "#" + hash : ""}`,
+      "",
+      "**What is wrong:**",
+      "",
+      "",
+      "**Suggested correction, with a source (textbook, paper or guideline):**",
+      ""
+    ].join("\n");
+    return `${REPO}/issues/new?title=${encodeURIComponent("Content: " + where)}&body=${encodeURIComponent(body)}`;
+  }
+  // region.review / structure.review / procedure.review: { by, date } once a specialist has checked it.
+  function reviewNote(...items) {
+    const rev = items.find((x) => x && x.review)?.review;
+    return rev
+      ? `Reviewed by ${esc(rev.by)}${rev.date ? `, ${esc(rev.date)}` : ""}`
+      : "Not yet reviewed by a specialist: check against the references before teaching from it";
+  }
+  function provenance(where, hash, ...items) {
+    return `<div class="content-meta"><span>${reviewNote(...items)}</span>
+      <a class="report-link" href="${esc(reportUrl(where, hash))}" target="_blank" rel="noopener">⚑ Report an error</a></div>`;
   }
 
   // ---------- links between structures ----------
@@ -456,7 +540,8 @@
     const supply = Object.entries(s.supply || {});
     return `
       <button class="back" data-back>← All structures</button>
-      <h2>${esc(s.name)}</h2>
+      <div class="card-head"><h2>${esc(s.name)}</h2><button type="button" class="bookmark" data-bookmark aria-pressed="${isBookmarked(state.regionId, s.id)}"
+        title="Bookmarks are kept on this device">${isBookmarked(state.regionId, s.id) ? "★ Saved" : "☆ Save"}</button></div>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
       ${viewer.structures.has(s.id) ? "" : pinFor(s) ? `<p class="aka">Shown as a pin on the 3D model.</p>` : `<p class="aka">Not shown in the 3D model yet.</p>`}
       ${s.drawn === "redrawn" ? `<p class="aka">Z-Anatomy's model places this structure inaccurately here, so its path in this region was redrawn for this app in its usual position.</p>`
@@ -469,7 +554,8 @@
       ${s.danger?.length ? `<div class="callout danger"><div class="callout-title">Danger points</div>${list(s.danger)}</div>` : ""}
       ${s.variations?.length ? `<h3>Variations</h3>${list(s.variations)}` : ""}
       ${relatedHtml(s, found)}
-      ${refChips(s.refs)}`;
+      ${refChips(s.refs)}
+      ${provenance(`${state.region.title} › ${s.name}`, `${state.regionId}/${s.id}`, s, state.region)}`;
   }
 
   // Structures named in these notes, and those whose notes name this one.
@@ -485,6 +571,71 @@
         .join("")}</div>
       ${inModel.length > 1 ? `<div class="rel-actions"><button type="button" data-rel-all>Show all on the model</button>${state.relFocus.size ? `<button type="button" data-rel-clear>Clear</button>` : ""}</div>` : ""}
     </div>`;
+  }
+
+  // ---------- guided dissection ----------
+  // Stage i shows the "keep" layers and every layer from order[i] down, with
+  // order[i] (the one now on top) highlighted; Next removes it.
+  function dissectStages(r) {
+    const d = r.dissection;
+    return d.order
+      .map((id) => ({ layer: r.layers.find((l) => l.id === id), items: r.structures.filter((s) => s.layer === id) }))
+      .filter((x) => x.layer && x.items.length);
+  }
+
+  function newAsk(stage) {
+    const pool = stage.items.filter((s) => viewer.structures.has(s.id) && !viewer.hidden.has(s.id));
+    return pool.length ? { id: pool[Math.floor(Math.random() * pool.length)].id, answered: false, picked: null } : null;
+  }
+
+  function dissection(r) {
+    const stages = dissectStages(r);
+    const k = Math.min(state.dissect.stage, stages.length - 1);
+    const st = stages[k];
+    const ask = state.dissect.ask;
+    const byId = Object.fromEntries(r.structures.map((s) => [s.id, s]));
+    let check = "";
+    if (ask) {
+      const name = esc(short(byId[ask.id].name));
+      check = !ask.answered
+        ? `<div class="q3-card dissect-check"><p class="q3-prompt" data-target="${ask.id}">Quick check: tap the <strong>${name}</strong> on the model</p>
+            <div class="q3-actions"><button type="button" data-dissect-reveal>Show me</button></div></div>`
+        : `<div class="q3-feedback ${ask.picked === ask.id ? "correct" : "wrong"}"><p><strong>${ask.picked === ask.id ? "✓ Correct" : ask.picked ? "✗ Not quite" : "Here it is"}</strong>${
+            ask.picked && ask.picked !== ask.id && byId[ask.picked] ? `: that was ${esc(short(byId[ask.picked].name))}` : ""}. Highlighted: <strong>${name}</strong>.</p></div>`;
+    }
+    return `
+      <button class="back" data-dissect-exit>← All structures</button>
+      <h2>Dissect: ${esc(r.title)}</h2>
+      <p class="muted">From superficial to deep. The highlighted layer is the one on top; Next lifts it away to show what lies beneath. Tap a name to read about it.</p>
+      <div class="steps-nav">
+        <span class="count">Layer ${k + 1} of ${stages.length}</span>
+        <button data-dissect-step="-1" ${k === 0 ? "disabled" : ""}>← Prev</button>
+        <button data-dissect-step="1" ${k === stages.length - 1 ? "disabled" : ""}>Next →</button>
+      </div>
+      <div class="step-card">
+        <h4><span class="dot" style="background:${LAYER_COLORS[st.layer.id]}"></span> ${esc(st.layer.label)}</h4>
+        <div class="focus-list">${st.items.map((s) => `<button data-select="${s.id}">${esc(short(s.name))}</button>`).join("")}</div>
+        ${check}
+      </div>
+      <div class="step-dots">${stages.map((_, i) => `<span class="${i <= k ? "on" : ""}"></span>`).join("")}</div>`;
+  }
+
+  function applyDissection() {
+    const r = state.region, stages = dissectStages(r);
+    const k = Math.min(state.dissect.stage, stages.length - 1);
+    const shown = [...r.dissection.keep, ...stages.slice(k).map((x) => x.layer.id)];
+    viewer.setLayers(shown);
+    viewer.setFocus(stages[k].items.map((s) => s.id));
+    const ask = state.dissect.ask;
+    viewer.select(ask && ask.answered ? ask.id : null, false);
+    renderLayerToggles();
+  }
+
+  function exitDissection() {
+    state.dissect = null;
+    viewer.setFocus([]);
+    viewer.setLayers(state.region.layers.filter((l) => l.defaultOn).map((l) => l.id));
+    renderLayerToggles();
   }
 
   function courseHtml(course) {
@@ -527,7 +678,8 @@
       <div class="step-dots">${p.steps.map((_, i) => `<span class="${i <= state.step ? "on" : ""}"></span>`).join("")}</div>
       <h3>${esc(p.complicationsTitle || "Complications")}</h3>
       <div class="callout danger"><ul>${p.complications.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>
-      ${refChips(p.refs)}`;
+      ${refChips(p.refs)}
+      ${provenance(`${r.title} › ${p.title}, step ${state.step + 1}: ${st.title}`, r.id, p, r)}`;
   }
 
   const riskIds = (p) => (p.atRisk || []).map((a) => a.id);
@@ -810,6 +962,35 @@
       try { localStorage.setItem("showRisk", state.showRisk ? "1" : "0"); } catch (e) {}
       applyStep();
     });
+    const bm = $("[data-bookmark]", body);
+    if (bm) bm.addEventListener("click", () => {
+      toggleBookmark(state.regionId, state.selected);
+      render();
+    });
+    const dStart = $("[data-dissect-start]", body);
+    if (dStart) dStart.addEventListener("click", () => {
+      state.dissect = { stage: 0, ask: newAsk(dissectStages(state.region)[0]) };
+      render();
+    });
+    const dExit = $("[data-dissect-exit]", body);
+    if (dExit) dExit.addEventListener("click", () => {
+      exitDissection();
+      render();
+    });
+    body.querySelectorAll("[data-dissect-step]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const stages = dissectStages(state.region);
+        state.dissect.stage = Math.max(0, Math.min(stages.length - 1, state.dissect.stage + Number(b.dataset.dissectStep)));
+        state.dissect.ask = newAsk(stages[state.dissect.stage]);
+        render();
+      })
+    );
+    const dReveal = $("[data-dissect-reveal]", body);
+    if (dReveal) dReveal.addEventListener("click", () => {
+      state.dissect.ask.answered = true;
+      viewer.frameStructure(state.dissect.ask.id);
+      render();
+    });
     body.querySelectorAll("[data-qmode]").forEach((b) =>
       b.addEventListener("click", () => {
         state.quizMode = b.dataset.qmode;
@@ -925,8 +1106,19 @@
     const q = searchInput.value.trim().toLowerCase();
     if (!searchIndex) return;
     if (!q) {
-      hits = [];
-      searchResults.innerHTML = `<li class="muted">Type to search ${searchIndex.length} structures in ${catalog.length} regions.</li>`;
+      // Bookmarks and recently viewed structures, from every region.
+      const find = (b) => searchIndex.find((x) => x.region === b.region && x.id === b.id);
+      const marks = store.get("bookmarks").map(find).filter(Boolean);
+      const recent = store.get("recent").map(find).filter(Boolean).filter((x) => !marks.includes(x)).slice(0, 8);
+      hits = [...marks, ...recent];
+      active = 0;
+      const row = (x, i) => `<li role="option" id="hit-${i}" aria-selected="${i === active}" data-hit="${i}">
+          <span class="dot" style="background:${LAYER_COLORS[x.layer] || "#999"}"></span>
+          <span class="hit-name">${esc(x.name)}</span><span class="hit-region muted">${esc(x.regionTitle)}</span></li>`;
+      searchResults.innerHTML = `<li class="muted">Type to search ${searchIndex.length} structures in ${catalog.length} regions.</li>` +
+        (marks.length ? `<li class="search-head">★ Bookmarks</li>` + marks.map((x, i) => row(x, i)).join("") : "") +
+        (recent.length ? `<li class="search-head">Recently viewed</li>` + recent.map((x, i) => row(x, marks.length + i)).join("") : "");
+      searchInput.setAttribute("aria-activedescendant", hits.length ? "hit-0" : "");
       return;
     }
     const words = q.split(/\s+/);
@@ -963,7 +1155,8 @@
   async function openSearch() {
     if (searchDialog.open) return;
     searchDialog.showModal();
-    searchInput.select();
+    searchInput.value = ""; // start afresh, showing bookmarks and recently viewed
+    searchInput.focus();
     await buildIndex();
     runSearch();
   }

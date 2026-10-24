@@ -62,6 +62,9 @@ window.ANATOMY.regions.oral_cavity = {
     ]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["context", "mucosa", "pharynx", "gland", "duct", "muscle", "vein", "artery", "nerve"]},
+
   layers: [{"id": "muscle", "label": "Tongue & floor muscles", "defaultOn": true}, {"id": "pharynx", "label": "Soft palate, pillars & tonsils", "defaultOn": true}, {"id": "mucosa", "label": "Gingiva & hard palate", "defaultOn": true}, {"id": "gland", "label": "Glands", "defaultOn": true}, {"id": "duct", "label": "Salivary ducts", "defaultOn": true}, {"id": "nerve", "label": "Nerves", "defaultOn": true}, {"id": "artery", "label": "Arteries", "defaultOn": true}, {"id": "vein", "label": "Veins", "defaultOn": false}, {"id": "bone", "label": "Jaws, teeth & hyoid", "defaultOn": true}, {"id": "context", "label": "Lips & pterygoid", "defaultOn": false}, {"id": "pathology", "label": "Ranula", "defaultOn": false}],
 
   structures: [

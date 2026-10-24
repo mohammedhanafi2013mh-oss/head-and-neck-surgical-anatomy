@@ -18,6 +18,7 @@ Modules so far:
 - **Pterygopalatine fossa** (its seven openings, the maxillary nerve, the pterygopalatine ganglion and the end of the maxillary artery)
 - **Orbit** (bony orbit, globe, extraocular muscles, orbital apex, nerves II–VI and V1, ophthalmic vessels, lacrimal apparatus)
 - **Nose & paranasal sinuses** (lateral nasal wall, ostiomeatal unit, frontal, ethmoid, maxillary and sphenoid sinuses and their drainage)
+- **Temporal bone & ear** (auricle, ear canal, eardrum, ossicles, middle-ear muscles, cochlea and labyrinth, the facial nerve through the temporal bone, the mastoid), right ear
 
 Every region shows **both sides**. Regions modelled on one side are mirrored across the midline at export, so selecting a structure highlights it on both sides; courses, pins and notes describe the traced side. **Double-click** (or double-tap) a structure to hide it, and use "Show hidden" to bring hidden structures back. The 3D view has baked ambient occlusion and soft shadows for depth.
 
@@ -36,12 +37,19 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 - **Pterygopalatine fossa:** V2 from the trigeminal ganglion to the face, the Vidian nerve, the greater palatine and nasopalatine nerves, and the infraorbital artery.
 - **Orbit:** II, III, IV, VI, V1 (frontal nerve), the nasociliary nerve and the ophthalmic artery.
 - **Nose & sinuses:** the drainage routes of the frontal, maxillary and sphenoid sinuses, and the anterior ethmoidal artery.
+- **Temporal bone & ear:** the facial nerve from the internal acoustic meatus through the geniculate ganglion and second genu to the stylomastoid foramen, and the chorda tympani.
 
-The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa), the 1 cm margin round a tongue cancer and the cut along the sublingual fold for a ranula. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
+The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa), the 1 cm margin round a tongue cancer, the cut along the sublingual fold for a ranula, and the postauricular incision for mastoidectomy. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
 
 Each operation also lists its **structures at risk**, each with what injuring it causes (hoarseness, shoulder droop, a numb tongue…). They are tinted orange on the model throughout the walkthrough, and the tint can be switched off.
 
 In a structure's notes, the **names of other structures are links**. Tap one to see it on the model together with the open structure. "Related structures" gathers every structure the notes name and every structure whose notes name this one; › opens its notes.
+
+Every structure, overview and operation ends with its **review status** and a **⚑ Report an error** link. The link opens a GitHub issue that already names the region, structure or step, so a correction can be checked and fixed. Once a specialist has checked a region, add `review: { by: "Name, specialty", date: "2026-11" }` to its data file (or to one structure or operation) and the note says who reviewed it.
+
+**Dissect layer by layer** (top of the Structures tab) peels the region from superficial to deep. Each layer is highlighted and named, with a quick check ("tap the … on the model"); Next lifts it away to show what lies beneath. The order is set per region in `dissection: { keep, order }`.
+
+**☆ Save** on a structure bookmarks it. Bookmarks appear at the top of that region's Structures list. Bookmarks and recently viewed structures from every region show in the search (<kbd>/</kbd>) before you type. Both are kept on the device.
 
 The **Quiz** tab has three modes:
 - **Questions**: multiple choice, with explanations.
@@ -67,6 +75,8 @@ Each push to `main` builds the apps and publishes them on the [Releases page](ht
 | **iPhone / iPad** | Open the web app (GitHub Pages: `https://mohammedhanafi2013mh-oss.github.io/head-and-neck-surgical-anatomy/`) in Safari → **Share → Add to Home Screen**. Then open the quick guide and tap **Download all regions for offline use**. |
 | **Any browser** | The same web app installs from Chrome or Edge (install icon in the address bar, or "Install app" in the quick guide). |
 | **No install** | Unzip `…-web.zip` (or this repository) and open `index.html`. It works offline from the files, with no server. |
+
+**Google Play:** everything for a Play Store listing is ready in [`packaging/play-store/`](packaging/play-store/README.md): a signed app bundle built by CI once the upload-key secrets are added, the listing text, data-safety answers, privacy policy, feature graphic and screenshots, with a step-by-step guide. On phones, the layer buttons fold behind a **Layers** button so they don't cover the model.
 
 GitHub Pages must be turned on once: **Settings → Pages → Source: GitHub Actions**. iPhone apps can only be built and signed on a Mac with an Apple developer account, so iOS uses the installable web app, which works offline like an app.
 
@@ -129,6 +139,14 @@ The Android build is signed with `packaging/android-debug.keystore`, a public de
 - **Surgery**: two operations to choose between: a 9-step transoral partial glossectomy for a lateral tongue cancer, with the 1 cm margin drawn on the tongue, and an 8-step transoral excision of the sublingual gland for a ranula, with the incision along the sublingual fold and the plunging ranula shown.
 - **Figures**: original diagrams of the open mouth with the subsites and the margin round a tumour, the fauces with the pillars and their muscles, and a ranula in coronal section. **Quiz**: ten questions.
 - **References**: AJCC 8, D'Cruz et al. 2015, Byers et al. 1997, the RCPath dataset, Harrison 2010, Zhao et al. 2004, Patel et al. 2009, Gray's, Shah and Scott-Brown's.
+
+## What's in the temporal bone & ear module
+
+- **3D model**: the right ear, with the temporal bone translucent. From Z-Anatomy: the temporal bone, auricle, tympanic membrane, malleus, incus and stapes, cochlea, vestibule and semicircular canals, the facial nerve through the bone, chorda tympani, VIII, the petrous internal carotid, the sigmoid sinus and jugular bulb, the auditory tube, sternocleidomastoid and the posterior belly of digastric. Sculpted for this app: the ear canal, the mastoid antrum and air cells, tensor tympani and stapedius. Surgical landmarks are pinned: internal acoustic meatus, geniculate ganglion, stylomastoid foramen, spine of Henle, MacEwen's triangle, mastoid tip, lateral semicircular canal, tegmen, oval and round windows, fossa incudis, cochleariform process.
+- **Structures**: notes on every structure, with the segments and branches of the facial nerve, topognosis, the walls of the middle ear and the mastoid landmarks. Traced courses for the facial nerve and chorda tympani.
+- **Surgery**: a 9-step cortical (canal wall up) mastoidectomy, from the postauricular incision (drawn on the model) to the facial recess, with its structures at risk.
+- **Figures**: original diagrams of a right mastoidectomy cavity and the middle ear opened like a box. **Quiz**: seven questions.
+- **References**: Gray's, Proctor, Sanna et al., Glasscock-Shambaugh, Fisch et al. and Scott-Brown's.
 
 ## What's in the parotid module
 
@@ -377,6 +395,6 @@ Do not add images from copyrighted atlases (Netter, Grant's, modern Gray's, Rohe
 
 ## Roadmap
 
-- More regions: posterior triangle, temporal bone
+- More regions: posterior triangle
 - Contrast-enhanced, openly licensed clinical CT/MRI alongside the Visible Human scans
 - App store releases (Play Store with a private signing key; iOS needs a Mac and an Apple developer account)

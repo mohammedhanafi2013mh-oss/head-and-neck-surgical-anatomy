@@ -35,6 +35,9 @@ window.ANATOMY.regions.parotid = {
     refs: ["gray", "scottbrown", "davis"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "lymph", "gland", "vein", "nerve", "artery", "muscle", "context", "deep"]},
+
   layers: [
     { id: "superficial", label: "Platysma", defaultOn: false },
     { id: "bone", label: "Bone & ear", defaultOn: true },

@@ -42,6 +42,9 @@ window.ANATOMY.regions.infratemporal = {
     refs: ["gray", "rhoton", "shah"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "muscle", "joint", "vein", "artery", "nerve", "context", "spaces", "foramina"]},
+
   layers: [
     { id: "bone", label: "Bone", defaultOn: true },
     { id: "foramina", label: "Foramina & landmarks (pins)", defaultOn: true },

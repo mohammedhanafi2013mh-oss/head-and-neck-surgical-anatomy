@@ -510,6 +510,7 @@ kbd { font: 12px ui-monospace, monospace; padding: 1px 5px; border: 1px solid va
 .risk-toggle { display: flex; gap: 6px; align-items: center; font-size: 13px; margin: 8px 0 4px; }
 .risk-list { list-style: none; padding: 0; margin: 4px 0 0; font-size: 13px; }
 .risk-list li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; }
+@media (max-width: 560px) { .risk-list li { display: block; } .risk-list li span { display: block; margin: 2px 0 4px 2px; } }
 .risk-list button { flex: none; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid #e2541c; color: #c2410c; background: none; cursor: pointer; }
 .risk-list span { color: var(--muted); }
 .focus-list button.risk { border-color: #e2541c; color: #c2410c; }
@@ -529,3 +530,29 @@ kbd { font: 12px ui-monospace, monospace; padding: 1px 5px; border: 1px solid va
 .q3-feedback.wrong { background: var(--danger-soft); border-color: var(--danger); }
 .q3-feedback p { margin: 0 0 6px; }
 .q3-score { margin-top: 10px; }
+
+/* Review status and error reports at the end of each card. */
+.content-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.report-link { color: var(--accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
+.report-link:hover { text-decoration: underline; }
+
+/* Guided dissection. */
+.dissect-start { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.dissect-start button { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; font: inherit; font-weight: 600; }
+.step-card h4 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.dissect-check { margin-top: 10px; background: var(--surface); }
+
+/* Bookmarks. */
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.card-head h2 { margin-right: auto; }
+.bookmark { flex: none; margin-top: 4px; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); background: none; cursor: pointer; }
+.bookmark[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.search-results .search-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 10px 12px 4px; cursor: default; }
+
+/* Phones: the layer chips fold behind a "Layers" button so they don't cover the model. */
+.layers-toggle { display: none; }
+@media (max-width: 560px) {
+  .layers-toggle { display: inline-flex; font-weight: 600; pointer-events: auto; }
+  .viewer-toolbar:not(.open) #layer-toggles { display: none; }
+  .viewer-toolbar.open #layer-toggles { margin-top: 6px; }
+}

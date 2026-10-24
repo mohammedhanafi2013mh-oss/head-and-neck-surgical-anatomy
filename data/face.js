@@ -61,6 +61,9 @@ window.ANATOMY.regions.face = {
     ]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["fascia", "muscle", "gland", "vein", "artery", "nerve", "context", "cartilage"]},
+
   layers: [{"id": "muscle", "label": "Facial muscles", "defaultOn": true}, {"id": "nerve", "label": "Nerves", "defaultOn": true}, {"id": "artery", "label": "Arteries", "defaultOn": true}, {"id": "vein", "label": "Veins", "defaultOn": false}, {"id": "gland", "label": "Parotid & duct", "defaultOn": true}, {"id": "bone", "label": "Skull & jaw", "defaultOn": true}, {"id": "cartilage", "label": "Nasal cartilages", "defaultOn": true}, {"id": "fascia", "label": "Scalp aponeurosis", "defaultOn": false}, {"id": "context", "label": "Chewing muscles", "defaultOn": false}],
 
   structures: [

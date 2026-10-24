@@ -36,6 +36,9 @@ window.ANATOMY.regions.larynx = {
     refs: ["gray", "scottbrown", "shah"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["context", "deep", "vein", "artery", "nerve", "muscle", "membrane"]},
+
   layers: [
     { id: "bone", label: "Cartilages & hyoid", defaultOn: true },
     { id: "membrane", label: "Folds & membranes", defaultOn: true },
