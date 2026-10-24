@@ -21,12 +21,17 @@ window.ANATOMY.models.sinonasal = {
     lateral: [-Math.PI / 2, Math.PI / 2],
     inferior: [Math.PI / 2, Math.PI / 2],
     anterior: [0, Math.PI / 2],
-    // A 0° endoscope in the right nostril, looking back along the floor of the
-    // nose: inferior and middle turbinates on the lateral wall, septum medially.
+    // A 0° endoscope just inside the right nasal cavity, looking back towards
+    // the choana: inferior turbinate below on the lateral wall, the middle
+    // turbinate above it, the septum medially.
     special: {
-      at: [0.02, 1.768, 5.1, [0.75, -0.6, -1.5]],
-      layers: ["mucosa", "foramina"],
-      opacity: { nasal_mucosa: 1, nasopharynx: 1 }
+      at: [0.006, 1.628, 4.69, [0.62, 0.1, -2.5]],
+      fov: 75,
+      layers: ["mucosa", "bone"],
+      hide: ["frontal", "sphenoid", "nasal_bones"],
+      opacity: { nasal_mucosa: 1, nasopharynx: 1, ethmoid: 1, inferior_concha: 1, maxilla: 1, palatine: 1, vomer: 1 },
+      // The turbinates and the floor (palate) are bone in the model: give them their lining's colour.
+      tint: { inferior_concha: 0xd99490, ethmoid: 0xd99490, maxilla: 0xd99490, palatine: 0xd99490, vomer: 0xd99490 }
     }
   },
   viewLabels: { inferior: "Medial", anterior: "Front", special: "Endoscope" },
