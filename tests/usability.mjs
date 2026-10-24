@@ -252,6 +252,29 @@ await check("Surgery", "A region with several operations offers a picker, and ea
   await go("thyroid");
   return `${names.join(" / ")}: ${note[1].split(" · ")[0]}`;
 });
+await check("3D model", "Surgeon's-eye views and the drilled mastoidectomy", async () => {
+  // The ear: Otoscope sets structures aside and lights from the eye, Reset restores them;
+  // the mastoidectomy steps drill the bone away and leaving the walkthrough fills it back.
+  const go = async (id) => {
+    await page.selectOption("#region-select", id);
+    await page.waitForFunction((r) => location.hash.startsWith("#" + r) && document.querySelector("#viewer-loading").hidden, id, { timeout: 60000 });
+  };
+  await go("temporal_bone");
+  const label = await page.textContent('[data-view="special"]');
+  await page.click('[data-view="special"]');
+  const inScope = await page.evaluate(() => [window.ANATOMY.viewer.hidden.size, window.ANATOMY.viewer.headlight.intensity > 0]);
+  await page.click('[data-view="reset"]');
+  const after = await page.evaluate(() => [window.ANATOMY.viewer.hidden.size, window.ANATOMY.viewer.headlight.intensity > 0]);
+  expect(inScope[0] > 0 && inScope[1] && after[0] === 0 && !after[1], `${label}: in ${inScope}, after ${after}`);
+  await page.click('[data-tab="surgery"]');
+  for (let i = 0; i < 3; i++) await page.click('[data-step="1"]');
+  const drilled = await page.evaluate(() => window.ANATOMY.viewer.drillCount);
+  await page.click('[data-tab="overview"]');
+  const filled = await page.evaluate(() => window.ANATOMY.viewer.drillCount);
+  expect(drilled > 0 && filled === 0, `drill spheres: step 4 ${drilled}, after ${filled}`);
+  await go("thyroid");
+  return `${label} hides ${inScope[0]} structures; step 4 drills ${drilled} spheres`;
+});
 await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.click('[data-tab="sections"]');
   await page.waitForTimeout(1000);

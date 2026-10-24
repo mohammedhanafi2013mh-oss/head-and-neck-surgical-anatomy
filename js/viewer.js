@@ -105,6 +105,7 @@
         geo.computeBoundingBox();
         const style = look[m.id] || { kind: "muscle" };
         const material = helpers.tissue(style.kind, style);
+        if (style.drill) addDrill(material);
         const aoStrength = style.ao ?? AO_STRENGTH; // a structure deep inside others can ask for less
         if (m.ao !== undefined && aoStrength > 0) {
           // Baked ambient occlusion (tools/export_zanatomy.py): darken folds,
@@ -151,7 +152,7 @@
   const SURFACE = {
     muscle: { strength: 0.012, height: "fibers(p)" },
     gland: { strength: 0.03, height: "lobules(p)" },
-    mucosa: { strength: 0.006, height: "vnoise(p * 28.0) * 0.7 + vnoise(p * 61.0) * 0.3" },
+    mucosa: { strength: 0.004, height: "vnoise(p * 22.0) * 0.75 + vnoise(p * 48.0) * 0.25" },
     bone: { strength: 0.01, height: "vnoise(p * 7.0) * 0.6 + vnoise(p * 19.0) * 0.4" },
     node: { strength: 0.01, height: "vnoise(p * 9.0)" },
     skin: { strength: 0.0022, height: "vnoise(p * 45.0) * 0.6 + vnoise(p * 95.0) * 0.25 + vnoise(p * 12.0) * 0.15" }
@@ -212,6 +213,36 @@
     };
   }
 
+  // Drilled bone (surgery steps): fragments inside any of up to MAX_DRILL
+  // spheres (x, y, z and radius, in model centimetres) are cut away from
+  // materials whose look asks for it (drill: true), leaving the structures
+  // inside the cavity in view.
+  const MAX_DRILL = 8;
+  let drillUniforms = null;
+  function addDrill(material) {
+    drillUniforms = drillUniforms || {
+      uDrill: { value: Array.from({ length: MAX_DRILL }, () => new THREE.Vector4()) },
+      uDrillN: { value: 0 }
+    };
+    const prev = material.onBeforeCompile;
+    const key = material.customProgramCacheKey();
+    material.customProgramCacheKey = () => key + "-drill";
+    material.onBeforeCompile = (shader, renderer) => {
+      prev.call(material, shader, renderer);
+      Object.assign(shader.uniforms, drillUniforms);
+      shader.vertexShader = "varying vec3 vDrillPos;\n" + shader.vertexShader.replace(
+        "#include <begin_vertex>",
+        "#include <begin_vertex>\n  vDrillPos = (modelMatrix * vec4(position, 1.0)).xyz;"
+      );
+      shader.fragmentShader = `varying vec3 vDrillPos;\nuniform vec4 uDrill[${MAX_DRILL}];\nuniform int uDrillN;\n` +
+        shader.fragmentShader.replace("void main() {", `void main() {
+          for (int i = 0; i < ${MAX_DRILL}; i++) {
+            if (i >= uDrillN) break;
+            if (distance(vDrillPos, uDrill[i].xyz) < uDrill[i].w) discard;
+          }`);
+    };
+  }
+
   // A soft studio for image-based lighting: dim walls with a few bright
   // panels, prefiltered into an environment map.
   function studio() {
@@ -244,6 +275,7 @@
       this.selectedId = null;
       this.labelMode = "some"; // "off" | "some" (pins and the selected structure) | "all"
       this.hidden = new Set(); // structures hidden by double-clicking them
+      this.opacityOverride = new Map(); // id -> opacity while a surgeon's-eye view is shown (enterScope)
 
       this.scene = new THREE.Scene();
       this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
@@ -281,6 +313,10 @@
       const fill = new THREE.DirectionalLight(0xe8eeff, 0.4 * L);
       fill.position.set(8, -4, -6);
       this.scene.add(fill);
+      // A light at the eye for endoscope, otoscope and laryngoscope views. See setHeadlight().
+      this.headlight = new THREE.PointLight(0xfff6ea, 0, 0, 0);
+      this.headlightPower = 1.0 * L;
+      this.scene.add(this.headlight);
 
       this.target = new THREE.Vector3();
       this.spherical = { radius: 24, theta: 1.0, phi: 1.75 };
@@ -333,6 +369,10 @@
       this.onHiddenChange && this.onHiddenChange(0);
       this.clearCourse();
       this.showIncisions([]);
+      this.setDrill([]);
+      this.setHeadlight(false);
+      this.opacityOverride = new Map();
+      this.scopeSaved = null;
       this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
         this.scene.remove(s.root);
@@ -359,6 +399,7 @@
           if (o.isMesh) {
             o.userData.id = item.id;
             o.userData.baseOpacity = o.material.opacity;
+            o.userData.baseEmissive = o.material.emissive.getHex();
             o.userData.baseTransparent = o.material.transparent;
           }
         });
@@ -465,8 +506,8 @@
           const m = o.material;
           if (danger && id !== this.selectedId) m.emissive.setHex(DANGER).multiplyScalar(0.55);
           else if (highlighted) m.emissive.copy(m.color).multiplyScalar(0.35);
-          else m.emissive.setHex(0x000000);
-          let opacity = o.userData.baseOpacity;
+          else m.emissive.setHex(o.userData.baseEmissive || 0);
+          let opacity = this.opacityOverride.get(id) ?? o.userData.baseOpacity;
           if (dimOthers && !highlighted && s.layer !== "bone") opacity = Math.min(opacity, 0.2);
           if (dimOthers && !highlighted && s.layer === "bone") opacity = Math.min(opacity, 0.4);
           m.opacity = opacity;
@@ -484,9 +525,49 @@
 
     resetView() {
       this.stopFly();
+      this.setHeadlight(false);
       const h = this.home || { target: [0, 0, 0], radius: 24, theta: 1, phi: 1.7 };
       this.target.copy(V3(h.target));
       Object.assign(this.spherical, { radius: h.radius, theta: h.theta, phi: h.phi });
+    }
+
+    // A surgeon's-eye view (otoscope, endoscope, laryngoscope): its own camera
+    // ({at: [theta, phi, radius, target]}), layers, hidden structures and
+    // opacities, lit from the eye. leaveScope() puts the rest back.
+    enterScope(spec) {
+      if (!this.scopeSaved) this.scopeSaved = { ...this.layerVisible };
+      this.setView(...spec.at);
+      if (spec.layers) for (const k of Object.keys(this.layerVisible)) this.layerVisible[k] = spec.layers.includes(k);
+      this.opacityOverride = new Map(Object.entries(spec.opacity || {}));
+      for (const id of spec.hide || []) this.hidden.add(id);
+      this.onHiddenChange && this.onHiddenChange(this.hidden.size);
+      this.setHeadlight(true);
+      this.refresh();
+    }
+
+    leaveScope() {
+      if (!this.scopeSaved) return;
+      Object.assign(this.layerVisible, this.scopeSaved);
+      this.scopeSaved = null;
+      this.opacityOverride = new Map();
+      this.hidden.clear();
+      this.onHiddenChange && this.onHiddenChange(0);
+      this.setHeadlight(false);
+      this.refresh();
+    }
+
+    setHeadlight(on) {
+      this.headlight.intensity = on ? this.headlightPower : 0;
+      this.dirty = true;
+    }
+
+    // Cut away drillable bone inside these spheres ([x, y, z, radius] each); [] fills it back.
+    setDrill(spheres = []) {
+      if (!drillUniforms) return;
+      const list = spheres.slice(0, MAX_DRILL);
+      list.forEach((d, i) => drillUniforms.uDrill.value[i].set(d[0], d[1], d[2], d[3]));
+      drillUniforms.uDrillN.value = this.drillCount = list.length;
+      this.dirty = true;
     }
 
     // A view is a direction, optionally with a distance and a point to look at.
@@ -515,6 +596,7 @@
         this.target.z + radius * Math.sin(phi) * Math.cos(theta)
       );
       this.camera.lookAt(this.target);
+      if (this.headlight.intensity) this.headlight.position.copy(this.camera.position);
       const { centre, radius: r } = this.extent;
       const eye = this.camera.position.clone().sub(this.target).normalize();
       const up = this.camera.up.clone().sub(eye.clone().multiplyScalar(eye.dot(this.camera.up))).normalize();

@@ -20,9 +20,16 @@ window.ANATOMY.models.sinonasal = {
   views: {
     lateral: [-Math.PI / 2, Math.PI / 2],
     inferior: [Math.PI / 2, Math.PI / 2],
-    anterior: [0, Math.PI / 2]
+    anterior: [0, Math.PI / 2],
+    // A 0° endoscope in the right nostril, looking back along the floor of the
+    // nose: inferior and middle turbinates on the lateral wall, septum medially.
+    special: {
+      at: [0.02, 1.768, 5.1, [0.75, -0.6, -1.5]],
+      layers: ["mucosa", "foramina"],
+      opacity: { nasal_mucosa: 1, nasopharynx: 1 }
+    }
   },
-  viewLabels: { inferior: "Medial", anterior: "Front" },
+  viewLabels: { inferior: "Medial", anterior: "Front", special: "Endoscope" },
 
   // Starting axial level (0 = bottom, 1 = top): through the maxillary sinus and middle meatus.
   sectionLevel: 0.27,
@@ -45,7 +52,7 @@ window.ANATOMY.models.sinonasal = {
     middle_ethmoid: { kind: "space", color: 0x4fd1c5, opacity: 0.6 },
     posterior_ethmoid: { kind: "space", color: 0x7fe0a0, opacity: 0.6 },
     maxillary_sinus: { kind: "space", color: 0xf2c14e, opacity: 0.45 },
-    nasal_mucosa: { kind: "gland", color: 0xe0a4a0, opacity: 0.25 },
+    nasal_mucosa: { kind: "mucosa", color: 0xe0a4a0, opacity: 0.25 },
     nasopharynx: { kind: "gland", color: 0xd48a86, opacity: 0.35 },
     nasolacrimal: { kind: "duct", color: 0x8fc7d8 },
     orbit_contents: { kind: "cartilage", color: 0xf2efe8, opacity: 0.5 },

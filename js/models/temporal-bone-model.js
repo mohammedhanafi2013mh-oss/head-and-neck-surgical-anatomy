@@ -21,18 +21,22 @@ window.ANATOMY.models.temporal_bone = {
   views: {
     lateral: [-Math.PI / 2, Math.PI / 2],
     inferior: [-1.2, 0.25],
+    anterior: [0, Math.PI / 2],
     // Down the ear canal at the eardrum, as through an otoscope: only the
-    // canal, eardrum and ossicles stay ("Show hidden" brings the rest back).
-    anterior: [-1.559, 1.784, 1.5, [0.186, -0.024, 0.357], ["temporal", "auricle", "cochlea", "labyrinth", "facial_nerve", "cn8",
-      "antrum", "air_cells", "sigmoid", "ijv", "ica", "tensor_tympani", "stapedius", "auditory_tube", "digastric_post", "scm"]]
+    // canal, eardrum and ossicles stay.
+    special: {
+      at: [-1.559, 1.784, 1.5, [0.186, -0.024, 0.357]],
+      hide: ["temporal", "auricle", "cochlea", "labyrinth", "facial_nerve", "cn8", "antrum", "air_cells", "sigmoid", "ijv", "ica",
+        "tensor_tympani", "stapedius", "auditory_tube", "digastric_post", "scm"]
+    }
   },
-  viewLabels: { inferior: "From above", anterior: "Otoscope" },
+  viewLabels: { inferior: "From above", anterior: "Front", special: "Otoscope" },
 
   // Starting axial level (0 = bottom, 1 = top): through the middle ear.
   sectionLevel: 0.5,
 
   look: {
-    temporal: { kind: "bone", opacity: 0.28 },
+    temporal: { kind: "bone", opacity: 0.28, drill: true },
     auricle: { kind: "skin" },
     eac: { kind: "skin", color: 0xd9a089, ao: 0.45 },
     tympanic_membrane: { kind: "membrane", opacity: 0.82, ao: 0 },
@@ -42,8 +46,8 @@ window.ANATOMY.models.temporal_bone = {
     tensor_tympani: { kind: "muscle", color: 0xb5524a },
     stapedius: { kind: "muscle", color: 0xa94b45 },
     // Antrum and air cells as a cast of the air spaces: pale, mucosa-lined cells.
-    antrum: { kind: "mucosa", color: 0xd9c4bb, ao: 0.4 },
-    air_cells: { kind: "mucosa", color: 0xe6d8d0, ao: 0.45 },
+    antrum: { kind: "mucosa", color: 0xd9c4bb, ao: 0.4, drill: true },
+    air_cells: { kind: "mucosa", color: 0xe6d8d0, ao: 0.45, drill: true },
     auditory_tube: { kind: "cartilage", color: 0xd9c2b8 },
     cochlea: { kind: "gland", color: 0xe0b98c },
     labyrinth: { kind: "gland", color: 0xd7a971 },

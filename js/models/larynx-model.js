@@ -17,9 +17,18 @@ window.ANATOMY.models.larynx = {
   views: {
     lateral: [-Math.PI / 2, Math.PI / 2],
     inferior: [Math.PI, 0.45],
-    anterior: [0, 1.55]
+    anterior: [0, 1.55],
+    // The glottis from above, as at laryngoscopy: epiglottis at the top,
+    // arytenoids below, vestibular folds lateral to the vocal folds.
+    special: {
+      at: [Math.PI, 0.5, 6, [0, -0.3, 0.2]],
+      layers: ["bone", "membrane", "muscle", "context"],
+      hide: ["hyoid", "thyroid_cartilage", "thyrohyoid_membrane", "cricoid", "trachea", "thyroid", "vertebrae", "cricothyroid_membrane",
+        "pca", "lca", "thyroarytenoid", "cricothyroid", "thyrohyoid", "interarytenoid", "constrictors"],
+      opacity: { tongue: 1, laryngopharynx: 0.3, quadrangular_membrane: 1 }
+    }
   },
-  viewLabels: { inferior: "From above" },
+  viewLabels: { inferior: "From above", special: "Laryngoscope" },
 
   // Starting axial level (0 = bottom of the model, 1 = top): the glottis.
   sectionLevel: 0.45,
