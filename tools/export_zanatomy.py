@@ -1691,7 +1691,8 @@ def drawn_vocal_folds(L):
         ary = L.arytenoid(sx)
         vp = min(ary, key=lambda v: v.y)  # vocal process: most anterior point
         front = L.thyroid_angle(vp.z - 0.0016)
-        out.append([front + Vector((sx * 0.0018, 0.0012, 0)),
+        front = Vector((0.0, front.y, front.z))  # both folds start at the midline
+        out.append([front + Vector((sx * 0.0011, 0.0012, 0)),
                     (front + vp) / 2 + Vector((sx * 0.0030, 0, 0)),
                     vp + Vector((sx * 0.0014, 0.0012, 0.0002)),
                     vp + Vector((sx * 0.0016, 0.0030, 0.0004))])
@@ -1708,8 +1709,9 @@ def drawn_vestibular_folds(L):
         vp = min(ary, key=lambda v: v.y)
         top = max(ary, key=lambda v: v.z)
         front = L.thyroid_angle(vp.z + 0.0030)
+        front = Vector((0.0, front.y, front.z))
         back = Vector((top.x + sx * 0.0012, vp.y + 0.003, vp.z + 0.0052))
-        out.append([front + Vector((sx * 0.0030, 0.0016, 0)),
+        out.append([front + Vector((sx * 0.0024, 0.0016, 0)),
                     (front + back) / 2 + Vector((sx * 0.0050, 0, 0.0004)),
                     back])
     return out

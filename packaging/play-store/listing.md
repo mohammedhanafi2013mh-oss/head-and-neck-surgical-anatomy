@@ -24,7 +24,10 @@ EXPLORE IN 3D
 • Trace nerves and vessels along their course: the facial nerve through the temporal bone and parotid, the recurrent laryngeal nerves, the accessory nerve, the lingual nerve and more.
 
 SURGICAL WALKTHROUGHS
-Sixteen operations step by step, including parotidectomy, thyroidectomy, neck dissection, laryngectomy, carotid endarterectomy, FESS, the endoscopic approach to the pituitary, glossectomy, ranula excision and cortical mastoidectomy. Incisions are drawn on the model, and the structures at risk in each operation are highlighted with what injuring them causes.
+Sixteen operations step by step, including parotidectomy, thyroidectomy, neck dissection, laryngectomy, carotid endarterectomy, FESS, the endoscopic approach to the pituitary, glossectomy, ranula excision and cortical mastoidectomy. Incisions are drawn on the model, and the structures at risk in each operation are highlighted with what injuring them causes. The mastoidectomy drills the bone away step by step, down to the antrum and facial nerve.
+
+SURGEON'S-EYE VIEWS
+See the eardrum through an otoscope, the nose through an endoscope and the vocal cords through a laryngoscope.
 
 LEARN ACTIVELY
 • Dissect layer by layer, from superficial to deep, with a quick check at each layer.

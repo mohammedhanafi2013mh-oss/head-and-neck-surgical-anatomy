@@ -576,6 +576,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Drill: saucerise the mastoid",
         "text": "With a large cutting burr and suction-irrigation, drill at MacEwen's triangle along the temporal line (the level of the tegmen) and parallel to the posterior canal wall, keeping the cavity wide and shallow-sided rather than a deep hole.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7]],
         "show": [
           "bone",
           "middle",
@@ -589,6 +590,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Tegmen and sigmoid sinus",
         "text": "Thin the bone over the middle fossa dura above and the sigmoid sinus behind; the sinodural angle lies between them. These define the upper and posterior limits.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7], [-1.0, 0.55, -1.2, 0.7], [-1.0, -0.4, -1.6, 0.75]],
         "show": [
           "bone",
           "middle",
@@ -596,6 +598,7 @@ window.ANATOMY.regions.temporal_bone = {
           "foramina"
         ],
         "focus": [
+          "air_cells",
           "sigmoid",
           "f_tegmen"
         ]
@@ -603,6 +606,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Open the antrum",
         "text": "About 1.5 cm deep, beneath MacEwen's triangle, the antrum opens; Körner's septum can masquerade as its medial wall. Pus, granulation tissue or cholesteatoma is removed.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7], [-1.0, 0.55, -1.2, 0.7], [-1.0, -0.4, -1.6, 0.75], [-0.6, 0.65, -0.6, 0.55], [-0.15, 0.72, -0.3, 0.42]],
         "show": [
           "bone",
           "middle",
@@ -610,6 +614,7 @@ window.ANATOMY.regions.temporal_bone = {
           "foramina"
         ],
         "focus": [
+          "air_cells",
           "antrum",
           "f_lscc"
         ]
@@ -617,6 +622,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Lateral canal and incus",
         "text": "On the medial wall of the antrum find the smooth, hard bulge of the lateral semicircular canal, and in front of it, through the aditus, the short process of the incus in the fossa incudis. Do not touch the incus with the burr.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7], [-1.0, 0.55, -1.2, 0.7], [-1.0, -0.4, -1.6, 0.75], [-0.6, 0.65, -0.6, 0.55], [-0.15, 0.72, -0.3, 0.42]],
         "show": [
           "bone",
           "middle",
@@ -625,6 +631,7 @@ window.ANATOMY.regions.temporal_bone = {
           "foramina"
         ],
         "focus": [
+          "air_cells",
           "labyrinth",
           "incus",
           "f_fossa_incudis"
@@ -633,6 +640,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Find the facial nerve",
         "text": "The second genu lies below the lateral canal and medial to the short process of the incus; the mastoid segment runs down medial to the posterior canal wall to the stylomastoid foramen, at the front of the digastric ridge. Thin the bone with a diamond burr and copious irrigation; open the facial recess between nerve and chorda if access to the middle ear is needed.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7], [-1.0, 0.55, -1.2, 0.7], [-1.0, -0.4, -1.6, 0.75], [-0.6, 0.65, -0.6, 0.55], [-0.15, 0.72, -0.3, 0.42], [-0.6, -1.0, -1.0, 0.65]],
         "show": [
           "bone",
           "middle",
@@ -642,6 +650,7 @@ window.ANATOMY.regions.temporal_bone = {
           "foramina"
         ],
         "focus": [
+          "air_cells",
           "facial_nerve",
           "chorda",
           "digastric_post",
@@ -651,6 +660,7 @@ window.ANATOMY.regions.temporal_bone = {
       {
         "title": "Close and after care",
         "text": "Check the facial nerve before waking, close in layers and apply a mastoid dressing. Test facial movement on recovery, and hearing and balance afterwards.",
+        "drill": [[-1.6, 0.5, -0.9, 0.8], [-1.6, -0.4, -1.2, 0.8], [-1.6, -1.3, -1.4, 0.7], [-1.0, 0.55, -1.2, 0.7], [-1.0, -0.4, -1.6, 0.75], [-0.6, 0.65, -0.6, 0.55], [-0.15, 0.72, -0.3, 0.42], [-0.6, -1.0, -1.0, 0.65]],
         "show": [
           "bone",
           "external",

@@ -270,6 +270,10 @@
       const v = b.dataset.view;
       if (names[v]) b.textContent = (state.model.viewLabels || {})[v] || names[v];
     });
+    // An optional surgeon's-eye view (otoscope, endoscope, laryngoscope), lit from the eye.
+    const special = document.querySelector('[data-view="special"]');
+    special.hidden = !state.model.views.special;
+    special.textContent = (state.model.viewLabels || {}).special || "";
   }
   // Phones: show or hide the layer chips.
   $("#layers-toggle").addEventListener("click", (e) => {
@@ -300,13 +304,11 @@
     b.addEventListener("click", () => {
       const v = b.dataset.view;
       if (!state.model) return;
+      viewer.leaveScope();
       if (v === "reset") viewer.resetView();
-      else {
-        // [theta, phi, radius?, target?, structures to hide in this view?]
-        const [theta, phi, radius, target, hide = []] = state.model.views[v];
-        viewer.setView(theta, phi, radius, target);
-        hide.forEach((id) => viewer.hide(id));
-      }
+      else if (v === "special") viewer.enterScope(state.model.views.special);
+      else viewer.setView(...state.model.views[v]); // [theta, phi, radius?, target?]
+      renderLayerToggles();
     })
   );
   // Labels on the 3D model: off, some (pins and the selected structure) or all. Remembered per browser.
@@ -1063,6 +1065,7 @@
     viewer.setLayers(st.show);
     viewer.setDanger(state.showRisk ? riskIds(p) : []);
     viewer.setFocus(st.focus);
+    viewer.setDrill(st.drill);
     viewer.select(state.selected, false);
     // Redraw (and re-frame) only when the step's incisions change.
     const inc = stepIncisions(st);
@@ -1079,6 +1082,7 @@
     viewer.showIncisions([]);
     viewer.setDanger([]);
     viewer.setFocus([]);
+    viewer.setDrill([]);
     viewer.setLayers(state.region.layers.filter((l) => l.defaultOn).map((l) => l.id));
     renderLayerToggles();
   }
