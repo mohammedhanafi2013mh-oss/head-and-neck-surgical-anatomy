@@ -36,6 +36,9 @@ window.ANATOMY.regions.carotid = {
     refs: ["gray", "shah", "rutherford"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "membrane", "muscle", "lymph", "vein", "artery", "nerve", "context"]},
+
   layers: [
     { id: "superficial", label: "Platysma", defaultOn: false },
     { id: "membrane", label: "Triangle boundaries", defaultOn: true },

@@ -41,6 +41,9 @@ window.ANATOMY.regions.sinonasal = {
     refs: ["gray", "lund", "stammberger"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["mucosa", "cartilage", "sinus", "duct", "foramina", "artery", "nerve", "context"]},
+
   layers: [
     { id: "bone", label: "Bone", defaultOn: true },
     { id: "sinus", label: "Sinuses", defaultOn: true },

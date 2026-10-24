@@ -38,6 +38,9 @@ window.ANATOMY.regions.submandibular = {
   },
 
   // Layers group structures for the visibility toggles in the 3D viewer.
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "lymph", "gland", "vein", "artery", "nerve", "muscle", "context"]},
+
   layers: [
     { id: "superficial", label: "Platysma", defaultOn: false },
     { id: "bone", label: "Bone", defaultOn: true },

@@ -26,6 +26,9 @@
     cartilage: "#c9d6e0",
     mucosa: "#e0a4a0",
     pharynx: "#c96f7a",
+    external: "#e0a48e",
+    middle: "#c08a5a",
+    inner: "#8fb7d8",
     pathology: "#86aee6",
     route: "#ff6a2a"
   };
@@ -46,6 +49,7 @@
     quiz: {},
     quizMode: "questions", // "questions" | "find" (tap it on the model) | "name" (name the highlighted one)
     q3: null,
+    dissect: null, // guided dissection in the Structures tab: { stage, ask: { id, answered, picked } }
     search: ""
   };
 
@@ -58,6 +62,15 @@
       if (state.tab === "quiz" && state.quizMode !== "questions" && state.q3) {
         if (state.quizMode === "find" && !state.q3.answered && id) answerQuiz3d(id);
         else viewer.select(state.selected, false);
+        return;
+      }
+      // Guided dissection: a tap answers the "find it" check at this layer.
+      const ask = state.tab === "structures" && !state.selected && state.dissect && state.dissect.ask;
+      if (ask && !ask.answered && id) {
+        ask.answered = true;
+        ask.picked = id;
+        viewer.frameStructure(ask.id);
+        render();
         return;
       }
       state.selected = id;
@@ -166,6 +179,7 @@
     shownIncisions = ""; // viewer.load() clears the drawn incisions
     state.quiz = {};
     state.q3 = null;
+    state.dissect = null;
     state.relFocus = new Set();
     state.search = "";
     if (state.tab === "surgery") state.tab = "overview";
@@ -303,6 +317,7 @@
   document.querySelectorAll("[data-tab]").forEach((b) =>
     b.addEventListener("click", () => {
       const leavingSurgery = state.tab === "surgery" && b.dataset.tab !== "surgery";
+      if (state.dissect && b.dataset.tab !== "structures") exitDissection();
       state.tab = b.dataset.tab;
       if (b.dataset.tab === "structures") state.selected = state.selected || null;
       if (leavingSurgery) exitWalkthrough();
@@ -333,8 +348,10 @@
       sections.resize();
     }
     wire(body);
-    viewer.hideNames = state.tab === "quiz" && state.quizMode !== "questions";
+    const dissectAsk = state.tab === "structures" && !state.selected && state.dissect && state.dissect.ask;
+    viewer.hideNames = (state.tab === "quiz" && state.quizMode !== "questions") || !!(dissectAsk && !dissectAsk.answered);
     if (state.tab === "surgery") applyStep();
+    else if (state.tab === "structures" && state.dissect && !state.selected) applyDissection();
     else {
       const rel = state.tab === "structures" && state.selected ? [...state.relFocus] : [];
       if (rel.length || viewer.focusIds.size) viewer.setFocus(rel);
@@ -363,6 +380,7 @@
 
   function structures(r) {
     if (state.selected) return structureCard(r.structures.find((s) => s.id === state.selected));
+    if (state.dissect) return dissection(r);
     const q = state.search.toLowerCase();
     const groups = r.layers
       .map((l) => ({
@@ -374,6 +392,8 @@
     const traced = q ? [] : r.structures.filter((s) => courseFor(s));
     return `
       <input class="search" type="search" placeholder="Search structures…" value="${esc(state.search)}" data-search>
+      ${!q && r.dissection ? `<div class="structure-group dissect-start"><button type="button" data-dissect-start>▶ Dissect layer by layer</button>
+        <span class="muted small">Peel the region from superficial to deep, with a quick check at each layer.</span></div>` : ""}
       ${traced.length ? `<div class="structure-group trace-quick"><h3>Trace a course</h3>
         <p class="muted small">Nerves and vessels of surgical importance: tap one to follow its path and branches on the model.</p>
         <div class="focus-list">${traced
@@ -517,6 +537,71 @@
         .join("")}</div>
       ${inModel.length > 1 ? `<div class="rel-actions"><button type="button" data-rel-all>Show all on the model</button>${state.relFocus.size ? `<button type="button" data-rel-clear>Clear</button>` : ""}</div>` : ""}
     </div>`;
+  }
+
+  // ---------- guided dissection ----------
+  // Stage i shows the "keep" layers and every layer from order[i] down, with
+  // order[i] (the one now on top) highlighted; Next removes it.
+  function dissectStages(r) {
+    const d = r.dissection;
+    return d.order
+      .map((id) => ({ layer: r.layers.find((l) => l.id === id), items: r.structures.filter((s) => s.layer === id) }))
+      .filter((x) => x.layer && x.items.length);
+  }
+
+  function newAsk(stage) {
+    const pool = stage.items.filter((s) => viewer.structures.has(s.id) && !viewer.hidden.has(s.id));
+    return pool.length ? { id: pool[Math.floor(Math.random() * pool.length)].id, answered: false, picked: null } : null;
+  }
+
+  function dissection(r) {
+    const stages = dissectStages(r);
+    const k = Math.min(state.dissect.stage, stages.length - 1);
+    const st = stages[k];
+    const ask = state.dissect.ask;
+    const byId = Object.fromEntries(r.structures.map((s) => [s.id, s]));
+    let check = "";
+    if (ask) {
+      const name = esc(short(byId[ask.id].name));
+      check = !ask.answered
+        ? `<div class="q3-card dissect-check"><p class="q3-prompt" data-target="${ask.id}">Quick check: tap the <strong>${name}</strong> on the model</p>
+            <div class="q3-actions"><button type="button" data-dissect-reveal>Show me</button></div></div>`
+        : `<div class="q3-feedback ${ask.picked === ask.id ? "correct" : "wrong"}"><p><strong>${ask.picked === ask.id ? "✓ Correct" : ask.picked ? "✗ Not quite" : "Here it is"}</strong>${
+            ask.picked && ask.picked !== ask.id && byId[ask.picked] ? `: that was ${esc(short(byId[ask.picked].name))}` : ""}. Highlighted: <strong>${name}</strong>.</p></div>`;
+    }
+    return `
+      <button class="back" data-dissect-exit>← All structures</button>
+      <h2>Dissect: ${esc(r.title)}</h2>
+      <p class="muted">From superficial to deep. The highlighted layer is the one on top; Next lifts it away to show what lies beneath. Tap a name to read about it.</p>
+      <div class="steps-nav">
+        <span class="count">Layer ${k + 1} of ${stages.length}</span>
+        <button data-dissect-step="-1" ${k === 0 ? "disabled" : ""}>← Prev</button>
+        <button data-dissect-step="1" ${k === stages.length - 1 ? "disabled" : ""}>Next →</button>
+      </div>
+      <div class="step-card">
+        <h4><span class="dot" style="background:${LAYER_COLORS[st.layer.id]}"></span> ${esc(st.layer.label)}</h4>
+        <div class="focus-list">${st.items.map((s) => `<button data-select="${s.id}">${esc(short(s.name))}</button>`).join("")}</div>
+        ${check}
+      </div>
+      <div class="step-dots">${stages.map((_, i) => `<span class="${i <= k ? "on" : ""}"></span>`).join("")}</div>`;
+  }
+
+  function applyDissection() {
+    const r = state.region, stages = dissectStages(r);
+    const k = Math.min(state.dissect.stage, stages.length - 1);
+    const shown = [...r.dissection.keep, ...stages.slice(k).map((x) => x.layer.id)];
+    viewer.setLayers(shown);
+    viewer.setFocus(stages[k].items.map((s) => s.id));
+    const ask = state.dissect.ask;
+    viewer.select(ask && ask.answered ? ask.id : null, false);
+    renderLayerToggles();
+  }
+
+  function exitDissection() {
+    state.dissect = null;
+    viewer.setFocus([]);
+    viewer.setLayers(state.region.layers.filter((l) => l.defaultOn).map((l) => l.id));
+    renderLayerToggles();
   }
 
   function courseHtml(course) {
@@ -842,6 +927,30 @@
       state.showRisk = riskToggle.checked;
       try { localStorage.setItem("showRisk", state.showRisk ? "1" : "0"); } catch (e) {}
       applyStep();
+    });
+    const dStart = $("[data-dissect-start]", body);
+    if (dStart) dStart.addEventListener("click", () => {
+      state.dissect = { stage: 0, ask: newAsk(dissectStages(state.region)[0]) };
+      render();
+    });
+    const dExit = $("[data-dissect-exit]", body);
+    if (dExit) dExit.addEventListener("click", () => {
+      exitDissection();
+      render();
+    });
+    body.querySelectorAll("[data-dissect-step]").forEach((b) =>
+      b.addEventListener("click", () => {
+        const stages = dissectStages(state.region);
+        state.dissect.stage = Math.max(0, Math.min(stages.length - 1, state.dissect.stage + Number(b.dataset.dissectStep)));
+        state.dissect.ask = newAsk(stages[state.dissect.stage]);
+        render();
+      })
+    );
+    const dReveal = $("[data-dissect-reveal]", body);
+    if (dReveal) dReveal.addEventListener("click", () => {
+      state.dissect.ask.answered = true;
+      viewer.frameStructure(state.dissect.ask.id);
+      render();
     });
     body.querySelectorAll("[data-qmode]").forEach((b) =>
       b.addEventListener("click", () => {

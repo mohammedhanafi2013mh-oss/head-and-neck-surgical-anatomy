@@ -47,6 +47,8 @@ In a structure's notes, the **names of other structures are links**. Tap one to 
 
 Every structure, overview and operation ends with its **review status** and a **⚑ Report an error** link. The link opens a GitHub issue that already names the region, structure or step, so a correction can be checked and fixed. Once a specialist has checked a region, add `review: { by: "Name, specialty", date: "2026-11" }` to its data file (or to one structure or operation) and the note says who reviewed it.
 
+**Dissect layer by layer** (top of the Structures tab) peels the region from superficial to deep. Each layer is highlighted and named, with a quick check ("tap the … on the model"); Next lifts it away to show what lies beneath. The order is set per region in `dissection: { keep, order }`.
+
 The **Quiz** tab has three modes:
 - **Questions**: multiple choice, with explanations.
 - **Find it on the model**: tap the named structure in 3D.

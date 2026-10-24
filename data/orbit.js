@@ -41,6 +41,9 @@ window.ANATOMY.regions.orbit = {
     refs: ["gray", "rhoton", "rontal"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["globe", "gland", "muscle", "vein", "artery", "nerve", "context", "foramina"]},
+
   layers: [
     { id: "bone", label: "Bone", defaultOn: true },
     { id: "foramina", label: "Foramina (pins)", defaultOn: true },

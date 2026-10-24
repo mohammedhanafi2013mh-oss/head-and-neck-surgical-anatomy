@@ -39,6 +39,9 @@ window.ANATOMY.regions.pterygopalatine = {
     refs: ["gray", "rhoton", "scottbrown"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["context", "artery", "nerve", "foramina"]},
+
   layers: [
     { id: "bone", label: "Bone", defaultOn: true },
     { id: "foramina", label: "Openings (pins)", defaultOn: true },

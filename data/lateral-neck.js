@@ -37,6 +37,9 @@ window.ANATOMY.regions.lateral_neck = {
     refs: ["robbins2002", "robbins2008", "som1999", "scottbrown"]
   },
 
+  // Guided dissection: layers from superficial to deep ("keep" stays on throughout).
+  dissection: {"keep": ["bone"], "order": ["superficial", "muscle", "gland", "lymph", "vein", "artery", "nerve", "context"]},
+
   layers: [
     { id: "superficial", label: "Platysma", defaultOn: false },
     { id: "bone", label: "Bone", defaultOn: true },

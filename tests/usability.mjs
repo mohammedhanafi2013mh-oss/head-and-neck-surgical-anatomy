@@ -312,6 +312,20 @@ await check("Structures", "Names in the notes link to other structures, shown to
   await page.click("[data-back]");
   return `${links} links, ${related} related structures`;
 });
+await check("Structures", "Guided dissection peels layers from superficial to deep, with a check at each", async () => {
+  await page.click('[data-tab="structures"]');
+  await page.click("[data-dissect-start]");
+  const shown = () => page.evaluate(() => Object.values(window.ANATOMY.viewer.layerVisible).filter(Boolean).length);
+  const before = await shown();
+  const target = await page.getAttribute(".q3-prompt", "data-target");
+  await page.evaluate((id) => window.ANATOMY.viewer.select(id, true), target);
+  await page.waitForSelector(".q3-feedback.correct");
+  await page.click('[data-dissect-step="1"]');
+  const after = await shown();
+  expect(after < before, `layers ${before} -> ${after}`);
+  await page.click("[data-dissect-exit]");
+  return `${await page.$$eval(".structure-group", (g) => g.length)} groups after exit; layers ${before} -> ${after}`;
+});
 await check("Surgery", "The operation's structures at risk are listed and tinted on the model", async () => {
   await page.click('[data-tab="surgery"]');
   const items = await page.$$eval(".risk-list li", (e) => e.length);
