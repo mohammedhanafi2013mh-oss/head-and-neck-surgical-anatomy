@@ -1190,6 +1190,66 @@ REGIONS = {
         },
     },
 
+    "temporal_bone": {
+        # The right ear and temporal bone: external, middle and inner ear, the
+        # facial nerve through the bone, and the mastoid. One side only (ear
+        # anatomy is taught one side at a time, and the parts are tiny).
+        "centre": (-0.050, 0.008, 1.578),
+        "build": "ear",
+        "structures": {
+            # ---- bone ----
+            "temporal": ["Temporal bone.r"],
+            # ---- external ear ----
+            "auricle": ["Helix.r", "Antihelix.r", "Crura of antihelix.r", "Tragus.r", "Antitragus.r", "Lobule of auricle.r",
+                        "Concha of auricle.r", "Cavity of concha.r", "Cymba conchae.r"],
+            "eac": ["External acoustic meatus (sculpted)"],
+            "tympanic_membrane": ["Tympanic membrane.r"],
+            # ---- middle ear and mastoid ----
+            "malleus": ["Malleus.r"],
+            "incus": ["Incus.r"],
+            "stapes": ["Stapes.r"],
+            "tensor_tympani": ["Tensor tympani (sculpted)"],
+            "stapedius": ["Stapedius (sculpted)"],
+            "antrum": ["Mastoid antrum (sculpted)"],
+            "air_cells": ["Mastoid air cells (sculpted)"],
+            "auditory_tube": ["Auditory tube.r"],
+            # ---- inner ear ----
+            "cochlea": ["Cochlea.r"],
+            "labyrinth": ["Vestibule.r"],
+            # ---- nerves ----
+            # Facial nerve from the internal acoustic meatus to just past the stylomastoid foramen.
+            "facial_nerve": [("Facial nerve (VII).r", [(0, 2, 17)])],
+            "chorda": ["Chorda tympani.r"],
+            "cn8": ["Vestibulocochlear nerve (VIII).r", "Cochlear nerve", "Vestibular nerve.r"],
+            # ---- vessels ----
+            "ica": ["Internal carotid artery.r"],
+            "sigmoid": ["Sigmoid sinus.r"],
+            "ijv": ["Internal jugular vein.r"],
+            # ---- context ----
+            "digastric_post": ["Posterior belly of digastric muscle.r"],
+            "scm": ["Sternocleidomastoid muscle.r"],
+        },
+        "clip": {"Internal carotid artery.r": (1.548, 1.600), "Internal jugular vein.r": (1.545, 9.0),
+                 "Sternocleidomastoid muscle.r": (1.540, 9.0), "Posterior belly of digastric muscle.r": (1.535, 9.0)},
+        "curve_scale": {"facial_nerve": 0.9, "chorda": 0.6, "cn8": 0.9},
+        "bones": {"temporal"},
+        "points": {
+            "internal_acoustic_meatus": ("first_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+            "stylomastoid_foramen": ("last_in", ("Facial nerve (VII).r", 0), ["Temporal bone.r"], 0.0015),
+            "geniculate": ("spline_point", "Facial nerve (VII).r", 0, 7),
+            # The rest are set by build_ear() from the ear's own landmarks.
+        },
+        "courses": {
+            "facial_nerve": {"path": [("Facial nerve (VII).r", 0, 3, 16)],
+                             "points": {"iam": "@internal_acoustic_meatus", "geniculate": "@geniculate",
+                                        "tympanic": ("spline_point", "Facial nerve (VII).r", 0, 9),
+                                        "genu": ("spline_point", "Facial nerve (VII).r", 0, 11),
+                                        "smf": "@stylomastoid_foramen"}},
+            "chorda": {"path": [("Chorda tympani.r", 0)],
+                       "points": {"origin": "start", "tm": ("nearest", "Malleus.r"), "itf": "end"}},
+        },
+    },
+
     "deep_neck": {
         # Midline, at the level of the hyoid and angle of the mandible.
         "centre": (0.0, -0.012, 1.50),
@@ -2777,6 +2837,95 @@ def build_oral():
 
 
 BUILDERS = {"oral": build_oral}
+
+
+# ---------- temporal bone: ear canal, mastoid cells, middle-ear muscles ----------
+# Z-Anatomy has the ossicles, eardrum and labyrinth but not the ear canal, the
+# mastoid antrum and air cells, or tensor tympani and stapedius. They are
+# modelled here from its landmarks (right ear), as are the surgical landmarks
+# pinned on the model.
+
+def build_ear():
+    import random
+    from mathutils.bvhtree import BVHTree
+    tm = eval_world("Tympanic membrane.r")
+    c = sum(tm, Vector()) / len(tm)
+    concha = eval_world("Cavity of concha.r")
+    cc = sum(concha, Vector()) / len(concha)
+    # Ear canal: from the concha, a gentle S through the cartilaginous and bony
+    # parts (narrowest at the isthmus) to the rim of the eardrum. Open at both ends.
+    canal = [cc + Vector((0.0015, 0, 0)), Vector((-0.0600, 0.0043, 1.5752)), Vector((-0.0545, 0.0040, 1.5770)),
+             Vector((c.x - 0.0008, c.y, c.z - 0.0003))]
+    mesh_object("External acoustic meatus (sculpted)", *sweep(canal, [0.0036, 0.0033, 0.0029, 0.0040], [0.0042, 0.0038, 0.0032, 0.0046],
+                                                               across=Vector((0, 0, 1)), n=18, caps=False), subsurf=1)
+    # Mastoid antrum, about 1.5 cm deep to the suprameatal triangle and lateral
+    # to the lateral semicircular canal, joined to the attic by the aditus.
+    ves = eval_world("Vestibule.r")
+    lscc = min(ves, key=lambda v: v.x)  # prominence of the lateral semicircular canal
+    antrum = lscc + Vector((-0.0052, 0.0035, 0.0022))
+    av, af = ellipsoid(antrum, (Vector((0.0026, 0, 0)), Vector((0, 0.0040, 0.0004)), Vector((0, -0.0004, 0.0030))))
+    attic = Vector((-0.0470, 0.0063, 1.5856))
+    dv, df = sweep([attic, attic.lerp(antrum, 0.5) + Vector((0, 0, 0.0006)), antrum], [0.0016, 0.0015, 0.0018], [0.0012, 0.0012, 0.0016])
+    mesh_object("Mastoid antrum (sculpted)", av + dv, af + [[k + len(av) for k in f] for f in df], subsurf=1)
+    # Air cells: small rounded cells through the mastoid process, behind and
+    # below the antrum, kept inside the bone.
+    o = D["Temporal bone.r"]
+    me = o.evaluated_get(deps).to_mesh()
+    bone = BVHTree.FromPolygons([o.matrix_world @ v.co for v in me.vertices], [list(p.vertices) for p in me.polygons])
+    rnd = random.Random(7)
+    cells, verts, faces = [], [], []
+    for _ in range(4000):
+        if len(cells) >= 46:
+            break
+        p = Vector((rnd.uniform(-0.059, -0.046), rnd.uniform(0.011, 0.036), rnd.uniform(1.555, 1.588)))
+        if (p - antrum).length < 0.005:
+            continue
+        hit = bone.find_nearest(p)
+        if hit[0] is None or (p - hit[0]).dot(hit[1]) > 0 or hit[3] < 0.0016:
+            continue  # outside the bone, or too close to its surface
+        if any((p - q).length < 0.0034 for q in cells):
+            continue
+        cells.append(p)
+        r = rnd.uniform(0.0011, 0.0019)
+        cv, cf = ellipsoid(p, (Vector((r, 0, 0)), Vector((0, r * rnd.uniform(0.9, 1.4), 0)), Vector((0, 0, r * rnd.uniform(0.8, 1.2)))), n=10, m=7)
+        faces += [[k + len(verts) for k in f] for f in cf]
+        verts += cv
+    mesh_object("Mastoid air cells (sculpted)", verts, faces, subsurf=1)
+    # Tensor tympani: in its semicanal above the auditory tube; its tendon turns
+    # round the cochleariform process to the neck of the malleus.
+    cochleariform = Vector((-0.0441, 0.0006, 1.5826))
+    tv, tf = sweep([Vector((-0.0300, -0.0085, 1.5842)), Vector((-0.0370, -0.0040, 1.5836)), cochleariform],
+                   [0.0010, 0.0011, 0.0005], [0.0009, 0.0010, 0.0005])
+    nv, nf = sweep([cochleariform, Vector((-0.0462, 0.0022, 1.5822)), Vector((-0.0476, 0.0033, 1.5818))], [0.0003] * 3, [0.0003] * 3)
+    mesh_object("Tensor tympani (sculpted)", tv + nv, tf + [[k + len(tv) for k in f] for f in nf])
+    # Stapedius: in the pyramidal eminence and a canal beside the descending
+    # facial nerve; its tendon runs forwards to the neck of the stapes.
+    eminence = Vector((-0.0451, 0.0086, 1.5794))
+    sv, sf = sweep([Vector((-0.0457, 0.0099, 1.5715)), Vector((-0.0455, 0.0094, 1.5755)), eminence],
+                   [0.0006, 0.0008, 0.0005], [0.0006, 0.0007, 0.0004])
+    st = eval_world("Stapes.r")
+    head = min(st, key=lambda v: v.x)
+    nv, nf = sweep([eminence, eminence.lerp(head, 0.5), head], [0.00025] * 3, [0.00025] * 3)
+    mesh_object("Stapedius (sculpted)", sv + nv, sf + [[k + len(sv) for k in f] for f in nf])
+    # Surgical landmarks pinned on the model.
+    lateral = lambda y, z: bone.ray_cast(Vector((-0.10, y, z)), Vector((1, 0, 0)), 0.08)[0]
+    pts = {
+        "spine_of_henle": lateral(0.0092, 1.5812) or Vector((-0.0595, 0.0092, 1.5812)),
+        "suprameatal_triangle": lateral(0.0150, 1.5870) or Vector((-0.0630, 0.0150, 1.5870)),
+        "mastoid_tip": min([v for v in (o.matrix_world @ w.co for w in me.vertices) if v.y > 0.012], key=lambda v: v.z),
+        "lscc": lscc,
+        "tegmen": antrum + Vector((0, 0, 0.0040)),
+        "oval_window": max(st, key=lambda v: v.x),
+        "round_window": max(st, key=lambda v: v.x) + Vector((0.0004, 0.0016, -0.0028)),
+        "fossa_incudis": max(eval_world("Incus.r"), key=lambda v: v.y),
+        "cochleariform": cochleariform,
+    }
+    for k, v in pts.items():
+        cfg["points"][k] = ("at", tuple(v))
+    deps.update()
+
+
+BUILDERS["ear"] = build_ear
 
 
 # ---------- export ----------

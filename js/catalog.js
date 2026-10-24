@@ -44,6 +44,11 @@ window.ANATOMY.catalog = [
     scripts: ["data/carotid.js", "data/carotid-meshes.js", "js/models/carotid-model.js"]
   },
   {
+    id: "temporal_bone",
+    title: "Temporal bone & ear",
+    scripts: ["data/temporal-bone.js", "data/temporal-bone-meshes.js", "js/models/temporal-bone-model.js"]
+  },
+  {
     id: "skull_base",
     title: "Skull base",
     scripts: ["data/skull-base.js", "data/skull-base-meshes.js", "js/models/skull-base-model.js"]
