@@ -49,6 +49,8 @@ Every structure, overview and operation ends with its **review status** and a **
 
 **Dissect layer by layer** (top of the Structures tab) peels the region from superficial to deep. Each layer is highlighted and named, with a quick check ("tap the … on the model"); Next lifts it away to show what lies beneath. The order is set per region in `dissection: { keep, order }`.
 
+**☆ Save** on a structure bookmarks it. Bookmarks appear at the top of that region's Structures list. Bookmarks and recently viewed structures from every region show in the search (<kbd>/</kbd>) before you type. Both are kept on the device.
+
 The **Quiz** tab has three modes:
 - **Questions**: multiple choice, with explanations.
 - **Find it on the model**: tap the named structure in 3D.

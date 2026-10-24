@@ -328,6 +328,7 @@
 
   function render() {
     if (!state.region) return;
+    if (state.tab === "structures" && state.selected) rememberViewed(state.regionId, state.selected);
     if (state.relFor !== state.selected) {
       state.relFocus = new Set(); // related structures belong to the structure they were opened from
       state.relFor = state.selected;
@@ -392,6 +393,11 @@
     const traced = q ? [] : r.structures.filter((s) => courseFor(s));
     return `
       <input class="search" type="search" placeholder="Search structures…" value="${esc(state.search)}" data-search>
+      ${(() => {
+        const mine = q ? [] : store.get("bookmarks").filter((b) => b.region === r.id).map((b) => r.structures.find((s) => s.id === b.id)).filter(Boolean);
+        return mine.length ? `<div class="structure-group"><h3>★ Your bookmarks</h3><div class="focus-list">${mine
+          .map((s) => `<button data-select="${s.id}">${esc(short(s.name))}</button>`).join("")}</div></div>` : "";
+      })()}
       ${!q && r.dissection ? `<div class="structure-group dissect-start"><button type="button" data-dissect-start>▶ Dissect layer by layer</button>
         <span class="muted small">Peel the region from superficial to deep, with a quick check at each layer.</span></div>` : ""}
       ${traced.length ? `<div class="structure-group trace-quick"><h3>Trace a course</h3>
@@ -408,6 +414,25 @@
           </ul></div>`
         )
         .join("") || `<p class="muted">No matches.</p>`}`;
+  }
+
+  // ---------- bookmarks and recently viewed (kept on this device) ----------
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch (e) { return []; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  const isBookmarked = (region, id) => store.get("bookmarks").some((b) => b.region === region && b.id === id);
+  function toggleBookmark(region, id) {
+    const list = store.get("bookmarks");
+    const i = list.findIndex((b) => b.region === region && b.id === id);
+    if (i >= 0) list.splice(i, 1);
+    else list.unshift({ region, id });
+    store.set("bookmarks", list);
+  }
+  function rememberViewed(region, id) {
+    const list = store.get("recent").filter((b) => !(b.region === region && b.id === id));
+    list.unshift({ region, id });
+    store.set("recent", list.slice(0, 12));
   }
 
   // ---------- content provenance ----------
@@ -507,7 +532,8 @@
     const supply = Object.entries(s.supply || {});
     return `
       <button class="back" data-back>← All structures</button>
-      <h2>${esc(s.name)}</h2>
+      <div class="card-head"><h2>${esc(s.name)}</h2><button type="button" class="bookmark" data-bookmark aria-pressed="${isBookmarked(state.regionId, s.id)}"
+        title="Bookmarks are kept on this device">${isBookmarked(state.regionId, s.id) ? "★ Saved" : "☆ Save"}</button></div>
       ${s.aka ? `<p class="aka">${esc(s.aka)}</p>` : ""}
       ${viewer.structures.has(s.id) ? "" : pinFor(s) ? `<p class="aka">Shown as a pin on the 3D model.</p>` : `<p class="aka">Not shown in the 3D model yet.</p>`}
       ${s.drawn === "redrawn" ? `<p class="aka">Z-Anatomy's model places this structure inaccurately here, so its path in this region was redrawn for this app in its usual position.</p>`
@@ -928,6 +954,11 @@
       try { localStorage.setItem("showRisk", state.showRisk ? "1" : "0"); } catch (e) {}
       applyStep();
     });
+    const bm = $("[data-bookmark]", body);
+    if (bm) bm.addEventListener("click", () => {
+      toggleBookmark(state.regionId, state.selected);
+      render();
+    });
     const dStart = $("[data-dissect-start]", body);
     if (dStart) dStart.addEventListener("click", () => {
       state.dissect = { stage: 0, ask: newAsk(dissectStages(state.region)[0]) };
@@ -1067,8 +1098,19 @@
     const q = searchInput.value.trim().toLowerCase();
     if (!searchIndex) return;
     if (!q) {
-      hits = [];
-      searchResults.innerHTML = `<li class="muted">Type to search ${searchIndex.length} structures in ${catalog.length} regions.</li>`;
+      // Bookmarks and recently viewed structures, from every region.
+      const find = (b) => searchIndex.find((x) => x.region === b.region && x.id === b.id);
+      const marks = store.get("bookmarks").map(find).filter(Boolean);
+      const recent = store.get("recent").map(find).filter(Boolean).filter((x) => !marks.includes(x)).slice(0, 8);
+      hits = [...marks, ...recent];
+      active = 0;
+      const row = (x, i) => `<li role="option" id="hit-${i}" aria-selected="${i === active}" data-hit="${i}">
+          <span class="dot" style="background:${LAYER_COLORS[x.layer] || "#999"}"></span>
+          <span class="hit-name">${esc(x.name)}</span><span class="hit-region muted">${esc(x.regionTitle)}</span></li>`;
+      searchResults.innerHTML = `<li class="muted">Type to search ${searchIndex.length} structures in ${catalog.length} regions.</li>` +
+        (marks.length ? `<li class="search-head">★ Bookmarks</li>` + marks.map((x, i) => row(x, i)).join("") : "") +
+        (recent.length ? `<li class="search-head">Recently viewed</li>` + recent.map((x, i) => row(x, marks.length + i)).join("") : "");
+      searchInput.setAttribute("aria-activedescendant", hits.length ? "hit-0" : "");
       return;
     }
     const words = q.split(/\s+/);
@@ -1105,7 +1147,8 @@
   async function openSearch() {
     if (searchDialog.open) return;
     searchDialog.showModal();
-    searchInput.select();
+    searchInput.value = ""; // start afresh, showing bookmarks and recently viewed
+    searchInput.focus();
     await buildIndex();
     runSearch();
   }

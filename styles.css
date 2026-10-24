@@ -540,3 +540,10 @@ kbd { font: 12px ui-monospace, monospace; padding: 1px 5px; border: 1px solid va
 .dissect-start button { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; font: inherit; font-weight: 600; }
 .step-card h4 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
 .dissect-check { margin-top: 10px; background: var(--surface); }
+
+/* Bookmarks. */
+.card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.card-head h2 { margin-right: auto; }
+.bookmark { flex: none; margin-top: 4px; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); background: none; cursor: pointer; }
+.bookmark[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.search-results .search-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 10px 12px 4px; cursor: default; }
