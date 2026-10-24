@@ -301,7 +301,12 @@
       const v = b.dataset.view;
       if (!state.model) return;
       if (v === "reset") viewer.resetView();
-      else viewer.setView(...state.model.views[v]);
+      else {
+        // [theta, phi, radius?, target?, structures to hide in this view?]
+        const [theta, phi, radius, target, hide = []] = state.model.views[v];
+        viewer.setView(theta, phi, radius, target);
+        hide.forEach((id) => viewer.hide(id));
+      }
     })
   );
   // Labels on the 3D model: off, some (pins and the selected structure) or all. Remembered per browser.
