@@ -152,7 +152,7 @@
   const SURFACE = {
     muscle: { strength: 0.012, height: "fibers(p)" },
     gland: { strength: 0.03, height: "lobules(p)" },
-    mucosa: { strength: 0.004, height: "vnoise(p * 22.0) * 0.75 + vnoise(p * 48.0) * 0.25" },
+    mucosa: { strength: 0.0025, height: "vnoise(p * 22.0) * 0.75 + vnoise(p * 48.0) * 0.25" },
     bone: { strength: 0.01, height: "vnoise(p * 7.0) * 0.6 + vnoise(p * 19.0) * 0.4" },
     node: { strength: 0.01, height: "vnoise(p * 9.0)" },
     skin: { strength: 0.0022, height: "vnoise(p * 45.0) * 0.6 + vnoise(p * 95.0) * 0.25 + vnoise(p * 12.0) * 0.15" }
@@ -291,13 +291,20 @@
       this.scene.environment = pmrem.fromScene(studio(), 0.04).texture;
       container.appendChild(this.renderer.domElement);
 
+      // The round field of a scope, shown in surgeon's-eye views.
+      this.scopeMask = document.createElement("div");
+      this.scopeMask.className = "scope-mask";
+      this.scopeMask.hidden = true;
+      container.appendChild(this.scopeMask);
+
       this.labelLayer = document.createElement("div");
       this.labelLayer.className = "labels";
       container.appendChild(this.labelLayer);
 
       // Three.js r155+ uses physical light units; older builds need ~1/π the intensity.
       const L = Number(THREE.REVISION) >= 155 ? 1 : 1 / Math.PI;
-      this.scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.35 * L));
+      this.hemi = new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.35 * L);
+      this.scene.add(this.hemi);
       // The key light follows the camera (above and to the left of the eye),
       // so its shadows always fall where they can be seen. See render().
       const key = new THREE.DirectionalLight(0xfff4e8, 1.5 * L);
@@ -313,10 +320,14 @@
       const fill = new THREE.DirectionalLight(0xe8eeff, 0.4 * L);
       fill.position.set(8, -4, -6);
       this.scene.add(fill);
-      // A light at the eye for endoscope, otoscope and laryngoscope views. See setHeadlight().
-      this.headlight = new THREE.PointLight(0xfff6ea, 0, 0, 0);
-      this.headlightPower = 1.0 * L;
+      this.fill = fill;
+      // A light at the eye for endoscope, otoscope and laryngoscope views,
+      // fading with distance as a scope's light does. See setHeadlight().
+      this.headlight = new THREE.PointLight(0xfff6ea, 0, 0, 2);
+      this.lightScale = L;
+      this.headlightPower = 4 * L;
       this.scene.add(this.headlight);
+      this.roomLights = [this.hemi, key, fill].map((l) => [l, l.intensity]);
 
       this.target = new THREE.Vector3();
       this.spherical = { radius: 24, theta: 1.0, phi: 1.75 };
@@ -373,6 +384,8 @@
       this.setHeadlight(false);
       this.opacityOverride = new Map();
       this.scopeSaved = null;
+      this.camera.fov = 35;
+      this.camera.updateProjectionMatrix();
       this.setPins(this.landmarks, []);
       for (const s of this.structures.values()) {
         this.scene.remove(s.root);
@@ -537,8 +550,12 @@
     enterScope(spec) {
       if (!this.scopeSaved) this.scopeSaved = { ...this.layerVisible };
       this.setView(...spec.at);
+      this.camera.fov = spec.fov || 35; // scopes see wider than the eye
+      this.camera.updateProjectionMatrix();
+      this.headlightPower = (spec.light || 4) * this.lightScale; // brighter for a scope held further back
       if (spec.layers) for (const k of Object.keys(this.layerVisible)) this.layerVisible[k] = spec.layers.includes(k);
       this.opacityOverride = new Map(Object.entries(spec.opacity || {}));
+      this.setTints(spec.tint || {});
       for (const id of spec.hide || []) this.hidden.add(id);
       this.onHiddenChange && this.onHiddenChange(this.hidden.size);
       this.setHeadlight(true);
@@ -549,15 +566,35 @@
       if (!this.scopeSaved) return;
       Object.assign(this.layerVisible, this.scopeSaved);
       this.scopeSaved = null;
+      this.camera.fov = 35;
+      this.camera.updateProjectionMatrix();
       this.opacityOverride = new Map();
+      this.setTints({});
       this.hidden.clear();
       this.onHiddenChange && this.onHiddenChange(0);
       this.setHeadlight(false);
       this.refresh();
     }
 
+    // Recolour structures while a view needs it (e.g. turbinate bone seen
+    // through its lining); {} gives every structure its own colour back.
+    setTints(map) {
+      for (const [id, s] of this.structures) {
+        s.root.traverse((o) => {
+          if (!o.isMesh) return;
+          if (o.userData.baseColor === undefined) o.userData.baseColor = o.material.color.getHex();
+          o.material.color.setHex(map[id] ?? o.userData.baseColor);
+        });
+      }
+    }
+
+    // Scope light on: the room lights drop to a glow and the field turns round.
     setHeadlight(on) {
       this.headlight.intensity = on ? this.headlightPower : 0;
+      for (const [light, base] of this.roomLights) light.intensity = on ? base * 0.12 : base;
+      this.scopeMask.hidden = !on;
+      this.renderer.setClearColor(0x000000, on ? 1 : 0); // gaps read as dark airway, not the page
+
       this.dirty = true;
     }
 

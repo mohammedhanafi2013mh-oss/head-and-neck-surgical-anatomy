@@ -22,6 +22,7 @@ window.ANATOMY.models.larynx = {
     // arytenoids below, vestibular folds lateral to the vocal folds.
     special: {
       at: [Math.PI, 0.5, 6, [0, -0.3, 0.2]],
+      light: 40,
       layers: ["bone", "membrane", "muscle", "context"],
       hide: ["hyoid", "thyroid_cartilage", "thyrohyoid_membrane", "cricoid", "trachea", "thyroid", "vertebrae", "cricothyroid_membrane",
         "pca", "lca", "thyroarytenoid", "cricothyroid", "thyrohyoid", "interarytenoid", "constrictors"],
