@@ -149,6 +149,7 @@
   // Bumped on every request, so a slow load that finishes after a later one is dropped.
   let loadSeq = 0;
   async function loadRegion(id, structureId) {
+    stopPhoto();
     const seq = ++loadSeq;
     const entry = catalog.find((r) => r.id === id) || catalog[0];
     select.value = entry.id;
@@ -311,6 +312,40 @@
       renderLayerToggles();
     })
   );
+  // Render: a path-traced, physically based image of the current view (photo.js).
+  let photo = null;
+  const photoBar = $("#photo-bar"), photoStatus = $("#photo-status");
+  function stopPhoto() {
+    if (!photo) return;
+    photo.stop();
+    photo = null;
+    photoBar.hidden = true;
+    $("#photo-btn").setAttribute("aria-pressed", "false");
+  }
+  $("#photo-btn").addEventListener("click", async () => {
+    if (photo) return stopPhoto();
+    photoStatus.textContent = "Preparing the render…";
+    photoBar.hidden = false;
+    $("#photo-btn").setAttribute("aria-pressed", "true");
+    const p = new window.ANATOMY.Photo(viewer, (n) => {
+      photoStatus.textContent = n < 2 ? "Rendering…" : `${n} samples · sharpens as it runs`;
+    });
+    photo = p;
+    try {
+      await p.start();
+    } catch (e) {
+      console.warn(e);
+      if (photo === p) stopPhoto();
+      photoBar.hidden = false;
+      photoStatus.textContent = "Rendering isn't supported on this device.";
+      setTimeout(() => { if (!photo) photoBar.hidden = true; }, 4000);
+    }
+  });
+  $("#photo-close").addEventListener("click", stopPhoto);
+  $("#photo-save").addEventListener("click", () => {
+    if (photo) photo.saveAs = `${state.region.id}-render.png`;
+  });
+
   // Labels on the 3D model: off, some (pins and the selected structure) or all. Remembered per browser.
   const labelsMode = $("#labels-mode");
   try {

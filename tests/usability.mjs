@@ -275,6 +275,16 @@ await check("3D model", "Surgeon's-eye views and the drilled mastoidectomy", asy
   await go("thyroid");
   return `${label} hides ${inScope[0]} structures; step 4 drills ${drilled} spheres`;
 });
+await check("3D model", "Render makes a path-traced image and Close returns to the live model", async () => {
+  await page.click("#photo-btn");
+  await page.waitForFunction(() => !!window.ANATOMY.viewer.renderHook || /supported/.test(document.querySelector("#photo-status").textContent), null, { timeout: 60000 });
+  const status = await page.textContent("#photo-status");
+  expect(!/supported/.test(status), status);
+  await page.click("#photo-close");
+  const after = await page.evaluate(() => [!!window.ANATOMY.viewer.renderHook, document.querySelector("#photo-bar").hidden]);
+  expect(!after[0] && after[1], `after close: rendering ${after[0]}, bar hidden ${after[1]}`);
+  return status;
+});
 await check("CT / MRI", "Slices follow the slider; real CT loads", async () => {
   await page.click('[data-tab="sections"]');
   await page.waitForTimeout(1000);
