@@ -23,6 +23,7 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin || url.pathname.endsWith("/precache.json")) return;
+  if (url.pathname.includes("/films/")) return; // films stream from the network (range requests), never stored
   event.respondWith(
     caches.open(CACHE).then(async (cache) => {
       const key = req.mode === "navigate" ? "index.html" : req;

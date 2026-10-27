@@ -39,6 +39,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Build the web app and run the usability tests
         run: npm test
+        env:
+          WITH_FILMS: "1" # the website (and its zip) carries the films; the apps stream them
       - name: Upload the test report
         if: always()
         uses: actions/upload-artifact@v4

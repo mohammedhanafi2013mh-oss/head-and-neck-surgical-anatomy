@@ -149,6 +149,14 @@
   </dialog>
 
   <!-- Quick guide, install and offline use. -->
+  <dialog id="film-dialog" class="dialog film-dialog" aria-labelledby="film-title">
+    <form method="dialog" class="dialog-head">
+      <h2 id="film-title">Film</h2>
+      <button class="dialog-close" aria-label="Close">×</button>
+    </form>
+    <video id="film-video" controls playsinline preload="metadata"></video>
+    <p class="film-note muted small">A narrated walkthrough on the 3D model. It plays from the website, so it needs an internet connection.</p>
+  </dialog>
   <dialog id="help-dialog" class="dialog help-dialog" aria-labelledby="help-title">
     <form method="dialog" class="dialog-head">
       <h2 id="help-title">Quick guide</h2>

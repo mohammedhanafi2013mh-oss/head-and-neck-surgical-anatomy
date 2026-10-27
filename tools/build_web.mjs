@@ -2,8 +2,11 @@
 // Android (Capacitor) and desktop (Electron) apps, and lists every file in
 // precache.json so the guide can download everything for offline use.
 //   node tools/build_web.mjs [outDir]
+// WITH_FILMS=1 also copies the narrated surgical films (films/*/film.mp4 and
+// poster.jpg) for the website; the apps and the offline download leave them
+// out, and play them from the website instead.
 
-import { cpSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -14,6 +17,14 @@ const ENTRIES = ["index.html", "privacy.html", "styles.css", "manifest.webmanife
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 for (const e of ENTRIES) cpSync(join(root, e), join(out, e), { recursive: true });
+if (process.env.WITH_FILMS) {
+  for (const film of readdirSync(join(root, "films"))) {
+    for (const f of ["film.mp4", "poster.jpg"]) {
+      const src = join(root, "films", film, f);
+      if (existsSync(src)) cpSync(src, join(out, "films", film, f));
+    }
+  }
+}
 writeFileSync(join(out, ".nojekyll"), "");
 
 const files = [];
@@ -25,7 +36,7 @@ let bytes = 0;
     if (st.isDirectory()) walk(p);
     else {
       const rel = relative(out, p).split(sep).join("/");
-      if (rel === "sw.js" || rel.startsWith(".") || rel === "icons/icon.svg" || rel === "icons/icon-1024.png") continue;
+      if (rel === "sw.js" || rel.startsWith(".") || rel.startsWith("films/") || rel === "icons/icon.svg" || rel === "icons/icon-1024.png") continue;
       files.push(rel);
       bytes += st.size;
     }
