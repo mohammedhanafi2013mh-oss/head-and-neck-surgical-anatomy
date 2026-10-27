@@ -43,6 +43,7 @@
         metalness: 0,
         clearcoat: t.clearcoat || 0,
         clearcoatRoughness: t.clearcoatRoughness ?? 0.3,
+        ior: t.ior ?? 1.4, // soft tissue reflects like water (~1.33–1.45), not glass (1.5)
         transparent: opacity < 1,
         opacity,
         depthWrite: opacity >= 1,
@@ -55,7 +56,7 @@
         m.sheenColor.setHex(t.sheenColor);
         m.sheenRoughness = 0.6;
       }
-      if (SURFACE[kind]) addSurfaceDetail(m, kind);
+      if (SURFACE[kind] || SCATTER[kind]) patchTissue(m, kind);
       return m;
     },
 
@@ -191,11 +192,44 @@
     }
   `;
 
-  function addSurfaceDetail(material, kind) {
-    const spec = SURFACE[kind];
+  // Subsurface scattering, approximated per tissue: light carried under the
+  // surface reaches past the shadow line and comes back out tinted (wrap
+  // lighting). wrap is how far round it reaches (0 = hard plastic edge);
+  // color is the tint of the scattered light, red where blood fills the tissue.
+  const SCATTER = {
+    skin: { wrap: 0.5, color: 0xff5a3c },
+    muscle: { wrap: 0.35, color: 0xff3a28 },
+    gland: { wrap: 0.4, color: 0xff7a48 },
+    mucosa: { wrap: 0.45, color: 0xff4a3c },
+    cartilage: { wrap: 0.4, color: 0xffa080 },
+    membrane: { wrap: 0.4, color: 0xffd6c8 },
+    nerve: { wrap: 0.3, color: 0xffc860 },
+    node: { wrap: 0.35, color: 0xb8d088 },
+    duct: { wrap: 0.3, color: 0xffeab8 },
+    artery: { wrap: 0.25, color: 0xff2414 },
+    vein: { wrap: 0.2, color: 0x6a6cff },
+    bone: { wrap: 0.12, color: 0xffd8a8 }
+  };
+  const DIFFUSE_LINE = "reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );";
+  const SCATTER_LINES = `float wrapNL = saturate( ( dot( geometryNormal, directLight.direction ) + uScatterWrap ) / ( 1.0 + uScatterWrap ) );
+  vec3 scattered = directLight.color * uScatterColor * max( wrapNL - dotNL, 0.0 );
+  reflectedLight.directDiffuse += ( irradiance + scattered ) * BRDF_Lambert( material.diffuseColor );`;
+
+  // Shader additions for a tissue: scattering (above) and relief (SURFACE).
+  function patchTissue(material, kind) {
+    const spec = SURFACE[kind], sss = SCATTER[kind];
     material.userData.fiber = new THREE.Vector3(0, 1, 0);
     material.customProgramCacheKey = () => "tissue-" + kind;
     material.onBeforeCompile = (shader) => {
+      if (sss) {
+        shader.uniforms.uScatterWrap = { value: sss.wrap };
+        shader.uniforms.uScatterColor = { value: new THREE.Color(sss.color) };
+        shader.fragmentShader = "uniform float uScatterWrap;\nuniform vec3 uScatterColor;\n" + shader.fragmentShader.replace(
+          "#include <lights_physical_pars_fragment>",
+          THREE.ShaderChunk.lights_physical_pars_fragment.replace(DIFFUSE_LINE, SCATTER_LINES)
+        );
+      }
+      if (!spec) return;
       shader.uniforms.uFiber = { value: material.userData.fiber };
       shader.uniforms.uBump = { value: spec.strength };
       shader.vertexShader = "varying vec3 vObjPos;\n" + shader.vertexShader.replace(
@@ -303,11 +337,11 @@
 
       // Three.js r155+ uses physical light units; older builds need ~1/π the intensity.
       const L = Number(THREE.REVISION) >= 155 ? 1 : 1 / Math.PI;
-      this.hemi = new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.35 * L);
+      this.hemi = new THREE.HemisphereLight(0xffffff, 0x6b5a50, 0.26 * L);
       this.scene.add(this.hemi);
       // The key light follows the camera (above and to the left of the eye),
       // so its shadows always fall where they can be seen. See render().
-      const key = new THREE.DirectionalLight(0xfff4e8, 1.5 * L);
+      const key = new THREE.DirectionalLight(0xfff4e8, 1.75 * L);
       key.position.set(-10, 8, 12);
       key.castShadow = true;
       key.shadow.mapSize.set(2048, 2048);
@@ -363,6 +397,11 @@
       this.dirty = true;
       let lastView = "";
       const loop = () => {
+        if (this.renderHook) { // a path-traced render (photo.js) has the canvas
+          this.renderHook();
+          requestAnimationFrame(loop);
+          return;
+        }
         const { radius, theta, phi } = this.spherical;
         const view = [radius, theta, phi, this.target.x, this.target.y, this.target.z].join();
         if (this.dirty || view !== lastView) {
@@ -625,7 +664,8 @@
       this.camera.updateProjectionMatrix();
     }
 
-    render() {
+    // placeOnly: set the camera and lights for this frame without drawing.
+    render(placeOnly = false) {
       const { radius, theta, phi } = this.spherical;
       this.camera.position.set(
         this.target.x + radius * Math.sin(phi) * Math.sin(theta),
@@ -640,6 +680,7 @@
       const left = up.clone().cross(eye).normalize();
       this.key.position.copy(centre).addScaledVector(eye.add(up.multiplyScalar(0.7)).add(left.multiplyScalar(0.5)).normalize(), r * 2);
       this.key.target.position.copy(centre);
+      if (placeOnly) return;
       this.renderer.render(this.scene, this.camera);
       this.positionLabels();
     }

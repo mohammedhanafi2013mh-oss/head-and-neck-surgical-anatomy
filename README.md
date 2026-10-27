@@ -41,6 +41,8 @@ Nerves and vessels of surgical importance can be **traced**: pick one from "Trac
 
 The **Surgery** walkthroughs draw the **incision** on the model, in skin-marker purple, at the steps where it is made: the modified Blair (parotid), the skin-crease incisions for the submandibular gland and deep neck drainage, the hockey-stick neck dissection incision, the Kocher collar (thyroid), the incision along sternocleidomastoid (carotid), the apron (laryngectomy), the hemicoronal incision (infratemporal fossa), the 1 cm margin round a tongue cancer, the cut along the sublingual fold for a ranula, and the postauricular incision for mastoidectomy. Each is built from real landmarks (mandible border, tragus, lobule, mastoid, sternal notch, sternocleidomastoid) and laid on the outer surface of the model, which has no skin layer.
 
+**Rendering**: the 3D models are lit with physically based materials (realistic surface reflectance for wet tissue, and an approximation of light scattering under the surface, which softens and reddens the shadow edges of skin, muscle, glands and mucosa). **Render** (under the model) makes a path-traced image of the current view: light is traced bouncing between the structures in a studio of soft boxes, so shadows are soft, crevices darken by themselves and wet surfaces reflect the lights. The image sharpens the longer it stays on screen; **Save image** downloads it. It uses [three-gpu-pathtracer](https://github.com/gkjohnson/three-gpu-pathtracer) and [three-mesh-bvh](https://github.com/gkjohnson/three-mesh-bvh) (MIT, in `vendor/`), loaded only when Render is first pressed, and needs WebGL 2.
+
 **Surgeon's-eye views**: an extra view button shows the anatomy the way it is seen in clinic or theatre, lit from the eye: **Otoscope** (the eardrum down the ear canal), **Endoscope** (a 0° endoscope in the right nostril, with the turbinates and septum) and **Laryngoscope** (the glottis from above). Each sets aside what would block the view; any other view button brings everything back.
 
 In the **cortical mastoidectomy**, the bone and air cells are drilled away step by step: the cortex at MacEwen's triangle, then out to the tegmen and sigmoid sinus, then into the antrum and down to the facial nerve, leaving the labyrinth, ossicles and nerve in the cavity.
@@ -86,7 +88,7 @@ GitHub Pages must be turned on once: **Settings → Pages → Source: GitHub Act
 
 ## Run it from source
 
-Open `index.html` in a modern browser. It works offline: there's no build step and no server, and Three.js is bundled in `vendor/`.
+Open `index.html` in a modern browser. It works offline: there's no build step and no server, and Three.js (with the path tracer for Render) is bundled in `vendor/`.
 
 To try it on a phone, serve the folder (for example `python3 -m http.server`) and open it from the phone's browser on the same network.
 

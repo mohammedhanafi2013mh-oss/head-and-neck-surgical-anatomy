@@ -7,7 +7,7 @@
 const CACHE = "hn-anatomy";
 const SHELL = [
   "./", "index.html", "styles.css", "manifest.webmanifest",
-  "vendor/three.min.js", "js/catalog.js", "js/figures.js", "js/viewer.js", "js/scans.js", "js/sections.js", "js/app.js",
+  "vendor/three.min.js", "js/catalog.js", "js/figures.js", "js/viewer.js", "js/photo.js", "js/scans.js", "js/sections.js", "js/app.js",
   "icons/icon-192.png", "icons/icon-512.png", "icons/apple-touch-icon.png"
 ];
 

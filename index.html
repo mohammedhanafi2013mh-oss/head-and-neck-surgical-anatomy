@@ -44,6 +44,11 @@
     <section class="viewer-wrap" aria-label="3D model">
       <div id="viewer" class="viewer"></div>
       <p id="viewer-loading" class="viewer-loading" hidden>Loading…</p>
+      <div id="photo-bar" class="photo-bar" role="status" hidden>
+        <span id="photo-status">Preparing the render…</span>
+        <button id="photo-save" type="button">Save image</button>
+        <button id="photo-close" type="button">Close</button>
+      </div>
       <div class="viewer-toolbar">
         <button id="layers-toggle" class="chip layers-toggle" type="button" aria-expanded="false" aria-controls="layer-toggles">Layers ▾</button>
         <div id="layer-toggles" class="chips" role="group" aria-label="Layers"></div>
@@ -55,6 +60,7 @@
         <button data-view="special" type="button" hidden></button>
         <button data-view="reset" type="button">Reset</button>
         <button id="show-hidden" type="button" hidden>Show hidden (0)</button>
+        <button id="photo-btn" type="button" title="A path-traced, physically based render of this view">Render</button>
         <label class="labels-mode" title="Name tags on the 3D model">
           <span class="visually-hidden">Labels</span>
           <select id="labels-mode">
@@ -180,6 +186,7 @@
   <script src="js/catalog.js"></script>
   <script src="js/figures.js"></script>
   <script src="js/viewer.js"></script>
+  <script src="js/photo.js"></script>
   <script src="js/scans.js"></script>
   <script src="js/sections.js"></script>
   <script src="js/app.js"></script>
