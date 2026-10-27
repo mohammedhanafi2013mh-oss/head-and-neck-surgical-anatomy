@@ -705,6 +705,7 @@
       ${picker}
       <h2>${esc(p.title)}</h2>
       <p class="muted">${esc(p.intro || "Step through the operation. The model shows the layers you would see at each stage and highlights the key structures.")}</p>
+      ${p.film ? `<button type="button" class="film-btn primary" data-film>▶ Watch the film <span class="small">(${esc(p.film.length)})</span></button>` : ""}
       <div class="steps-nav">
         <span class="count">Step ${state.step + 1} of ${p.steps.length}</span>
         <button data-step="-1" ${state.step === 0 ? "disabled" : ""}>← Prev</button>
@@ -951,6 +952,10 @@
         s.setSelectionRange(pos, pos);
       });
     }
+    body.querySelector("[data-film]")?.addEventListener("click", () => {
+      const p = procedureOf(state.region);
+      openFilm(p.film, p.title);
+    });
     body.querySelectorAll("[data-proc]").forEach((b) =>
       b.addEventListener("click", () => {
         state.proc = Number(b.dataset.proc);
@@ -1330,8 +1335,32 @@
     helpDialog.showModal();
   }
   $("#help-open").addEventListener("click", openHelp);
+  // Narrated films of the operations. The web app on GitHub Pages carries
+  // them; the installed apps and the downloadable web app don't (they would
+  // add tens of MB each), so a film that fails to load there plays from the website.
+  const filmDialog = $("#film-dialog"), filmVideo = $("#film-video");
+  function openFilm(film, title) {
+    $("#film-title").textContent = title;
+    filmVideo.onerror = () => {
+      if (filmVideo.src.startsWith(SITE)) return;
+      filmVideo.poster = film.poster ? SITE + film.poster : "";
+      filmVideo.src = SITE + film.src;
+      filmVideo.play().catch(() => {});
+    };
+    filmVideo.poster = film.poster || "";
+    filmVideo.src = film.src;
+    filmDialog.showModal();
+    filmVideo.play().catch(() => {});
+  }
+  filmDialog.addEventListener("close", () => {
+    filmVideo.onerror = null;
+    filmVideo.pause();
+    filmVideo.removeAttribute("src");
+    filmVideo.load(); // stops the download
+  });
+
   // Dialogs close on a click outside their box.
-  for (const d of [searchDialog, helpDialog]) {
+  for (const d of [searchDialog, helpDialog, filmDialog]) {
     d.addEventListener("click", (e) => { if (e.target === d) d.close(); });
   }
 

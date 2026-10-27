@@ -252,6 +252,17 @@ await check("Surgery", "A region with several operations offers a picker, and ea
   await go("thyroid");
   return `${names.join(" / ")}: ${note[1].split(" · ")[0]}`;
 });
+await check("Surgery", "Watch the film opens the operation's narrated film", async () => {
+  // Thyroid (where the previous check left the app): a total thyroidectomy film.
+  await page.click('[data-tab="surgery"]');
+  await page.click("[data-film]");
+  await page.waitForSelector("#film-dialog[open]");
+  const src = await page.$eval("#film-video", (v) => v.currentSrc || v.src);
+  expect(/films\/[a-z-]+\/film\.mp4$/.test(src), src);
+  await page.keyboard.press("Escape");
+  expect(await page.$eval("#film-dialog", (d) => !d.open), "the film dialog did not close");
+  return src.split("/").slice(-2).join("/");
+});
 await check("3D model", "Surgeon's-eye views and the drilled mastoidectomy", async () => {
   // The ear: Otoscope sets structures aside and lights from the eye, Reset restores them;
   // the mastoidectomy steps drill the bone away and leaving the walkthrough fills it back.

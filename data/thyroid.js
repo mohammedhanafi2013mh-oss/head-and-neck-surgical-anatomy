@@ -736,6 +736,8 @@ window.ANATOMY.regions.thyroid = {
 
   procedure: {
     title: "Total thyroidectomy",
+    // Narrated film of the walkthrough (tools/film; streamed from the website).
+    film: { src: "films/total-thyroidectomy/film.mp4", poster: "films/total-thyroidectomy/poster.jpg", length: "4 min" },
     atRisk: [{"id": "rln_right", "why": "Enters the larynx behind the cricothyroid joint, near Berry's ligament: hoarse voice"}, {"id": "rln_left", "why": "Both nerves injured: stridor and airway obstruction"}, {"id": "non_recurrent", "why": "Right side, about 0.5%: runs straight from the vagus and is easily cut"}, {"id": "ebsln", "why": "Close to the superior thyroid vessels: weak high-pitched voice"}, {"id": "parathyroid_superior", "why": "Behind the upper pole: hypocalcaemia"}, {"id": "parathyroid_inferior", "why": "More variable, near the lower pole and thymus: hypocalcaemia"}],
     steps: [
       {
