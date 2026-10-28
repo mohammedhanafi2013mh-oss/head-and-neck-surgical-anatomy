@@ -74,7 +74,7 @@ def place_labels(labels):
         while moved:
             moved = False
             for P in placed:
-                if bx < P['bx'] + P['bw'] + 8 and P['bx'] < bx + bw + 8 and abs(P['ty'] - ty) < 34:
+                if bx < P['bx'] + P['bw'] + 8 and P['bx'] < bx + bw + 8 and abs(P['ty'] - ty) < 33.5:
                     ty = P['ty'] + 34
                     moved = True
         placed.append(dict(L, ty=ty, right=right, bx=bx, bw=bw))
@@ -140,11 +140,13 @@ def outro_card(im, t, D, names):
     d = ImageDraw.Draw(layer)
     d.rectangle((0, 0, W, H), fill=(8, 10, 14, int(170 * a)))
     d.text((80, 120), 'Structures at risk', font=f_big, fill=WHITE + (int(255 * a),))
+    rows = 5 if len(names) > 6 else len(names)  # long lists take two columns, clear of the subtitles
     for i, n in enumerate(names):
         ai = ease((t - 1.0 - i * 1.1) / 0.5) * a
-        d.ellipse((86, 238 + i * 54, 100, 252 + i * 54), fill=ORANGE + (int(255 * ai),))
-        d.text((118, 228 + i * 54), n, font=f_mid, fill=WHITE + (int(255 * ai),))
-    d.text((84, H - 110), 'For education only. Check every surgical detail against current atlases and senior guidance.',
+        x, y = 86 + (i // rows) * 520, 238 + (i % rows) * 54
+        d.ellipse((x, y, x + 14, y + 14), fill=ORANGE + (int(255 * ai),))
+        d.text((x + 32, y - 10), n, font=f_mid, fill=WHITE + (int(255 * ai),))
+    d.text((84, 196), 'For education only. Check every surgical detail against current atlases and senior guidance.',
            font=f_small, fill=MUTED + (int(230 * ease((t - 8) / 1.0)),))
     im.alpha_composite(layer)
 
