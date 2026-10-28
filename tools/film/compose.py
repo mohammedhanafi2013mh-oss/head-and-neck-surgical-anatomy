@@ -74,7 +74,7 @@ def place_labels(labels):
         while moved:
             moved = False
             for P in placed:
-                if bx < P['bx'] + P['bw'] + 8 and P['bx'] < bx + bw + 8 and abs(P['ty'] - ty) < 34:
+                if bx < P['bx'] + P['bw'] + 8 and P['bx'] < bx + bw + 8 and abs(P['ty'] - ty) < 33.5:
                     ty = P['ty'] + 34
                     moved = True
         placed.append(dict(L, ty=ty, right=right, bx=bx, bw=bw))
