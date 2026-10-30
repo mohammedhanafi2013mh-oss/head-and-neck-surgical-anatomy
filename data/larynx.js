@@ -699,6 +699,7 @@ window.ANATOMY.regions.larynx = {
   ],
 
   procedure: {
+    film: { src: "films/total-laryngectomy/film.mp4", poster: "films/total-laryngectomy/poster.jpg", length: "4 min" },
     title: "Total laryngectomy",
     atRisk: [{"id": "cca", "why": "Retracted laterally with the sheath: keep it covered, especially after radiotherapy"}, {"id": "ijv", "why": "In the sheath beside the carotid"}, {"id": "vagus", "why": "Between the carotid and jugular vein"}, {"id": "thyroid", "why": "Keep a lobe and its parathyroids if the tumour allows: hypocalcaemia"}, {"id": "laryngopharynx", "why": "Keep enough mucosa for a tension-free closure: pharyngocutaneous fistula, stricture"}],
     steps: [
