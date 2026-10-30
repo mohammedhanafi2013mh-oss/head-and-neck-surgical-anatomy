@@ -661,6 +661,7 @@ window.ANATOMY.regions.parotid = {
   ],
 
   procedure: {
+    film: { src: "films/superficial-parotidectomy/film.mp4", poster: "films/superficial-parotidectomy/poster.jpg", length: "3 min" },
     title: "Superficial parotidectomy",
     atRisk: [{"id": "facial_trunk", "why": "Found between the tragal pointer and the posterior belly of digastric: paralysis of the whole face"}, {"id": "temporal_branch", "why": "Brow droop"}, {"id": "zygomatic_branch", "why": "Weak eye closure: corneal exposure"}, {"id": "buccal_branch", "why": "Weak smile and cheek, food pocketing"}, {"id": "mmn", "why": "Lower-lip asymmetry"}, {"id": "great_auricular", "why": "On sternocleidomastoid at the lower pole: numb ear lobe"}, {"id": "retromandibular", "why": "Deep to the nerve in the gland: bleeding that obscures the field"}],
     steps: [
