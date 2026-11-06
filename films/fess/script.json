@@ -1,0 +1,68 @@
+[
+ {
+  "id": "intro",
+  "step": null,
+  "title": "Functional endoscopic sinus surgery",
+  "text": "Functional endoscopic sinus surgery. In this film we follow the operation step by step, on a three dimensional model of the nose and sinuses, and through the endoscope. The aim is to restore drainage of the sinuses, while protecting the orbit, the optic nerve, the internal carotid artery, the anterior ethmoidal artery, and the skull base."
+ },
+ {
+  "id": "s0",
+  "step": 0,
+  "title": "Plan from the CT",
+  "text": "The operation is planned from the C T, using the CLOSE checklist: the cribriform plate and its Keros type, the lamina papyracea, an Onodi cell, the sphenoid sinus with the carotid artery and optic nerve, and the anterior ethmoidal artery. The nose is decongested, and image guidance is registered. Navigation can even overlay structures from the scan on the live endoscopic picture, as in this cadaver study, where the carotid arteries appear in red beyond the opened sphenoid."
+ },
+ {
+  "id": "s1",
+  "step": 1,
+  "title": "Middle meatus",
+  "text": "Through a zero degree endoscope in the right nasal cavity, the inferior turbinate lies below on the lateral wall, the middle turbinate above it, and the septum medially. The middle turbinate is gently medialised, to show the uncinate process, and the ethmoid bulla behind it."
+ },
+ {
+  "id": "s2",
+  "step": 2,
+  "title": "Uncinectomy",
+  "text": "The uncinate process is incised and removed, opening the ethmoid infundibulum. The nasolacrimal duct lies just in front, so the cut stays behind it."
+ },
+ {
+  "id": "s3",
+  "step": 3,
+  "title": "Maxillary antrostomy",
+  "text": "The natural ostium of the maxillary sinus is found, and enlarged backwards and downwards into the posterior fontanelle, staying behind the nasolacrimal duct, and below the orbital floor."
+ },
+ {
+  "id": "s4",
+  "step": 4,
+  "title": "Anterior ethmoidectomy",
+  "text": "The ethmoid bulla and the anterior ethmoid cells are opened, keeping the lamina papyracea, the thin lateral wall towards the orbit, in view at all times."
+ },
+ {
+  "id": "s5",
+  "step": 5,
+  "title": "Basal lamella and posterior ethmoid",
+  "text": "The basal lamella of the middle turbinate is entered low and medially, into the posterior ethmoid cells. An Onodi cell, a posterior ethmoid cell lying beside the optic nerve, is looked for."
+ },
+ {
+  "id": "s6",
+  "step": 6,
+  "title": "Sphenoidotomy",
+  "text": "The sphenoid is opened through its natural ostium in the sphenoethmoidal recess, and enlarged medially and downwards. Inside, the carotid and optic prominences are identified, and the intersinus septum is never twisted, because it may attach to the carotid canal."
+ },
+ {
+  "id": "s7",
+  "step": 7,
+  "title": "Skull base, back to front",
+  "text": "With the roof of the sphenoid as the reference, the cells are cleared off the skull base, working forwards, until the anterior ethmoidal artery is seen crossing the roof."
+ },
+ {
+  "id": "s8",
+  "step": 8,
+  "title": "Frontal recess",
+  "text": "If needed, the frontal recess is opened by clearing the agger nasi and the cells around it, using angled endoscopes, and keeping the mucosa in the recess intact."
+ },
+ {
+  "id": "outro",
+  "step": null,
+  "title": "Structures at risk",
+  "text": "To summarise, the structures at risk are the orbit and the lamina papyracea, the optic nerve, the internal carotid artery, the anterior ethmoidal artery, the nasolacrimal duct, and the cribriform plate and skull base. This film is for education only. Always check surgical detail against current atlases and senior guidance."
+ }
+]

@@ -6,7 +6,7 @@
 # closing cards and the narration, and writes <work dir>/film.mp4.
 import json, os, re, subprocess, sys, math
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 FILM, WORK = sys.argv[1], sys.argv[2]
 S = WORK
@@ -172,6 +172,53 @@ def base_frames(seg):
         yield last
     proc.stdout.close(); proc.wait()
 
+def inset_frames(spec, D):
+    """A real video shown as a picture-in-picture inset during part of a
+    segment (shots.json "inset": src, at [x, y, height], from, to, caption,
+    credit), sampled at FPS for the inset's time window."""
+    h = spec['at'][2]
+    n = int(round((spec['to'] - spec['from']) * FPS))
+    out = subprocess.run(['ffmpeg', '-v', 'error', '-i', f"{FILM}/{spec['src']}", '-vf', f'scale=-2:{h},fps={FPS}',
+                          '-frames:v', str(n), '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True, check=True).stdout
+    w = len(out) // (n * h * 3) if n else 0
+    frames = [Image.frombuffer('RGB', (w, h), out[i * w * h * 3:(i + 1) * w * h * 3]) for i in range(len(out) // (w * h * 3))]
+    return frames
+
+def inset_alpha(spec, t):
+    return ease((t - spec['from']) / 0.6) * ease((spec['to'] - t) / 0.6)
+
+def draw_inset(im, spec, frames, t):
+    """Fade the inset in and out over its window, with a caption above and the credit below."""
+    a = inset_alpha(spec, t)
+    if a <= 0 or not frames: return
+    fr = frames[min(len(frames) - 1, max(0, int((t - spec['from']) * FPS)))]
+    x, y, h = spec['at']
+    w = fr.width
+    layer = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    d.rounded_rectangle((x - 10, y - 46, x + w + 10, y + h + 40), radius=14, fill=(10, 13, 18, int(225 * a)))
+    d.text((x, y - 38), spec['caption'], font=f_label, fill=WHITE + (int(255 * a),))
+    mask = Image.new('L', (w, h), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w - 1, h - 1), radius=8, fill=int(255 * a))
+    layer.paste(fr, (x, y), mask)
+    for i, line in enumerate(wrap(d, spec['credit'], f_small, w)[:2]):
+        d.text((x, y + h + 6 + i * 19), line, font=f_small, fill=MUTED + (int(230 * a),))
+    im.alpha_composite(layer)
+
+def scope_view(im):
+    """A scope shot seen as through the endoscope: a round field, dark outside."""
+    global SCOPE_MASK
+    if SCOPE_MASK is None:
+        m = Image.new('L', (W, H), 0)
+        r = H * 0.49
+        ImageDraw.Draw(m).ellipse((W / 2 - r, H / 2 - r, W / 2 + r, H / 2 + r), fill=255)
+        SCOPE_MASK = m.filter(ImageFilter.GaussianBlur(18))
+    out = Image.new('RGB', (W, H), (4, 4, 6))
+    out.paste(ImageEnhance.Brightness(im.convert('RGB')).enhance(0.82), (0, 0), SCOPE_MASK)
+    return out
+
+SCOPE_MASK = None
+
 def labels_at(meta, t):
     """Label positions at time t, interpolated between the source frames."""
     if not meta: return []
@@ -198,18 +245,24 @@ def main(only):
         n = int(round(seg['D'] * FPS))
         meta = json.load(open(f'{S}/frames/{seg["id"]}/labels.json')) if seg['id'] in cfg['shots'] else []
         frames = base_frames(seg) if seg['id'] in cfg['shots'] else None
+        shot = cfg['shots'].get(seg['id'], {})
+        inset = shot.get('inset')
+        inset_fr = inset_frames(inset, seg['D']) if inset else None
         still = None
         if frames is None:  # the closing card sits on the last picture, softened
             still = (prev or BG).filter(ImageFilter.GaussianBlur(6))
         for i in range(n):
             t = i / FPS
             base = next(frames) if frames else still
+            if shot.get('scope') and frames: base = scope_view(base)
             im = base.convert('RGBA')
             if prev is not None and i < 12:  # cross-fade from the previous segment
                 im = Image.blend(prev.convert('RGBA'), im, ease(i / 12))
             if seg['id'] == 'intro': title_card(im, t)
+            inset_a = inset_alpha(inset, t) if inset else 0  # labels make way for an inset
             if seg['id'] == 'outro': outro_card(im, t, seg['D'], risk)
-            else: draw_labels(im, labels_at(meta, t), ease((t - 2.4) / 0.6) * ease((seg['D'] - t) / 0.5) if seg['id'] != 'intro' else ease((t - 8.0) / 0.8) * ease((seg['D'] - t) / 0.5))
+            else: draw_labels(im, labels_at(meta, t), (1 - inset_a) * (ease((t - 2.4) / 0.6) * ease((seg['D'] - t) / 0.5) if seg['id'] != 'intro' else ease((t - 8.0) / 0.8) * ease((seg['D'] - t) / 0.5)))
+            if inset: draw_inset(im, inset, inset_fr, t)
             draw_chrome(im, seg, t, seg['D'])
             enc.stdin.write(im.convert('RGB').tobytes())
             last = base
