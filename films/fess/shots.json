@@ -1,0 +1,195 @@
+{
+ "region": "sinonasal",
+ "title": "Functional endoscopic sinus surgery",
+ "subtitle": "Surgical anatomy, step by step",
+ "steps": 9,
+ "voice": "af_heart",
+ "risk": [
+  "Orbit and lamina papyracea",
+  "Optic nerve",
+  "Internal carotid artery",
+  "Anterior ethmoidal artery",
+  "Nasolacrimal duct",
+  "Cribriform plate and skull base"
+ ],
+ "fps": 6,
+ "lead": 0.6,
+ "tail": 1.0,
+ "move": 2.6,
+ "drift": -0.012,
+ "start": [
+  -0.7,
+  1.5,
+  24,
+  [
+   0.0,
+   0.2,
+   0.0
+  ]
+ ],
+ "shots": {
+  "intro": {
+   "to": [
+    -0.5,
+    1.45,
+    20,
+    [
+     0.5,
+     0.8,
+     -0.5
+    ]
+   ],
+   "move": 13,
+   "labels": [
+    "maxillary_sinus",
+    "frontal_sinus",
+    "sphenoid_sinus",
+    "ethmoid"
+   ]
+  },
+  "s0": {
+   "to": [
+    -0.6,
+    1.3,
+    16,
+    [
+     0.5,
+     1.5,
+     -1.5
+    ]
+   ],
+   "inset": {
+    "src": "clips/navigation-cadaver.webm",
+    "at": [
+     840,
+     104,
+     380
+    ],
+    "from": 19.0,
+    "to": 34.2,
+    "caption": "Real endoscope with navigation (cadaver)",
+    "credit": "Li L et al., PLOS ONE 2016 · CC BY 4.0 · via Wikimedia Commons"
+   }
+  },
+  "s1": {
+   "to": [
+    0.006,
+    1.628,
+    4.69,
+    [
+     0.62,
+     0.1,
+     -2.5
+    ]
+   ],
+   "scope": true,
+   "labels": []
+  },
+  "s2": {
+   "to": [
+    -0.7,
+    1.45,
+    11,
+    [
+     0.2,
+     0.3,
+     0.4
+    ]
+   ]
+  },
+  "s3": {
+   "to": [
+    -0.9,
+    1.5,
+    13,
+    [
+     -0.8,
+     -1.0,
+     0.3
+    ]
+   ]
+  },
+  "s4": {
+   "to": [
+    -0.4,
+    1.4,
+    11,
+    [
+     0.4,
+     1.0,
+     -0.5
+    ]
+   ]
+  },
+  "s5": {
+   "to": [
+    -0.8,
+    1.4,
+    11,
+    [
+     0.3,
+     1.0,
+     -1.8
+    ]
+   ]
+  },
+  "s6": {
+   "to": [
+    -1.0,
+    1.35,
+    12,
+    [
+     0.8,
+     1.2,
+     -3.5
+    ]
+   ],
+   "hide": [
+    "orbit_contents"
+   ]
+  },
+  "s7": {
+   "to": [
+    -0.5,
+    1.2,
+    12,
+    [
+     0.8,
+     1.8,
+     -1.0
+    ]
+   ]
+  },
+  "s8": {
+   "to": [
+    -0.3,
+    1.45,
+    11,
+    [
+     0.6,
+     2.5,
+     1.2
+    ]
+   ]
+  },
+  "outro": {
+   "to": [
+    -0.6,
+    1.4,
+    16,
+    [
+     0.5,
+     1.0,
+     -1.0
+    ]
+   ],
+   "labels": [
+    "orbit_contents",
+    "cn2",
+    "ica",
+    "ethmoidal_arteries",
+    "nasolacrimal"
+   ]
+  }
+ }
+}

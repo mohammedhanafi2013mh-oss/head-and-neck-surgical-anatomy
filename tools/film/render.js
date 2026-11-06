@@ -6,6 +6,7 @@
 // labelled structures in each frame). Serve the app first, e.g.
 // python3 -m http.server 8765; set APP_URL to use another address.
 // PREVIEW=1 renders one frame per segment, just after the camera move.
+// A shot with "scope": true is filmed through the region's surgeon's-eye view.
 const fs = require('fs');
 const { chromium } = require(require('child_process').execSync('npm root -g').toString().trim() + '/playwright');
 const [FILM, WORK, ...ARGS] = process.argv.slice(2);
@@ -39,15 +40,18 @@ function plan() {
   let curStep = -1;
   for (const id of want) {
     const n = segs.findIndex((s) => s.id === id), seg = segs[n], pl = P[n];
+    await p.evaluate(() => window.ANATOMY.viewer.leaveScope()); // the step's own layers come back before it changes
     if (seg.step !== null && seg.step !== undefined) {
       if (curStep < 0) { await p.$eval('[data-tab="surgery"]', (e) => e.click()); curStep = 0; await p.waitForTimeout(800); }
       while (curStep < seg.step) { await p.$eval('[data-step="1"]', (e) => e.click()); curStep++; await p.waitForTimeout(300); }
     }
     // Layers retracted in this shot are set aside; extra structures can stay highlighted.
-    await p.evaluate(([hide, add]) => {
+    // A scope shot looks through the region's surgeon's-eye view (its layers, tints and headlight).
+    await p.evaluate(([hide, add, scope, region]) => {
       const v = window.ANATOMY.viewer; v.showHidden(); for (const id of hide) v.hide(id);
       if (add.length) v.setFocus([...v.focusIds, ...add]);
-    }, [pl.shot.hide || [], pl.shot.addFocus || []]);
+      if (scope) v.enterScope(window.ANATOMY.models[region].views.special);
+    }, [pl.shot.hide || [], pl.shot.addFocus || [], !!pl.shot.scope, cfg.region]);
     await p.waitForTimeout(1200);
     const labelIds = pl.shot.labels || null;
     const dir = `${WORK}/${process.env.PREVIEW ? 'preview' : 'frames'}/${id}`; fs.mkdirSync(dir, { recursive: true });

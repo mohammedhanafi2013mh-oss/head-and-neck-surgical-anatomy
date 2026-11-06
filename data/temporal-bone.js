@@ -499,6 +499,7 @@ window.ANATOMY.regions.temporal_bone = {
   ],
 
   procedure: {
+    "film": { "src": "films/mastoidectomy/film.mp4", "poster": "films/mastoidectomy/poster.jpg", "length": "3 min" },
     "title": "Cortical mastoidectomy (canal wall up)",
     "intro": "Step through the operation on a right ear. The model shows the layers you would see at each stage and highlights the landmarks; the structures at risk are tinted orange.",
     "atRisk": [
