@@ -2,6 +2,8 @@
 
 An interactive web app for learning the surgical anatomy of the head and neck. It has a 3D model you can rotate, structure-by-structure notes with surgical pearls and danger points, step-by-step operative walkthroughs, diagrams, a self-test quiz and references.
 
+The app opens on a **home screen**: a card for every region (its picture, what it covers, how many structures and traced courses it has, and whether its operation has a film), a shelf of the narrated films, and a card to continue in the region you were last in. Once you have used the quizzes, each card shows how many of its structures you have named and your best quiz score; this is kept on the device. The logo, or "Home · all regions" in the region menu, returns to it. What the cards say comes from `js/catalog.js` (`group`, `blurb`) and from `js/catalog-meta.js`, which `node tools/catalog_meta.mjs` regenerates from the region data (`npm test` fails if it is out of date). `node tools/region_thumbs.js` re-renders the pictures in `icons/regions/` from the running app.
+
 Modules so far:
 
 - **Submandibular region** (submandibular triangle, level IB)
