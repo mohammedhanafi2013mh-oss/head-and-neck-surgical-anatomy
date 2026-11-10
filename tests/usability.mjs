@@ -18,7 +18,7 @@ mkdirSync(OUT, { recursive: true });
 
 // ---------- static server for dist/web ----------
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
-  ".webmanifest": "application/manifest+json", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml" };
+  ".webmanifest": "application/manifest+json", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".webp": "image/webp" };
 const server = createServer((req, res) => {
   let path = decodeURIComponent(new URL(req.url, "http://x").pathname);
   if (path.endsWith("/")) path += "index.html";
@@ -77,13 +77,54 @@ const state = (page) => page.evaluate(() => ({ hash: location.hash, region: docu
 console.log(`Testing ${BASE}`);
 const { ctx, page } = await newPage();
 
-await check("First visit", "App opens on a region within 15 s", async () => {
+await check("Home", "The app opens on the home screen, with a card for every region and the films", async () => {
   const t0 = Date.now();
   await page.goto(BASE, NAV);
+  await page.waitForSelector("#home:not([hidden]) .home-card", { timeout: 15000 });
+  const ms = Date.now() - t0;
+  const n = await page.evaluate(() => ({
+    cards: document.querySelectorAll(".home-card").length, regions: window.ANATOMY.catalog.length,
+    films: document.querySelectorAll(".home-film").length, layout: getComputedStyle(document.querySelector(".layout")).display,
+    wide: document.documentElement.scrollWidth > innerWidth + 1
+  }));
+  expect(n.cards === n.regions, `${n.cards} cards for ${n.regions} regions`);
+  expect(n.films >= 7, `only ${n.films} films on the shelf`);
+  expect(n.layout === "none", "the region view shows behind the home screen");
+  expect(!n.wide, "the home screen scrolls sideways");
+  await page.evaluate(() => document.querySelectorAll("#home img[loading]").forEach((i) => (i.loading = "eager")));
+  await page.waitForFunction(() => [...document.querySelectorAll(".home-thumb img")].every((i) => i.complete && i.naturalWidth > 0), null, { timeout: 15000 });
+  await shot(page, "00-home.png", "Home: every region, the films and where to start");
+  return `${(ms / 1000).toFixed(1)} s, ${n.cards} regions, ${n.films} films`;
+});
+await check("Home", "A film opens straight from the home screen", async () => {
+  await page.click(".home-film");
+  await page.waitForSelector("#film-dialog[open]");
+  const src = await page.$eval("#film-video", (v) => v.currentSrc || v.src);
+  expect(/films\/[a-z-]+\/film\.mp4$/.test(src), src);
+  await page.click("#film-dialog .dialog-close");
+});
+await check("First visit", "A region card opens the region within 15 s", async () => {
+  const t0 = Date.now();
+  await page.click(".home-card");
   await ready(page);
   const ms = Date.now() - t0;
   expect(ms < 15000, `took ${ms} ms`);
+  expect(await page.evaluate(() => document.querySelector("#home").hidden && window.ANATOMY.viewer.renderer.domElement.width > 100), "the region view did not replace the home screen");
   return `${(ms / 1000).toFixed(1)} s, ${(await state(page)).structures} structures`;
+});
+await check("Home", "Back returns home, the logo too, and the last region is offered to continue", async () => {
+  const rid = (await state(page)).region;
+  await page.goBack();
+  await page.waitForSelector("#home:not([hidden])");
+  expect((await page.$eval(".home-continue", (a) => a.getAttribute("href"))) === "#" + rid, "Continue does not point to the last region");
+  await page.click(".home-continue");
+  await page.waitForFunction(() => document.querySelector("#home").hidden);
+  expect((await state(page)).region === rid, "Continue opened another region");
+  await page.click("a.brand");
+  await page.waitForSelector("#home:not([hidden])");
+  expect((await page.evaluate(() => location.hash)) === "", "home keeps a region in the address");
+  await page.goBack();
+  await page.waitForFunction(() => document.querySelector("#home").hidden);
 });
 await check("First visit", "A dismissible tip points new users to the guide", async () => {
   expect(await page.isVisible("#first-tip"), "tip not shown");
@@ -95,7 +136,7 @@ await check("First visit", "A dismissible tip points new users to the guide", as
   expect(!(await page.isVisible("#first-tip")), "tip came back after dismissing");
 });
 
-const regions = await page.$$eval("#region-select option:not([disabled])", (o) => o.map((x) => x.value));
+const regions = await page.$$eval("#region-select option:not([disabled])", (o) => o.map((x) => x.value).filter(Boolean));
 // Shared CI machines render 3D in software and vary a lot in speed (the deep neck
 // took 10 s locally and 10-31 s on GitHub runners), so CI gets a wider budget.
 const REGION_BUDGET = process.env.CI ? 60000 : 30000;
@@ -484,7 +525,7 @@ await phone.ctx.close();
 if (!QUICK) {
   const off = await newPage();
   await check("Offline", "The guide downloads every region for offline use", async () => {
-    await off.page.goto(BASE, NAV);
+    await off.page.goto(BASE + "#submandibular", NAV);
     await ready(off.page);
     await off.page.waitForFunction(() => navigator.serviceWorker?.controller || navigator.serviceWorker?.ready, null, { timeout: 20000 });
     await off.page.reload(NAV);

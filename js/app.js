@@ -121,6 +121,10 @@
 
   // ---------- region ----------
   const select = $("#region-select");
+  const homeOpt = document.createElement("option");
+  homeOpt.value = "";
+  homeOpt.textContent = "Home · all regions";
+  select.appendChild(homeOpt);
   for (const r of catalog) {
     const opt = document.createElement("option");
     opt.value = r.id;
@@ -131,7 +135,7 @@
   soon.disabled = true;
   soon.textContent = "More regions coming…";
   select.appendChild(soon);
-  select.addEventListener("change", () => loadRegion(select.value));
+  select.addEventListener("change", () => (select.value ? loadRegion(select.value) : showHome()));
 
   // Each region's content, meshes and model load on first use, as plain
   // script tags so the app still works from file://.
@@ -149,6 +153,7 @@
   // Bumped on every request, so a slow load that finishes after a later one is dropped.
   let loadSeq = 0;
   async function loadRegion(id, structureId) {
+    hideHome(); // the viewer needs its size before the model loads
     stopPhoto();
     const seq = ++loadSeq;
     const entry = catalog.find((r) => r.id === id) || catalog[0];
@@ -172,6 +177,7 @@
     loading.hidden = true;
     state.region = regions[entry.id];
     state.regionId = entry.id;
+    try { localStorage.setItem("lastRegion", entry.id); } catch (e) {}
     state.model = models[entry.id];
     landmarksShown = null;
     state.selected = null;
@@ -207,8 +213,15 @@
   const parseHash = () => location.hash.slice(1).split("/");
   window.addEventListener("hashchange", () => {
     const [rid, sid] = parseHash();
-    if (rid && rid !== state.regionId) loadRegion(rid, sid);
-    else if (sid && state.region && state.region.structures.some((s) => s.id === sid)) openStructure(sid);
+    if (!rid) return showHome();
+    if (rid !== state.regionId) return loadRegion(rid, sid);
+    if (!home.hidden) { // back to the region that is still loaded
+      hideHome();
+      select.value = rid;
+      $("#region-subtitle").textContent = `${state.region.title} · ${state.region.subtitle}`;
+      render();
+    }
+    if (sid && state.region.structures.some((s) => s.id === sid)) openStructure(sid);
   });
   function openStructure(id) {
     if (state.tab === "surgery") exitWalkthrough();
@@ -1070,6 +1083,14 @@
       b.addEventListener("click", () => {
         const [i, j] = b.dataset.quiz.split(":").map(Number);
         state.quiz[i] = j;
+        const qs = state.region.quiz;
+        if (qs.every((q, k) => state.quiz[k] !== undefined)) { // finished: keep the best score for the home screen
+          const best = bestScores(), right = qs.filter((q, k) => state.quiz[k] === q.answer).length;
+          if (!(best[state.regionId] >= right)) {
+            best[state.regionId] = right;
+            try { localStorage.setItem("quizBest", JSON.stringify(best)); } catch (e) {}
+          }
+        }
         render();
       })
     );
@@ -1378,7 +1399,127 @@
   $("[data-tip-guide]", firstTip).addEventListener("click", openHelp);
   $("[data-tip-close]", firstTip).addEventListener("click", () => hideFirstTip(true));
 
+  // ---------- home ----------
+  // Every region as a card (picture, what it covers, your progress), the films,
+  // and the region you were last in. Shown when the address has no region.
+  const home = $("#home");
+  const meta = window.ANATOMY.meta || {};
+  function bestScores() {
+    try { return JSON.parse(localStorage.getItem("quizBest")) || {}; } catch (e) { return {}; }
+  }
+  const namedIn = (id) => Object.values(progress()[id] || {}).filter(known).length;
+  const thumb = (id) => `<img src="icons/regions/${id}.webp" alt="" loading="lazy" decoding="async">`;
+
+  function regionCard(entry, all, best) {
+    const m = meta[entry.id] || { structures: 0, questions: 0, operations: [] };
+    const named = Math.min(m.structures, Object.values(all[entry.id] || {}).filter(known).length);
+    const score = best[entry.id];
+    const progressHtml = named || score !== undefined
+      ? `<span class="home-progress" title="Structures you have named correctly in the model quizzes">
+           <span class="home-bar"><span style="width:${m.structures ? Math.round((named / m.structures) * 100) : 0}%"></span></span>
+           <span>${named} of ${m.structures} named${score !== undefined ? ` · quiz ${score}/${m.questions}` : ""}</span>
+         </span>`
+      : "";
+    return `<a class="home-card" href="#${entry.id}">
+      <span class="home-thumb">${thumb(entry.id)}${m.film ? `<span class="home-badge">▶ Film</span>` : ""}</span>
+      <span class="home-card-body">
+        <strong>${esc(entry.title)}</strong>
+        <span class="muted">${esc(entry.blurb || "")}</span>
+        <span class="home-meta muted">${m.structures} structures${m.traced ? ` · ${m.traced} traced` : ""}</span>
+        ${progressHtml}
+      </span>
+    </a>`;
+  }
+
+  function renderHome() {
+    const all = progress(), best = bestScores();
+    const metas = catalog.map((e) => meta[e.id]).filter(Boolean);
+    const sum = (k) => metas.reduce((n, m) => n + m[k], 0);
+    const films = catalog.filter((e) => meta[e.id] && meta[e.id].film);
+    const named = catalog.reduce((n, e) => n + Math.min((meta[e.id] || {}).structures || 0, namedIn(e.id)), 0);
+    let last = null;
+    try { last = catalog.find((e) => e.id === localStorage.getItem("lastRegion")) || null; } catch (e) {}
+    const lastMeta = last && meta[last.id];
+
+    home.innerHTML = `
+      <div class="home-hero">
+        <div class="home-hero-text">
+          <h2>The surgical anatomy of the head and neck, in 3D</h2>
+          <p class="muted">Rotate each region, peel it layer by layer, trace nerves and vessels, step through the operations and test yourself.</p>
+          <button type="button" class="home-search" data-home-search>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+            <span>Search every region: nerve, artery, space, foramen…</span><kbd>/</kbd>
+          </button>
+          <p class="home-stats muted"><span><strong>${catalog.length}</strong> regions</span><span><strong>${sum("structures")}</strong> structures</span><span><strong>${sum("traced")}</strong> traced courses</span><span><strong>${metas.reduce((n, m) => n + m.operations.length, 0)}</strong> operations</span><span><strong>${films.length}</strong> films</span></p>
+        </div>
+        ${last ? `<a class="home-continue" href="#${last.id}">
+          <span class="home-thumb">${thumb(last.id)}</span>
+          <span class="home-card-body">
+            <span class="home-eyebrow">Continue</span>
+            <strong>${esc(last.title)}</strong>
+            <span class="muted">${esc(last.blurb || "")}</span>
+            ${named ? `<span class="home-meta muted">${named} of ${sum("structures")} structures named so far, across all regions</span>` : ""}
+          </span>
+          <span class="home-go" aria-hidden="true">→</span>
+        </a>` : `<a class="home-continue" href="#${catalog[0].id}">
+          <span class="home-thumb">${thumb(catalog[0].id)}</span>
+          <span class="home-card-body">
+            <span class="home-eyebrow">Start here</span>
+            <strong>${esc(catalog[0].title)}</strong>
+            <span class="muted">A small region with three nerves at risk: a good first one to explore.</span>
+          </span>
+          <span class="home-go" aria-hidden="true">→</span>
+        </a>`}
+      </div>
+
+      ${films.length ? `<h3 class="home-heading">Operations on film <span class="muted">narrated, step by step on the model</span></h3>
+      <div class="home-films">${films.map((e) => {
+        const f = meta[e.id].film;
+        return `<button type="button" class="home-film" data-home-film="${e.id}">
+          <span class="home-poster"><img src="${esc(f.poster)}" alt="" loading="lazy" decoding="async" data-poster><span class="home-play" aria-hidden="true">▶</span><span class="home-length">${esc(f.length)}</span></span>
+          <strong>${esc(f.title.replace(/ \(.*\)$/, ""))}</strong>
+          <span class="muted">${esc(e.title)}</span>
+        </button>`;
+      }).join("")}</div>` : ""}
+
+      ${(window.ANATOMY.groups || []).map((g) => {
+        const cards = catalog.filter((e) => e.group === g.id);
+        return cards.length ? `<h3 class="home-heading">${esc(g.title)}</h3><div class="home-grid">${cards.map((e) => regionCard(e, all, best)).join("")}</div>` : "";
+      }).join("")}`;
+
+    $("[data-home-search]", home).addEventListener("click", openSearch);
+    home.querySelectorAll("[data-home-film]").forEach((b) =>
+      b.addEventListener("click", () => openFilm(meta[b.dataset.homeFilm].film, meta[b.dataset.homeFilm].film.title))
+    );
+    // The installed apps don't carry the films: their posters come from the website.
+    home.querySelectorAll("img[data-poster]").forEach((img) =>
+      img.addEventListener("error", () => {
+        if (!img.src.startsWith(SITE)) img.src = SITE + img.getAttribute("src");
+        else img.hidden = true;
+      })
+    );
+  }
+
+  function showHome() {
+    stopPhoto();
+    if (state.region && state.tab === "surgery") exitWalkthrough();
+    filmDialog.open && filmDialog.close();
+    renderHome();
+    home.hidden = false;
+    document.body.classList.add("at-home");
+    select.value = "";
+    $("#region-subtitle").textContent = "Interactive 3D atlas";
+    if (location.hash.length > 1) history.pushState(null, "", location.pathname + location.search);
+    window.scrollTo(0, 0);
+  }
+  function hideHome() {
+    if (home.hidden) return;
+    home.hidden = true;
+    document.body.classList.remove("at-home");
+  }
+
   if (canCache) navigator.serviceWorker.register("sw.js").catch(() => {});
 
-  loadRegion(...parseHash());
+  if (parseHash()[0]) loadRegion(...parseHash());
+  else showHome();
 })();

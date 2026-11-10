@@ -9,7 +9,7 @@
   "main": "desktop/main.js",
   "scripts": {
     "build:web": "node tools/build_web.mjs",
-    "test": "node tools/build_web.mjs && node tests/usability.mjs",
+    "test": "node tools/catalog_meta.mjs --check && node tools/build_web.mjs && node tests/usability.mjs",
     "desktop": "node tools/build_web.mjs && electron .",
     "dist:win": "node tools/build_web.mjs && electron-builder --win --publish never",
     "dist:mac": "node tools/build_web.mjs && electron-builder --mac --publish never",

@@ -16,13 +16,13 @@
 </head>
 <body>
   <header class="app-header">
-    <div class="brand">
+    <a class="brand" href="#" title="Home: all regions">
       <span class="brand-mark" aria-hidden="true">◆</span>
       <div>
         <h1>Head &amp; Neck Surgical Anatomy</h1>
         <p id="region-subtitle" class="muted"></p>
       </div>
-    </div>
+    </a>
     <div class="header-actions">
       <button id="search-open" class="icon-btn" type="button" aria-label="Search all regions" title="Search all regions (/)">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
@@ -39,6 +39,9 @@
       </button>
     </div>
   </header>
+
+  <!-- Home: every region, the films and where you left off. app.js fills it in. -->
+  <section id="home" class="home" aria-label="Home" hidden></section>
 
   <main class="layout">
     <section class="viewer-wrap" aria-label="3D model">
@@ -192,6 +195,7 @@
 
   <script src="vendor/three.min.js"></script>
   <script src="js/catalog.js"></script>
+  <script src="js/catalog-meta.js"></script>
   <script src="js/figures.js"></script>
   <script src="js/viewer.js"></script>
   <script src="js/photo.js"></script>
