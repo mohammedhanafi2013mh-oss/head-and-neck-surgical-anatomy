@@ -93,7 +93,10 @@ jobs:
           grep -E "versionCode|versionName" android/app/build.gradle
           # Google Play requires a recent target API level for new apps and updates.
           sed -i "s/compileSdkVersion = 35/compileSdkVersion = 36/; s/targetSdkVersion = 35/targetSdkVersion = 36/" android/variables.gradle
+          # Play automatic protection (enabled on the Play Console release) needs Android 7.0+ (API 24).
+          sed -i -E "s/minSdkVersion = [0-9]+/minSdkVersion = 24/" android/variables.gradle
           grep -E "SdkVersion" android/variables.gradle
+          grep -q "minSdkVersion = 24" android/variables.gradle
       - run: npx cap sync android
       - name: Build the APK
         run: |
